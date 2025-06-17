@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Hashable
 from itertools import chain
 from math import prod
@@ -7,7 +9,9 @@ import numpy as np
 
 from ...qtools import choi_from_krauses, dchoi_from_krauses
 
-from ..classes import SpaceDict, ConstTensor, ParamTensor, DEFAULT_SDICT
+from ..classes import (
+    SpaceDict, ConstTensor, ParamTensor, VarTensor, DEFAULT_SDICT
+)
 
 
 
@@ -148,4 +152,31 @@ def tensor_from_krauses(krauses: list[np.ndarray],
     return ParamTensor(
         output_spaces + input_spaces, choi=C, dchoi=dC,
         sdict=sdict, output_spaces=output_spaces, **kwargs
+    )
+
+
+def cptp_var(input_spaces: list[Hashable], output_spaces: list[Hashable],
+    name: str, sdict: SpaceDict = DEFAULT_SDICT, **kwargs) -> VarTensor:
+    """
+    Creates a CPTP variable.
+
+    Parameters
+    ----------
+    input_spaces : list[Hashable]
+        Input spaces.
+    output_spaces : list[Hashable]
+        Output spaces.
+    sdict : SpaceDict, optional
+        Space dictionary of the result, by default DEFAULT_SDICT.
+    **kwargs :
+        Key-word arguments passed to VarTensor constructor.
+
+    Returns
+    -------
+    tensor : ParamTensor
+        CPTP variable.
+    """
+    return VarTensor(
+        input_spaces + output_spaces, name=name, sdict=sdict,
+        output_spaces=output_spaces, is_measurement=False, **kwargs
     )

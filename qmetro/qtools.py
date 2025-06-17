@@ -10,12 +10,14 @@ from cvxpy.constraints.constraint import Constraint
 import numpy as np
 from scipy.linalg import expm
 
-from qmetro.utils import ket_bra
-
 from .consts import PAULI_X, PAULI_Z, PAULIS, QubitStates as QS2
-from .utils import ket_bra, matrix_exp_derivative, hc
+from .utils import matrix_exp_derivative
 
 
+
+
+def ket_bra(x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    return np.kron(x.reshape(len(x), 1), y.conjugate())
 
 
 def cmarkov_krauses(krauses: list[np.ndarray], transition_mat: np.ndarray
@@ -166,6 +168,23 @@ def krauses_from_choi(choi: np.ndarray, dims: tuple[int, int],
         return krauses, vals, vecs
 
     return krauses
+
+
+def hc(x: np.ndarray | cp.Expression) -> np.ndarray | cp.Expression:
+    """
+    Hermitian conjugation of a numpy matrix or a cvxpy expression.
+
+    Parameters
+    ----------
+    x : np.ndarray | cp.Expression
+        Matrix.
+
+    Returns
+    -------
+    np.ndarray | cp.Expression
+        `x.conjugate().T`
+    """    
+    return x.conjugate().T
 
 
 def dkrauses_from_choi(choi: np.ndarray, dchoi: np.ndarray,

@@ -2,15 +2,11 @@ from __future__ import annotations
 
 from bisect import bisect_left
 from collections.abc import Iterable
-from typing import TypeVar, Callable, Union
+from typing import TypeVar, Union
 
 import numpy as np
-import cvxpy as cp
 from numpy.typing import NDArray
 from scipy.linalg import expm
-from scipy.stats import unitary_group
-
-from ncon import ncon
 
 from .consts import LINE_WIDTH
 
@@ -93,14 +89,6 @@ def get_random_pure_state(d: int) -> np.ndarray:
 
     v = np.random.randn(d) + 1j * np.random.randn(d)
     return v / np.linalg.norm(v)
-
-
-def hc(x: np.ndarray | cp.Expression) -> np.ndarray | cp.Expression:
-    return x.conjugate().T
-
-
-def ket_bra(x: np.ndarray, y: np.ndarray) -> np.ndarray:
-    return np.kron(x.reshape(len(x), 1), y.conjugate())
 
 
 def schmidt(state: np.ndarray, dims: list[int], eps: float = 1e-5
@@ -201,7 +189,7 @@ def in_sorted(a, x):
 
 
 def enhance_hermiticity(m: np.ndarray) -> tuple[np.ndarray, float]:
-    herm_m = (m + hc(m)) / 2
+    herm_m = (m + m.conjugate().T) / 2
     delta = np.max(np.abs(m - herm_m))
     return herm_m, delta
 

@@ -5,10 +5,9 @@ from warnings import warn
 import cvxpy as cp
 import numpy as np
 
-from .qtools import comb_variables, swap_operator, minimize_alpha
-from .utils import hc
-from .protocols import mop_adaptive_qfi
-from .param_channel import ParamChannel
+from ..qtools import comb_variables, swap_operator, minimize_alpha, hc
+from ..protocols import mop_adaptive_qfi
+from ..param_channel import ParamChannel
 
 
 
@@ -131,7 +130,7 @@ def minimize_alpha_given_beta(krauses: list[np.ndarray],
     A10 = dK - 1j * cp.kron(h, np.eye(dout)) @ K  # Top-right block
     A01 = hc(A10)  # Bottom-left block
     A = cp.bmat([[A00, A01], [A10, A11]])
-    constraints.append(A >> 0)  # Constraint enforcing t1 >= ||alpha||
+    constraints.append(A >> 0)  # Constraint enforcing t >= ||alpha||
 
     # Construct the block matrix B for the beta constraint
     B00 = bmax * np.eye(din)  # Top-left block for beta constraint
@@ -144,7 +143,8 @@ def minimize_alpha_given_beta(krauses: list[np.ndarray],
         #simplify problem for bmax = 0
         constraints.append(B01 == np.zeros(B01.shape))
     else:
-        constraints.append(B >> 0)  # Constraint enforcing t1 >= ||beta||
+        # Constraint enforcing bmax**2 >= ||beta||**2
+        constraints.append(B >> 0)
 
     # Define the objective for the optimization problem
     objective = cp.Minimize(t)
@@ -654,12 +654,10 @@ def asym_scaling_qfi(channel: ParamChannel, power: int | None = None
         
     Returns
     -------
-    tuple[float, int]
-        A tuple containing:
-            - coef: float
-                Coefficient in the QFI scaling law
-            - power: int
-                Power in the QFI scaling law. Can be 1 or 2.
+    coef: float
+        Coefficient in the QFI scaling law
+    power: int
+        Power in the QFI scaling law. Can be 1 or 2.
                 
     Notes
     -----

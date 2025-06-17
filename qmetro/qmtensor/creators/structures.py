@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Hashable
 from copy import copy
 
@@ -195,8 +197,9 @@ def mpo_measure_var_tnet(input_spaces: list[Hashable], name: str,
     return TensorNetwork(measures, sd, name), names, bonds
 
 
-def measure_var(input_spaces: list[Hashable], name: str, sdict: SpaceDict,
-    bond_dim: int | None = None, **kwargs) -> VarTensor | TensorNetwork:
+def measure_var(input_spaces: list[Hashable], name: str,
+    sdict: SpaceDict = DEFAULT_SDICT, bond_dim: int | None = None,
+    **kwargs) -> VarTensor | TensorNetwork:
     """
     Creates a measurement variable.
 
@@ -340,9 +343,8 @@ def cmarkov_param_tnet(krauses: list[np.ndarray],
 
 
 def comb_var_tnet(structure: list[tuple[list[Hashable], list[Hashable]]],
-    ancilla_dim : int = 2, sdict: SpaceDict = DEFAULT_SDICT,
-    name: str | None = None, **kwargs
-    ) -> tuple[TensorNetwork, list[str], list[Hashable]]:
+    name: str, sdict: SpaceDict = DEFAULT_SDICT, ancilla_dim : int = 1,
+    **kwargs) -> tuple[TensorNetwork, list[str], list[Hashable]]:
     """
     Returns a network of variable tensors representing channels in a
     sequence such that part of the output of one channel is a part of the
@@ -365,15 +367,15 @@ def comb_var_tnet(structure: list[tuple[list[Hashable], list[Hashable]]],
         List defining the spaces of every tooth. For i-th tooth and
         `inp_i, out_i = structure[i]` inp_i (out_i) is a list of input
         (output) spaces of the i-th tooth excluding ancilla.
-    ancilla_dim : int, optional
-        Dimension of ancilla spaces, by default 2.
-    sdict : SpaceDict, optional
-        Space dictionary, by default DEFAULT_SDICT.
     name : str
         Name of the result. Elements have names in format f"{name}, {i}"
         where i is the element number and its input and output ancilla
         spaces are (name, 'ANCILLA', i-1) and (name, 'ANCILLA', i)
         respectively.
+    sdict : SpaceDict, optional
+        Space dictionary, by default DEFAULT_SDICT.
+    ancilla_dim : int, optional
+        Dimension of ancilla spaces, by default 1.
     **kwargs :
         Arguments passed to VarTensor constructor.
 
@@ -413,8 +415,9 @@ def comb_var_tnet(structure: list[tuple[list[Hashable], list[Hashable]]],
 
 
 def comb_var(structure: list[tuple[list[Hashable], list[Hashable]]],
-    ancilla_dim : int | None = None, sdict: SpaceDict = DEFAULT_SDICT,
-    name: str | None = None, **kwargs) -> VarTensor | TensorNetwork:
+    name: str, sdict: SpaceDict = DEFAULT_SDICT,
+    ancilla_dim : int | None = None, **kwargs
+    ) -> VarTensor | TensorNetwork:
     """
     Creates a comb variable.
 
@@ -424,19 +427,19 @@ def comb_var(structure: list[tuple[list[Hashable], list[Hashable]]],
         List defining the spaces of every tooth. For i-th tooth and
         `inp_i, out_i = structure[i]` inp_i (out_i) is a list of input
         (output) spaces of the i-th tooth excluding ancilla.
-    ancilla_dim : int | None, optional
-        Dimension of ancilla spaces. When this argument is:
-        - a number then a tensor network of control operations will be
-        created,
-        - None then one comb-like variable tensor will be created,
-        by default None.
-    sdict : SpaceDict, optional
-        Space dictionary, by default DEFAULT_SDICT.
     name : str
         Name of the result. Elements have names in format f"{name}, {i}"
         where i is the element number and its input and output ancilla
         spaces are (name, 'ANCILLA', i-1) and (name, 'ANCILLA', i)
         respectively.
+    sdict : SpaceDict, optional
+        Space dictionary, by default DEFAULT_SDICT.
+    ancilla_dim : int | None, optional
+        Dimension of ancilla spaces. When this argument is:
+        - a number: a tensor network of control operations will be
+        created,
+        - None: one comb-like variable tensor will be created,
+        by default None.
     **kwargs :
         Arguments passed to VarTensor constructor.
 
@@ -452,5 +455,5 @@ def comb_var(structure: list[tuple[list[Hashable], list[Hashable]]],
         )
 
     return comb_var_tnet(
-        structure, ancilla_dim, sdict, name, **kwargs
+        structure, name, sdict, ancilla_dim, **kwargs
     )[0]

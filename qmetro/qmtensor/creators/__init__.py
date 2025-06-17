@@ -1,5 +1,5 @@
 from .single import (
-    choi_identity, zero, const_tensor_from_fun
+    choi_identity, zero, const_tensor_from_fun, cptp_var
 )
 from .structures import (
     mps_var_tnet, input_state_var, mpo_measure_var_tnet, measure_var,

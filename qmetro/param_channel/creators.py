@@ -1,11 +1,14 @@
+from __future__ import annotations
+
 from typing import Any
 
 import numpy as np
 
+from ..qtools import ket_bra
+
 from ..qtools import (
     depolarization_krauses, par_dephasing_krauses, per_dephasing_krauses,
-    par_amp_damping_krauses, per_amp_damping_krauses,
-    ket_bra
+    par_amp_damping_krauses, per_amp_damping_krauses
 )
 
 from . import ParamChannel

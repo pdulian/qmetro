@@ -4,6 +4,7 @@ from collections.abc import Hashable
 from dataclasses import dataclass
 
 from ..qmtensor import TensorNetwork
+from ..qmtensor.operations import is_var
 
 from .consts import PARTIAL
 
@@ -28,8 +29,22 @@ class IssConfig:
 
 
     def check(self, tn: TensorNetwork):
+        """
+        Check correctness of the parameters of the ISS algorithm.
+
+        Parameters
+        ----------
+        tn : TensorNetwork
+            Tensor network to be optimized.
+        
+        Raises
+        ------
+        ValueError
+            If the parameters are not correct.
+        """
         self.check_art_noise_params()
         self.check_contraction_order(tn)
+        self.check_cptp_vars(tn)
 
 
     def check_art_noise_params(self):
@@ -70,6 +85,18 @@ class IssConfig:
                 'tensors that are in tn. The following elements are not '\
                 f'names of tn tensors: {not_in_tn}.'
             )
+        
+    
+    def check_cptp_vars(self, tn: TensorNetwork):
+        for name, tensor in tn.tensors.items():
+            if (
+                is_var(tensor) and tensor.bond_spaces
+                and tensor.input_spaces and tensor.output_spaces
+            ):
+                raise ValueError(
+                    'The tensor network contains CPTP variable with bond '\
+                    f'spaces ({name}). '
+                )
 
 
     @property

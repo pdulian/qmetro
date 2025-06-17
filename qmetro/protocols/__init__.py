@@ -1,6 +1,6 @@
 from .iss import (
     iss_channel_qfi, iss_parallel_qfi, iss_tnet_parallel_qfi,
-    iss_adaptive_qfi, iss_tnet_adaptive_qfi, iss_passive_adaptive_qfi
+    iss_adaptive_qfi, iss_tnet_adaptive_qfi, iss_tnet_collisional_qfi
 )
 from .mop import (
     mop_channel_qfi, mop_parallel_qfi, mop_adaptive_qfi

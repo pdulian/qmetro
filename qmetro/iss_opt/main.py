@@ -506,6 +506,8 @@ def _single_iteration(tn: TensorNetwork, _tn: TensorNetwork,
                 m = 2 * m0 - m1
                 pre_qfi = np.real((m * old_t).array[0])
             elif name in slds:
+                _x = m0 * slds[name]
+                y = m1 * slds2[name]
                 pre_qfi = np.real(
                     (2 * m0 * slds[name] - m1 * slds2[name]).array[0]
                 )

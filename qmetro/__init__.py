@@ -6,3 +6,7 @@ from .iss_opt import iss_opt
 from .param_channel import *
 from .protocols import *
 from .qmtensor import *
+from .qtools import (
+    choi_from_krauses, dchoi_from_krauses, ket_bra, krauses_from_choi,
+    dkrauses_from_choi, hc
+)

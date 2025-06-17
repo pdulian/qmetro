@@ -497,9 +497,6 @@ def iss_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
 
         comb_structure.append((tooth_inp, tooth_out))
     comb = comb_var(comb_structure, sdict=sd, name=COMB)
-    # VarTensor(
-    #     flatten(comb_structure, 2), sd, COMB, comb_structure=comb_structure
-    # )
 
     ENV_INP_STATE = 'ENVIRONMENT INPUT STATE'
     if env_inp_state is None:
@@ -814,7 +811,7 @@ def iss_tnet_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
     return qfi, qfiss[0], teeth_arrs, sld_arr, status
 
 
-def iss_passive_adaptive_qfi(channel: ParamChannel,
+def iss_tnet_collisional_qfi(channel: ParamChannel,
     number_of_channels: int, ancilla_dim: int, mps_bond_dim: int,
     measure_bond_dim: int, unital_teeth: bool = False,
     initial_teeth: list[np.ndarray] | None = None,

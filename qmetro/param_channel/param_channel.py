@@ -2,18 +2,17 @@ from __future__ import annotations
 
 from collections.abc import Hashable, Iterable
 from typing import Callable, Any
-from itertools import repeat, chain
+from itertools import repeat
 from warnings import warn
 
 import numpy as np
 
 from ..qmtensor import ParamTensor, DEFAULT_SDICT, SpaceDict, ConstTensor
 from ..qtools import (
-    choi_from_krauses, dchoi_from_krauses,
-    krauses_from_choi, dkrauses_from_choi, krauses_kron, ket_bra,
+    choi_from_krauses, dchoi_from_krauses, ket_bra, hc,
+    krauses_from_choi, dkrauses_from_choi, krauses_kron,
     krauses_sequential, choi_dchoi_from_lindblad
 )
-from ..utils import hc
 
 
 
@@ -119,11 +118,22 @@ class ParamChannel():
         input_dim: int | list[int] | None = None,
         output_dim: int | list[int] | None = None, **kwargs: Any):
 
-        kraus_like_inp = krauses is not None and dkrauses is not None
-        choi_like_inp = (choi is not None and dchoi is not None)
-        lindblad_like_inp = (lindblad is not None and dlindblad is not None
-                             and time is not None and input_dim is not None
-                            )
+        kraus_like_inp = krauses is not None or dkrauses is not None
+        if krauses is not None and dkrauses is None:
+            dkrauses = [np.zeros_like(k) for k in krauses]
+
+        choi_like_inp = choi is not None or dchoi is not None
+        if choi is not None and dchoi is None:
+            dchoi = np.zeros_like(choi)
+        
+        lindblad_like_inp = (
+            (lindblad is not None or dlindblad is not None)
+            and time is not None and input_dim is not None
+        )
+        if lindblad is not None and dlindblad is None:
+            def _dlindblad(rho):
+                return np.zeros_like(rho)
+            dlindblad = _dlindblad
         
         self.kraus_like_inp = kraus_like_inp
         #when lindblad is given, choi will be computed
@@ -217,7 +227,7 @@ class ParamChannel():
                 #TODO: maybe allow input_dim to be a list
 
                 choi, dchoi = choi_dchoi_from_lindblad(
-                    lindblad, dlindblad, input_dim * self.env_inp_dim, 
+                    lindblad, dlindblad, input_dim * self.env_inp_dim,
                     time, **kwargs
                 )
             
@@ -500,9 +510,8 @@ class ParamChannel():
         env_out : Hashable | None, optional
             Name of the environment output space. If the environment output
             is trivial this space will be omitted. By default None.
-        sdict : SpaceDict | None, optional
-            Tensor's space dicitionary. If None then self.sdict is taken,
-            by default None.
+        sdict : SpaceDict, optional
+            Tensor's space dicitionary, by default `self.sdict`.
 
         Returns
         -------
@@ -512,6 +521,8 @@ class ParamChannel():
         provided_spaces = any([
             input_spaces, output_spaces, env_inp, env_out, sdict
         ])
+        sd = sdict or self.sdict
+        
         if not provided_spaces:
             if self._tensor is None:
                 self._tensor = ParamTensor(
@@ -545,8 +556,6 @@ class ParamChannel():
                     'For channel with non-trivial environment output'
                     'env_out must be provided.'
                 )
-
-        sd = sdict or self.sdict
         
         # Check if spaces are in sdict and have correct dimensions.
         spaces = env_outs + output_spaces + env_inps + input_spaces
@@ -1024,7 +1033,7 @@ class ParamChannel():
         return self.scalar_mul(other)
 
 
-    def add_channel(self, other: ParamChannel) -> ParamChannel:
+    def add(self, other: ParamChannel) -> ParamChannel:
         """
         Adds two ParamChannels by adding their chois and dchois.
 
@@ -1063,11 +1072,15 @@ class ParamChannel():
 
 
     def __add__(self, other: ParamChannel) -> ParamChannel:
-        return self.add_channel(other)
+        return self.add(other)
+    
+
+    def __sub__(self, other: ParamChannel) -> ParamChannel:
+        return self.add(other.scalar_mul(-1))
 
 
-    def _sequential_composition_one(self, other: ParamChannel,  
-        simplify_krauses:bool = True) -> ParamChannel:
+    def _compose_one(self, other: ParamChannel,
+        simplify_krauses: bool = True) -> ParamChannel:
         """
         Returns the sequential composition of self and other.
 
@@ -1155,7 +1168,7 @@ class ParamChannel():
         )
     
     
-    def sequential_composition(self, *others: ParamChannel,  
+    def compose(self, *others: ParamChannel,  
         simplify_krauses: bool = True) -> ParamChannel:
         """
         Returns the sequential composition of self and others.
@@ -1187,12 +1200,11 @@ class ParamChannel():
         """
         new = self
         for other in others:
-            new = new._sequential_composition_one(other, simplify_krauses)
+            new = new._compose_one(other, simplify_krauses)
         return new
     
 
-    def act_on_state(self, 
-        state: np.ndarray | tuple[np.ndarray, np.ndarray]
+    def act(self, state: np.ndarray | tuple[np.ndarray, np.ndarray]
         ) -> tuple[np.ndarray, np.ndarray]:
         """
         Act on a state with the channel.
@@ -1252,7 +1264,7 @@ class ParamChannel():
             choi=rho, dchoi=drho, input_dim=1, 
             env_dim=(1, self.env_inp_dim)  
         )
-        state_out = self.sequential_composition(state_chan)
+        state_out = self.compose(state_chan)
         return state_out.choi(), state_out.dchoi()
 
     
@@ -1261,12 +1273,12 @@ class ParamChannel():
         ) -> ParamChannel | tuple[np.ndarray, np.ndarray]:
 
         if isinstance(other, ParamChannel):
-            return self.sequential_composition(other)
-        return self.act_on_state(other)
+            return self.compose(other)
+        return self.act(other)
 
 
     def __call__(self, state) -> tuple[np.ndarray, np.ndarray]:
-        return self.act_on_state(state)
+        return self.act(state)
 
 
     def trace_env_inp(self, env_inp_state: np.ndarray | None = None

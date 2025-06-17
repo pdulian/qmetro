@@ -16,9 +16,9 @@ from scipy.stats import unitary_group
 
 from ncon import ncon
 
-from ...qtools import krauses_from_choi, dkrauses_from_choi
+from ...qtools import ket_bra, krauses_from_choi, dkrauses_from_choi
 from ...utils import (
-    ket_bra, get_random_positive_matrix, enhance_hermiticity,
+    get_random_positive_matrix, enhance_hermiticity,
     is_perfect_square
 )
 
@@ -1605,6 +1605,7 @@ class ConstTensor(GeneralTensor):
         """
         tensor = copy.deepcopy(self.array)
         to_square = set(self.spaces).difference(spaces)
+        # self.reorder(list(to_square) + spaces)
 
         if to_square.intersection(self.bond_spaces):
             raise ValueError(

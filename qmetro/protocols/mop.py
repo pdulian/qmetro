@@ -6,9 +6,8 @@ from warnings import warn, catch_warnings, filterwarnings
 import cvxpy as cp
 import numpy as np
 
-from ..utils import hc
 from ..param_channel import ParamChannel
-from ..qtools import minimize_alpha, comb_variables, krauses_kron
+from ..qtools import minimize_alpha, comb_variables, krauses_kron, hc
 
 from .errors import EnvDimsError
 from .warnings import ENV_FOR_SINGLE, COMB_FOR_SINGLE

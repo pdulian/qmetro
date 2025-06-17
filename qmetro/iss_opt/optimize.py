@@ -11,8 +11,8 @@ from ncon import ncon
 
 from ..qmtensor import ConstTensor, TensorNetwork
 from ..qmtensor.operations import is_comb_var
-from ..qtools import comb_variables
-from ..utils import enhance_hermiticity, snd, hc, ket_bra
+from ..qtools import comb_variables, hc, ket_bra
+from ..utils import enhance_hermiticity, snd
 
 from .errors import NormMatZeroEigenval, SolverError
 from .iss_config import IssConfig
@@ -270,26 +270,28 @@ def _get_a_matrix(m: ConstTensor, physical_spaces: list[Hashable],
     for space in physical_spaces:
         array1_new_phys_dims += [_sd[space], _sd[space]]
         new_array1_phys_order += [
-            non_con_i, non_con_i - 3*len_phys - len_bond
+            non_con_i, non_con_i - 2*len_phys - len_bond - 1
         ]
-        mat_prod_term_order += [non_con_i - len_phys]
-        non_con_i -= 1
+        mat_prod_term_order += [non_con_i - 1]
+        non_con_i -= 2
 
     new_array1_bond_order: list[int] = []
     for space in bond_spaces:
         array1_new_bond_dims += [_sd[space]]
-        new_array1_bond_order += [non_con_i - len_phys]
+        new_array1_bond_order += [non_con_i]
         non_con_i -= 1
 
     array1_new_dims = array1_new_phys_dims + 2 * array1_new_bond_dims
     array1 = array1.reshape(array1_new_dims)
 
     new_array1_bond_order += [
-        i - len_bond - 2*len_phys for i in new_array1_bond_order
+        i - (2*len_phys+len_bond) for i in new_array1_bond_order
     ]
     new_array1_order = new_array1_phys_order + new_array1_bond_order
 
-    mat_prod_term_order += [i - len_all for i in mat_prod_term_order]
+    mat_prod_term_order += [
+        i - (2*len_phys+len_bond-1) for i in mat_prod_term_order
+    ]
 
     mat_prod_term = np.identity(physical_dim, dtype=np.complex128)
     mat_prod_term = mat_prod_term.reshape(
