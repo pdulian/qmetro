@@ -20,7 +20,7 @@ serve as benchmarks of optimality of the outcomes of numerical
 optimization. All functionalities are wrapped up in a user-friendly
 interface which enables defining strategies at various levels of detail.
 
-See detiled description in [TODO arxiv link]
+See detiled description in `our article <>`_.
 
 .. toctree::
    :maxdepth: 2
