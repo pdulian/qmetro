@@ -34,7 +34,7 @@ jobs:
     - name: Build HTML
       # uses: ammaraskar/sphinx-action@master
       run: |
-        sphinx-build doc _build
+        sphinx-build docs _build
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
