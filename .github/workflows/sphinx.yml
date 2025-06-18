@@ -23,7 +23,7 @@ jobs:
         pip install sphinx-rtd-theme
     - name: Install numpydoc
       run: |
-        pip install sphinx-numpydoc
+        pip install numpydoc
     # - name: Install dependencies 2
     #   run: |
     #     pip install sphinx sphinx_rtd_theme myst_parser
