@@ -32,7 +32,9 @@ jobs:
     #   run: |
     #     pip install sphinx sphinx_rtd_theme myst_parser
     - name: Build HTML
-      uses: ammaraskar/sphinx-action@master
+      # uses: ammaraskar/sphinx-action@master
+      run: |
+        sphinx-build doc _build
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
