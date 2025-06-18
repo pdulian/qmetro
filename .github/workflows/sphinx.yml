@@ -15,9 +15,10 @@ jobs:
       with:
         persist-credentials: false
     - uses: actions/setup-python@v5
-    - name: Install dependencies
+    - name: Install dependencies 1
       run: |
-        pip install sphinx-numpydoc sphinx-rtd-theme
+        pip install sphinx sphinx-numpydoc sphinx-rtd-theme
+    - name: Install dependencies 2
       run: |
         pip install sphinx sphinx_rtd_theme myst_parser
     - name: Build HTML
