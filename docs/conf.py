@@ -23,7 +23,7 @@ extensions =  [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'sphinx_simplepdf',
+    # 'sphinx_simplepdf',
     'sphinx.ext.mathjax',
     'numpydoc'
 ]
