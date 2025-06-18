@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmetro.iss_opt.optimize &mdash; QMetro++ 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            QMetro++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../qmetro.html">QMetro++ package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">QMetro++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qmetro.iss_opt.optimize</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qmetro.iss_opt.optimize</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hashable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">repeat</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">prod</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cvxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">eig</span><span class="p">,</span> <span class="n">eigh</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ncon</span><span class="w"> </span><span class="kn">import</span> <span class="n">ncon</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..qmtensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">TensorNetwork</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..qmtensor.operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_comb_var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..qtools</span><span class="w"> </span><span class="kn">import</span> <span class="n">comb_variables</span><span class="p">,</span> <span class="n">hc</span><span class="p">,</span> <span class="n">ket_bra</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">enhance_hermiticity</span><span class="p">,</span> <span class="n">snd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">NormMatZeroEigenval</span><span class="p">,</span> <span class="n">SolverError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.iss_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.iss_warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">non_herimitan_message</span><span class="p">,</span> <span class="n">parameter_norm_message</span>
+
+
+
+
+<div class="viewcode-block" id="optimize_var">
+<a class="viewcode-back" href="../../../qmetro.iss_opt.html#qmetro.iss_opt.optimize.optimize_var">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">optimize_var</span><span class="p">(</span><span class="n">tn</span><span class="p">:</span> <span class="n">TensorNetwork</span><span class="p">,</span> <span class="n">_tn</span><span class="p">:</span> <span class="n">TensorNetwork</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">m0</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">m1</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span>
+    <span class="n">cptp_vs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">],</span> <span class="n">slds</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">],</span>
+    <span class="n">mps_vs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">],</span> <span class="n">mps_left</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span>
+    <span class="n">mps_rights</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">],</span> <span class="n">_</span><span class="p">:</span> <span class="n">IssConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+
+    <span class="n">templ_t</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="n">old_t</span> <span class="o">=</span> <span class="n">_tn</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="n">output_spaces</span> <span class="o">=</span> <span class="n">old_t</span><span class="o">.</span><span class="n">output_spaces</span>
+    <span class="n">bond_spaces</span> <span class="o">=</span> <span class="n">old_t</span><span class="o">.</span><span class="n">bond_spaces</span>
+    <span class="n">comb_str</span> <span class="o">=</span> <span class="n">old_t</span><span class="o">.</span><span class="n">comb_structure</span>
+    <span class="n">is_unital</span> <span class="o">=</span> <span class="n">templ_t</span><span class="o">.</span><span class="n">is_unital</span>
+    <span class="n">sing_val_cutoff</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">slds</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mf">1e-7</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cptp_vs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_comb_var</span><span class="p">(</span><span class="n">templ_t</span><span class="p">):</span>
+                <span class="n">qfi</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_comb_optimize</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">comb_str</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">qfi</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_cptp_optimize</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">output_spaces</span><span class="p">,</span> <span class="n">is_unital</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">slds</span><span class="p">:</span>
+            <span class="n">qfi</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_sld_optimize</span><span class="p">(</span><span class="n">m0</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">bond_spaces</span><span class="p">,</span> <span class="n">sing_val_cutoff</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">mps_vs</span><span class="p">:</span>
+            <span class="n">norm_t</span> <span class="o">=</span> <span class="n">mps_left</span> <span class="o">*</span> <span class="n">mps_rights</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">qfi</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_mps_optimize</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">norm_t</span><span class="p">,</span> <span class="n">eps</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not recognized.&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">cp</span><span class="o">.</span><span class="n">SolverError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SolverError</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">m0</span><span class="p">,</span> <span class="n">m1</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    
+    <span class="k">if</span> <span class="n">qfi</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">1e-5</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Obtained QFI (</span><span class="si">{</span><span class="n">qfi</span><span class="si">}</span><span class="s1">) is negative.&#39;</span>
+        <span class="k">raise</span> <span class="n">SolverError</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">m0</span><span class="p">,</span> <span class="n">m1</span><span class="p">)</span>
+
+    <span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">output_spaces</span> <span class="o">=</span> <span class="n">output_spaces</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">comb_structure</span> <span class="o">=</span> <span class="n">old_t</span><span class="o">.</span><span class="n">comb_structure</span>
+
+    <span class="k">return</span> <span class="n">qfi</span><span class="p">,</span> <span class="n">x</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cptp_optimize</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">output_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span>
+    <span class="n">unital</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+    <span class="n">_sd</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">sdict</span>
+    <span class="n">out_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">output_spaces</span><span class="p">)</span>
+    <span class="n">input_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">space</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">spaces</span> <span class="k">if</span> <span class="n">space</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_set</span><span class="p">]</span>
+    <span class="n">out_dim</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">space</span><span class="p">]</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">output_spaces</span><span class="p">)</span>
+    <span class="n">inp_dim</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">space</span><span class="p">]</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">input_spaces</span><span class="p">)</span>
+
+    <span class="n">m_arr</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">choi</span><span class="p">([</span><span class="o">*</span><span class="n">output_spaces</span><span class="p">,</span> <span class="o">*</span><span class="n">input_spaces</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">m_par</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">m_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">m_arr</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;Parameter value must be hermitian.&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="n">m_arr</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">enhance_hermiticity</span><span class="p">(</span><span class="n">m_arr</span><span class="p">)</span>
+            <span class="n">m_par</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">m_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">m_arr</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">non_herimitan_message</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="n">v</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">m_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">constrs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">v</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">cp</span><span class="o">.</span><span class="n">partial_trace</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">out_dim</span><span class="p">,</span> <span class="n">inp_dim</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">inp_dim</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">unital</span><span class="p">:</span>
+        <span class="n">constrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">cp</span><span class="o">.</span><span class="n">partial_trace</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">out_dim</span><span class="p">,</span> <span class="n">inp_dim</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">out_dim</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">m_par</span> <span class="o">@</span> <span class="n">v</span><span class="p">))),</span> <span class="n">constrs</span><span class="p">)</span>
+
+    <span class="n">ns</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">NORM_TRIES_MAX</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">NORM_TRIES_STEP</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ns</span><span class="p">:</span>
+        <span class="n">norm_factor</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">n</span>
+        <span class="n">m_par</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">m_arr</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">norm_factor</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qfi</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span> <span class="o">*</span> <span class="n">norm_factor</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="n">cp</span><span class="o">.</span><span class="n">SolverError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">NORM_TRIES_MAX</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="n">parameter_norm_message</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">return</span> <span class="n">qfi</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">(</span>
+        <span class="n">output_spaces</span> <span class="o">+</span> <span class="n">input_spaces</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">_sd</span><span class="p">,</span>
+        <span class="n">output_spaces</span><span class="o">=</span><span class="n">output_spaces</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sld_optimize</span><span class="p">(</span><span class="n">m0</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">m1</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span>
+    <span class="n">bond_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="n">sing_val_cutoff</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bond_spaces</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_sld_optimize_sdp</span><span class="p">(</span><span class="n">m0</span><span class="p">,</span> <span class="n">m1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">_sld_optimize_pseudoinverse</span><span class="p">(</span>
+        <span class="n">m0</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">bond_spaces</span><span class="p">,</span> <span class="n">sing_val_cutoff</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sld_optimize_sdp</span><span class="p">(</span><span class="n">m0</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">m1</span><span class="p">:</span> <span class="n">ConstTensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">m0</span><span class="o">.</span><span class="n">dimension</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">L2</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">bmat</span><span class="p">([[</span><span class="n">L2</span><span class="p">,</span> <span class="n">L</span><span class="p">],</span> <span class="p">[</span><span class="n">L</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">)]])</span>
+    <span class="n">constrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">A</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># L2 &gt;&gt; L^2</span>
+
+    <span class="n">spaces</span> <span class="o">=</span> <span class="n">m0</span><span class="o">.</span><span class="n">spaces</span>
+    <span class="n">m0_arr</span> <span class="o">=</span> <span class="n">m0</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+    <span class="n">m1_arr</span> <span class="o">=</span> <span class="n">m1</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">m0_par</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">m0_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">m0_arr</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;Parameter value must be hermitian.&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="n">m0_arr</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">enhance_hermiticity</span><span class="p">(</span><span class="n">m0_arr</span><span class="p">)</span>
+            <span class="n">m0_par</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">m0_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">m0_arr</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">non_herimitan_message</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">m1_par</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">m1_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">m1_arr</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;Parameter value must be hermitian.&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+            <span class="n">m1_arr</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">enhance_hermiticity</span><span class="p">(</span><span class="n">m1_arr</span><span class="p">)</span>
+            <span class="n">m1_par</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span>
+                <span class="n">m1_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">m1_arr</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">non_herimitan_message</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m0_par</span> <span class="o">@</span> <span class="n">L</span> <span class="o">-</span> <span class="n">m1_par</span> <span class="o">@</span> <span class="n">L2</span><span class="p">)))</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">constrs</span><span class="p">)</span>
+
+    <span class="n">ns</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">NORM_TRIES_MAX</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">NORM_TRIES_STEP</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">ns</span><span class="p">:</span>
+        <span class="n">norm_factor</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">n</span>
+        <span class="n">m0_par</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">m0_arr</span> <span class="o">/</span> <span class="n">norm_factor</span>
+        <span class="n">m1_par</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">m1_arr</span> <span class="o">/</span> <span class="n">norm_factor</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qfi</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span> <span class="o">*</span> <span class="n">norm_factor</span>
+            <span class="k">break</span>
+        <span class="k">except</span> <span class="n">cp</span><span class="o">.</span><span class="n">SolverError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">NORM_TRIES_MAX</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span><span class="n">parameter_norm_message</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">return</span> <span class="n">qfi</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">L</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">m0</span><span class="o">.</span><span class="n">sdict</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sld_optimize_pseudoinverse</span><span class="p">(</span><span class="n">m0</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">m1</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span>
+    <span class="n">bond_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="n">sing_val_cutoff</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Algorithm from K. Chabuda et al. &quot;Tensor-Network Approach for Quantum</span>
+<span class="sd">    Metrology in Many-Body Quantum Systems&quot; section IIIC.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bond_spaces_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bond_spaces</span><span class="p">)</span>
+    <span class="n">physical_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">m0</span><span class="o">.</span><span class="n">spaces</span> <span class="k">if</span> <span class="n">s</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bond_spaces_set</span><span class="p">]</span>
+
+    <span class="n">b_vec</span> <span class="o">=</span> <span class="n">_get_b_vector</span><span class="p">(</span><span class="n">m0</span><span class="p">,</span> <span class="n">physical_spaces</span><span class="p">,</span> <span class="n">bond_spaces</span><span class="p">)</span>
+    <span class="n">a_mat</span> <span class="o">=</span> <span class="n">_get_a_matrix</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">physical_spaces</span><span class="p">,</span> <span class="n">bond_spaces</span><span class="p">)</span>
+    <span class="n">a_tylde</span> <span class="o">=</span> <span class="p">(</span><span class="n">a_mat</span> <span class="o">+</span> <span class="n">a_mat</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">solution</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">a_tylde</span><span class="p">,</span> <span class="n">sing_val_cutoff</span><span class="p">)</span> <span class="o">@</span> <span class="n">b_vec</span>
+
+    <span class="n">_sd</span> <span class="o">=</span> <span class="n">m0</span><span class="o">.</span><span class="n">sdict</span>
+    <span class="n">solution_tensor</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">physical_spaces</span><span class="p">]</span>
+        <span class="o">+</span> <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Inner product below is a substitute for tensor contraction thus</span>
+    <span class="c1"># there should be no complex conjugation for the left vector.</span>
+    <span class="n">qfi</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">b_vec</span> <span class="o">@</span> <span class="n">solution</span> <span class="o">-</span> <span class="n">solution</span> <span class="o">@</span> <span class="p">(</span><span class="n">a_mat</span> <span class="o">@</span> <span class="n">solution</span><span class="p">)</span>
+    <span class="n">qfi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">qfi</span><span class="p">)</span>
+
+    <span class="n">spaces</span> <span class="o">=</span> <span class="n">physical_spaces</span> <span class="o">+</span> <span class="n">bond_spaces</span>
+    <span class="n">LT</span> <span class="o">=</span> <span class="n">ConstTensor</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="n">solution_tensor</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="n">_sd</span><span class="p">)</span>
+    <span class="n">arr_T</span> <span class="o">=</span> <span class="n">LT</span><span class="o">.</span><span class="n">choi_T</span><span class="p">(</span><span class="o">*</span><span class="n">LT</span><span class="o">.</span><span class="n">physical_spaces</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+    <span class="n">LT</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="p">(</span><span class="n">LT</span><span class="o">.</span><span class="n">array</span> <span class="o">+</span> <span class="n">arr_T</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">qfi</span><span class="p">,</span> <span class="n">LT</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sld_optimize_linear</span><span class="p">(</span><span class="n">m0</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">m1</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span>
+    <span class="n">sing_val_cutoff</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+    <span class="n">spaces</span> <span class="o">=</span> <span class="n">m0</span><span class="o">.</span><span class="n">spaces</span>
+    <span class="n">m0_choi</span> <span class="o">=</span> <span class="n">m0</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+    <span class="n">m1_choi</span> <span class="o">=</span> <span class="n">m1</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+    <span class="n">eigvals</span><span class="p">,</span> <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">eigh</span><span class="p">(</span><span class="n">m1_choi</span><span class="p">)</span>
+
+    <span class="n">sld</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">m1_choi</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">ei</span><span class="p">),</span> <span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">ej</span><span class="p">)</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">eigvals</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">vi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">eigvecs</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">vj</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">eigvecs</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ei</span> <span class="o">+</span> <span class="n">ej</span> <span class="o">&gt;</span> <span class="n">sing_val_cutoff</span><span class="p">:</span>
+            <span class="n">sld_ij</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">vi</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span> <span class="o">@</span> <span class="p">(</span><span class="n">m0_choi</span> <span class="o">@</span> <span class="n">vj</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ei</span> <span class="o">+</span> <span class="n">ej</span><span class="p">)</span>
+            <span class="n">sld</span> <span class="o">+=</span> <span class="n">sld_ij</span> <span class="o">*</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">)</span>
+    
+    <span class="n">qfi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">m1_choi</span> <span class="o">@</span> <span class="n">sld</span> <span class="o">-</span> <span class="n">m0_choi</span> <span class="o">@</span> <span class="n">sld</span> <span class="o">@</span> <span class="n">sld</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">qfi</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">choi</span><span class="o">=</span><span class="n">sld</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="n">m0</span><span class="o">.</span><span class="n">sdict</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_b_vector</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">physical_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span>
+    <span class="n">bond_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">tensor0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">reorder</span><span class="p">(</span><span class="n">physical_spaces</span> <span class="o">+</span> <span class="n">bond_spaces</span><span class="p">)</span><span class="o">.</span><span class="n">array</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">tensor0</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_a_matrix</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">physical_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span>
+    <span class="n">bond_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">_sd</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">sdict</span>
+
+    <span class="n">_bond_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">_sd</span><span class="o">.</span><span class="n">primed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span><span class="p">]</span>
+    <span class="n">physical_dim</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">physical_spaces</span><span class="p">)</span>
+    <span class="n">len_phys</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">physical_spaces</span><span class="p">)</span>
+    <span class="n">len_bond</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bond_spaces</span><span class="p">)</span>
+    <span class="n">len_all</span> <span class="o">=</span> <span class="n">len_phys</span> <span class="o">+</span> <span class="n">len_bond</span>
+
+    <span class="n">array1_spaces</span> <span class="o">=</span> <span class="n">physical_spaces</span> <span class="o">+</span> <span class="n">bond_spaces</span> <span class="o">+</span> <span class="n">_bond_spaces</span>
+    <span class="n">array1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">reorder</span><span class="p">(</span><span class="n">array1_spaces</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+
+    <span class="n">array1_new_phys_dims</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">array1_new_bond_dims</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">non_con_i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">new_array1_phys_order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mat_prod_term_order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">physical_spaces</span><span class="p">:</span>
+        <span class="n">array1_new_phys_dims</span> <span class="o">+=</span> <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">space</span><span class="p">],</span> <span class="n">_sd</span><span class="p">[</span><span class="n">space</span><span class="p">]]</span>
+        <span class="n">new_array1_phys_order</span> <span class="o">+=</span> <span class="p">[</span>
+            <span class="n">non_con_i</span><span class="p">,</span> <span class="n">non_con_i</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">len_phys</span> <span class="o">-</span> <span class="n">len_bond</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">]</span>
+        <span class="n">mat_prod_term_order</span> <span class="o">+=</span> <span class="p">[</span><span class="n">non_con_i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">non_con_i</span> <span class="o">-=</span> <span class="mi">2</span>
+
+    <span class="n">new_array1_bond_order</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">bond_spaces</span><span class="p">:</span>
+        <span class="n">array1_new_bond_dims</span> <span class="o">+=</span> <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">space</span><span class="p">]]</span>
+        <span class="n">new_array1_bond_order</span> <span class="o">+=</span> <span class="p">[</span><span class="n">non_con_i</span><span class="p">]</span>
+        <span class="n">non_con_i</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="n">array1_new_dims</span> <span class="o">=</span> <span class="n">array1_new_phys_dims</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">array1_new_bond_dims</span>
+    <span class="n">array1</span> <span class="o">=</span> <span class="n">array1</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">array1_new_dims</span><span class="p">)</span>
+
+    <span class="n">new_array1_bond_order</span> <span class="o">+=</span> <span class="p">[</span>
+        <span class="n">i</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">len_phys</span><span class="o">+</span><span class="n">len_bond</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">new_array1_bond_order</span>
+    <span class="p">]</span>
+    <span class="n">new_array1_order</span> <span class="o">=</span> <span class="n">new_array1_phys_order</span> <span class="o">+</span> <span class="n">new_array1_bond_order</span>
+
+    <span class="n">mat_prod_term_order</span> <span class="o">+=</span> <span class="p">[</span>
+        <span class="n">i</span> <span class="o">-</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">len_phys</span><span class="o">+</span><span class="n">len_bond</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">mat_prod_term_order</span>
+    <span class="p">]</span>
+
+    <span class="n">mat_prod_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">physical_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">mat_prod_term</span> <span class="o">=</span> <span class="n">mat_prod_term</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">physical_spaces</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">new_array1</span> <span class="o">=</span> <span class="n">ncon</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">array1</span><span class="p">,</span> <span class="n">mat_prod_term</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">new_array1_order</span><span class="p">,</span> <span class="n">mat_prod_term_order</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">single_bond_range</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">prod</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">new_array1</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span>
+        <span class="n">single_bond_range</span> <span class="o">*</span> <span class="n">physical_dim</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">single_bond_range</span> <span class="o">*</span> <span class="n">physical_dim</span><span class="o">**</span><span class="mi">2</span>
+    <span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mps_optimize</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">norm_tensor</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+    <span class="n">_sd</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">sdict</span>
+    <span class="n">bond_spaces</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">bond_spaces</span>
+    <span class="n">physical_spaces</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">physical_spaces</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">len_phys</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">physical_spaces</span><span class="p">)</span>
+    <span class="n">len_bond</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">bond_spaces</span><span class="p">)</span>
+    <span class="n">len_all</span> <span class="o">=</span> <span class="n">len_phys</span> <span class="o">+</span> <span class="n">len_bond</span>
+
+    <span class="n">f_mat</span> <span class="o">=</span> <span class="n">_get_f_mat</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="c1"># It is F operator from [1] multiplied by -1</span>
+
+    <span class="n">norm_tensor</span><span class="o">.</span><span class="n">reorder</span><span class="p">(</span><span class="n">bond_spaces</span><span class="p">)</span>
+    <span class="n">proto_n</span> <span class="o">=</span> <span class="n">norm_tensor</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">proto_n</span> <span class="o">=</span> <span class="n">proto_n</span><span class="o">.</span><span class="n">reshape</span><span class="p">([</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">repeat</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">])</span>
+
+    <span class="n">inner_prod_term</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">physical_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">)</span>
+    <span class="n">inner_prod_term</span> <span class="o">=</span> <span class="n">inner_prod_term</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">physical_spaces</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">inner_prod_indices</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_phys</span><span class="p">)]</span>
+    <span class="n">inner_prod_indices</span> <span class="o">+=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">len_all</span> <span class="o">-</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_phys</span><span class="p">)]</span>
+
+    <span class="n">proto_n_indices</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">len_phys</span> <span class="o">-</span> <span class="n">ind</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_bond</span><span class="p">)</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">len_all</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="n">n_arr</span> <span class="o">=</span> <span class="n">ncon</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">inner_prod_term</span><span class="p">,</span> <span class="n">proto_n</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">inner_prod_indices</span><span class="p">,</span> <span class="n">proto_n_indices</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">single_bond_range</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">prod</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span><span class="p">)))</span>
+    <span class="n">n_dim</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">physical_dim</span> <span class="o">*</span> <span class="n">single_bond_range</span>
+    <span class="n">n_mat</span> <span class="o">=</span> <span class="n">n_arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_dim</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">)</span>
+
+    <span class="n">VERSION</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">VERSION</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">n_eigs</span> <span class="o">=</span> <span class="n">eig</span><span class="p">(</span><span class="n">n_mat</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">min_n_eig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">n_eigs</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">min_n_eig</span> <span class="o">&lt;</span> <span class="n">eps</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NormMatZeroEigenval</span><span class="p">(</span><span class="n">min_n_eig</span><span class="p">)</span>
+
+        <span class="n">eigs</span><span class="p">,</span> <span class="n">eigvs</span> <span class="o">=</span> <span class="n">eig</span><span class="p">(</span><span class="n">f_mat</span><span class="p">,</span> <span class="n">n_mat</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">eigs</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="n">snd</span><span class="p">)</span>
+        <span class="n">solution_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">eigvs</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">VERSION</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># This version requires bigger eps (1e-7 vs 1e-5) so it might be</span>
+        <span class="c1"># more prone to errors. On the other hand, it can proceed when</span>
+        <span class="c1"># n_mat has eigenvalues smaller than eps while version 0 can&#39;t.</span>
+        <span class="c1"># In practive they give similar results.</span>
+        <span class="n">n_eigs</span><span class="p">,</span> <span class="n">U_hc</span> <span class="o">=</span> <span class="n">eig</span><span class="p">(</span><span class="n">n_mat</span><span class="p">)</span>
+        <span class="n">_n_pinv_sqrt_eigs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">eigval</span> <span class="ow">in</span> <span class="n">n_eigs</span><span class="p">:</span>
+            <span class="n">sqrt_eig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eigval</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span><span class="p">)</span> <span class="c1"># n_mat is PSD by construction.</span>
+
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">eigval</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-5</span><span class="p">:</span>
+                <span class="n">_n_pinv_sqrt_eigs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">sqrt_eig</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">_n_pinv_sqrt_eigs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="n">_n_pinv_sqrt</span> <span class="o">=</span> <span class="n">U_hc</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">_n_pinv_sqrt_eigs</span><span class="p">)</span> <span class="o">@</span> <span class="n">hc</span><span class="p">(</span><span class="n">U_hc</span><span class="p">)</span>
+
+        <span class="n">eigs</span><span class="p">,</span> <span class="n">eigvs</span> <span class="o">=</span> <span class="n">eig</span><span class="p">(</span><span class="n">_n_pinv_sqrt</span> <span class="o">@</span> <span class="n">f_mat</span> <span class="o">@</span> <span class="n">_n_pinv_sqrt</span><span class="p">)</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">eigs</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="n">snd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+        <span class="n">solution_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">_n_pinv_sqrt</span> <span class="o">@</span> <span class="n">eigvs</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span>
+
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">solution_vec</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span> <span class="o">@</span> <span class="p">(</span><span class="n">n_mat</span> <span class="o">@</span> <span class="n">solution_vec</span><span class="p">)</span>
+    <span class="n">qfi</span> <span class="o">=</span> <span class="n">solution_vec</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span> <span class="o">@</span> <span class="p">(</span><span class="n">f_mat</span> <span class="o">@</span> <span class="n">solution_vec</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span>
+    <span class="n">solution_vec</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">norm</span><span class="p">)</span>
+    <span class="n">solution_arr</span> <span class="o">=</span> <span class="n">solution_vec</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">physical_spaces</span><span class="p">]</span>
+        <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">qfi</span><span class="p">),</span> <span class="n">ConstTensor</span><span class="o">.</span><span class="n">from_mps</span><span class="p">(</span>
+        <span class="n">solution_arr</span><span class="p">,</span> <span class="n">physical_spaces</span> <span class="o">+</span> <span class="n">bond_spaces</span><span class="p">,</span> <span class="n">_sd</span><span class="p">,</span>
+        <span class="n">physical_spaces</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_f_mat</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">_sd</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">sdict</span>
+    <span class="n">bond_spaces</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">bond_spaces</span>
+    <span class="n">physical_spaces</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">physical_spaces</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">spaces</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">physical_spaces</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">bond_spaces</span>
+    <span class="n">len_phys</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">physical_spaces</span><span class="p">)</span>
+    <span class="n">len_bond</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">bond_spaces</span><span class="p">)</span>
+    <span class="n">len_all</span> <span class="o">=</span> <span class="n">len_phys</span> <span class="o">+</span> <span class="n">len_bond</span>
+
+    <span class="n">m</span><span class="o">.</span><span class="n">reorder</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+    <span class="n">proto_f_arr</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">physical_spaces</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">repeat</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">],</span> <span class="mi">2</span><span class="p">)]</span>
+        <span class="o">+</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">repeat</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">])),</span> <span class="mi">2</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ind</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_all</span><span class="p">)</span> <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">len_all</span><span class="p">)]</span>
+    <span class="n">f_arr</span> <span class="o">=</span> <span class="n">ncon</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">proto_f_arr</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">tmp</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">f_dim</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">physical_dim</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="n">prod</span><span class="p">(</span><span class="n">_sd</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">bond_spaces</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">f_arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">f_dim</span><span class="p">,</span> <span class="n">f_dim</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_comb_optimize</span><span class="p">(</span><span class="n">m</span><span class="p">:</span> <span class="n">ConstTensor</span><span class="p">,</span>
+    <span class="n">comb_structure</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">]:</span>
+    <span class="n">_sd</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">sdict</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tooth_inp</span><span class="p">,</span> <span class="n">tooth_out</span> <span class="ow">in</span> <span class="n">comb_structure</span><span class="p">:</span>
+        <span class="n">inp_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">space</span><span class="p">]</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">tooth_inp</span><span class="p">]</span>
+        <span class="n">out_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">_sd</span><span class="p">[</span><span class="n">space</span><span class="p">]</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">tooth_out</span><span class="p">]</span>
+
+        <span class="n">inp_dim</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="n">inp_dims</span><span class="p">)</span>
+        <span class="n">out_dim</span> <span class="o">=</span> <span class="n">prod</span><span class="p">(</span><span class="n">out_dims</span><span class="p">)</span>
+
+        <span class="n">dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp_dim</span><span class="p">)</span>
+        <span class="n">dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_dim</span><span class="p">)</span>
+
+    <span class="n">T_vars</span><span class="p">,</span> <span class="n">constraints</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">comb_variables</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dims</span><span class="p">))</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">T_vars</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># H_2i+2 (x) ... (x) H_2 (x) H_2i+1 (x) ... H_1</span>
+    <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">T</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">even_spaces</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">odd_spaces</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tooth_inp</span><span class="p">,</span> <span class="n">tooth_out</span> <span class="ow">in</span> <span class="n">comb_structure</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">even_spaces</span> <span class="o">+=</span> <span class="n">tooth_out</span>
+        <span class="n">odd_spaces</span> <span class="o">+=</span> <span class="n">tooth_inp</span>
+    <span class="n">spaces</span> <span class="o">=</span> <span class="n">even_spaces</span> <span class="o">+</span> <span class="n">odd_spaces</span>
+    <span class="n">m_matrix</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">objective</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">m_matrix</span> <span class="o">@</span> <span class="n">T</span><span class="p">)))</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">constraints</span><span class="p">)</span>
+    <span class="n">qfi</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">qfi</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">(</span>
+        <span class="n">spaces</span><span class="p">,</span> <span class="n">choi</span><span class="o">=</span><span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="n">_sd</span><span class="p">,</span> <span class="n">output_spaces</span><span class="o">=</span><span class="n">even_spaces</span><span class="p">,</span>
+        <span class="n">comb_structure</span><span class="o">=</span><span class="n">comb_structure</span>
+    <span class="p">)</span>
+
+
+<span class="n">NORM_TRIES_STEP</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">NORM_TRIES_MAX</span> <span class="o">=</span> <span class="mi">8</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Piotr Dulian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

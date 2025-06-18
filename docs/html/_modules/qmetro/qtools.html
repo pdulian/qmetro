@@ -1,0 +1,1256 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmetro.qtools &mdash; QMetro++ 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            QMetro++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../qmetro.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">QMetro++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qmetro.qtools</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qmetro.qtools</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">sqrt</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">cvxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cvxpy.constraints.constraint</span><span class="w"> </span><span class="kn">import</span> <span class="n">Constraint</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">expm</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.consts</span><span class="w"> </span><span class="kn">import</span> <span class="n">PAULI_X</span><span class="p">,</span> <span class="n">PAULI_Z</span><span class="p">,</span> <span class="n">PAULIS</span><span class="p">,</span> <span class="n">QubitStates</span> <span class="k">as</span> <span class="n">QS2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">matrix_exp_derivative</span>
+
+
+
+
+<div class="viewcode-block" id="ket_bra">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.ket_bra">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ket_bra</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">conjugate</span><span class="p">())</span></div>
+
+
+
+<div class="viewcode-block" id="cmarkov_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.cmarkov_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmarkov_krauses</span><span class="p">(</span><span class="n">krauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">transition_mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes Kraus operators of channels with classical Markov</span>
+<span class="sd">    correlations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        Kraus operators or their derivatives.</span>
+<span class="sd">    transition_mat : np.ndarray</span>
+<span class="sd">        Matrix `M` of conditional probabilities. The coefficient `M[i, j]`</span>
+<span class="sd">        is equal to P(j|i) - the conditional probability of ith Kraus</span>
+<span class="sd">        operator given the occurence of jth operator in the previous step.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list[np.ndarray]</span>
+<span class="sd">        List of new operators with correlations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="c1"># This works only for unitary krauses</span>
+    <span class="n">transition_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">transition_mat</span><span class="p">)</span>
+    <span class="n">d_env</span><span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses</span><span class="p">)</span>
+    <span class="n">id_env</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">d_env</span><span class="p">)</span>
+    <span class="n">corr_ks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d_env</span><span class="p">):</span>
+        <span class="n">ei</span> <span class="o">=</span> <span class="n">id_env</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d_env</span><span class="p">):</span>
+            <span class="n">ej</span> <span class="o">=</span> <span class="n">id_env</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">transition_mat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="o">*</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">ej</span><span class="p">,</span> <span class="n">ei</span><span class="p">)</span>
+            <span class="n">corr_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">krauses</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">corr_ks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">corr_k</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">corr_ks</span></div>
+
+
+
+<div class="viewcode-block" id="choi_from_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.choi_from_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">choi_from_krauses</span><span class="p">(</span><span class="n">krauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get Choi matrix of a channel defined using its Kraus operators.</span>
+
+<span class="sd">    For channel Phi: H_in -&gt; H_out returned matrix acts on tensor product</span>
+<span class="sd">    H_out (x) H_in.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    choi: np.ndarray</span>
+<span class="sd">        Choi matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flat_ks</span> <span class="o">=</span> <span class="p">[</span><span class="n">K</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">ket_bra</span><span class="p">(</span><span class="n">fk</span><span class="p">,</span> <span class="n">fk</span><span class="p">)</span> <span class="k">for</span> <span class="n">fk</span> <span class="ow">in</span> <span class="n">flat_ks</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">C</span></div>
+
+
+
+<div class="viewcode-block" id="dchoi_from_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.dchoi_from_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dchoi_from_krauses</span><span class="p">(</span><span class="n">krauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">dkrauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get derivative of a Choi matrix of a channel defined using its Kraus</span>
+<span class="sd">    operators and their derivatives.</span>
+
+<span class="sd">    For channel Phi: H_in -&gt; H_out returnde matrix acts on tensor product</span>
+<span class="sd">    H_out (x) H_in.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        List of derivatives of Kraus operators.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dchoi: np.ndarray</span>
+<span class="sd">        Derivative of a Choi matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flat_ks</span> <span class="o">=</span> <span class="p">[</span><span class="n">K</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="n">flat_dks</span> <span class="o">=</span> <span class="p">[</span><span class="n">dK</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">dK</span> <span class="ow">in</span> <span class="n">dkrauses</span><span class="p">]</span>
+    <span class="n">dC</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="n">ket_bra</span><span class="p">(</span><span class="n">fdk</span><span class="p">,</span> <span class="n">fk</span><span class="p">)</span> <span class="o">+</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">fk</span><span class="p">,</span> <span class="n">fdk</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">fk</span><span class="p">,</span> <span class="n">fdk</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">flat_ks</span><span class="p">,</span> <span class="n">flat_dks</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">dC</span></div>
+
+
+
+<div class="viewcode-block" id="krauses_from_choi">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.krauses_from_choi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">krauses_from_choi</span><span class="p">(</span><span class="n">choi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span> <span class="n">return_eigensystem</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates Kraus operators of a channel with a given Choi.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    choi: np.ndarray</span>
+<span class="sd">        Choi-Jamiolkowski matrix of a channel : Lin(`dout` x `din`)</span>
+<span class="sd">    dims: tuple[int, int]</span>
+<span class="sd">        Tuple [`din`, `dout`],`din`, `dout` are input/output dimensions</span>
+<span class="sd">        of a channel</span>
+<span class="sd">    eps: float, optional</span>
+<span class="sd">        Eigenvectors of choi with eigenvalues smaller than eps are</span>
+<span class="sd">        ignored.</span>
+<span class="sd">    return_eigensystem: bool, optional</span>
+<span class="sd">        If true, returns additionally eigenvalues and eigenvectors.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses: list[np.ndarray] | tuple[list[np.ndarray], np.ndarray,</span>
+<span class="sd">    np.ndarray]</span>
+<span class="sd">        Kraus operators of a channel (arrays of dimensions `dout` x `din`)</span>
+<span class="sd">        or if return_eigensystem=True a tuple (Kraus operators,</span>
+<span class="sd">        eigenvalues, eigenvectors) where i-th eigenvector is</span>
+<span class="sd">        eigenvectors[:, i].</span>
+<span class="sd">        </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">        Normalization convention: Trace of the Choi matrix is equal to the</span>
+<span class="sd">        dimension of the input space.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">choi</span><span class="p">)</span>
+    <span class="n">din</span><span class="p">,</span> <span class="n">dout</span> <span class="o">=</span> <span class="n">dims</span>
+    <span class="k">if</span> <span class="n">din</span> <span class="o">*</span> <span class="n">dout</span> <span class="o">!=</span> <span class="n">D</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Invalid dims.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;The product of two dimensions should be equal to size of &#39;</span>\
+            <span class="s1">&#39;choi matrix&#39;</span>
+        <span class="p">)</span>
+
+    <span class="n">vals</span><span class="p">,</span> <span class="n">vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">choi</span><span class="p">)</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># for correcting numerical -epsilon</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">vals</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">eps</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Choi matrix must be positive.&#39;</span><span class="p">)</span>
+
+    <span class="n">krauses</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">D</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">:</span>
+            <span class="n">krauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">vecs</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="p">(</span><span class="n">dout</span><span class="p">,</span> <span class="n">din</span><span class="p">))</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_eigensystem</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">krauses</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">vecs</span>
+
+    <span class="k">return</span> <span class="n">krauses</span></div>
+
+
+
+<div class="viewcode-block" id="hc">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.hc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">cp</span><span class="o">.</span><span class="n">Expression</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">cp</span><span class="o">.</span><span class="n">Expression</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hermitian conjugation of a numpy matrix or a cvxpy expression.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : np.ndarray | cp.Expression</span>
+<span class="sd">        Matrix.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray | cp.Expression</span>
+<span class="sd">        `x.conjugate().T`</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">conjugate</span><span class="p">()</span><span class="o">.</span><span class="n">T</span></div>
+
+
+
+<div class="viewcode-block" id="dkrauses_from_choi">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.dkrauses_from_choi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">dkrauses_from_choi</span><span class="p">(</span><span class="n">choi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">dchoi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates Kraus operators and derivaties of a channel with a given</span>
+<span class="sd">    Choi and derivative.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    choi: np.ndarray</span>
+<span class="sd">        Choi-Jamiolkowski matrix of a channel : Lin(`dout` x `din`). It</span>
+<span class="sd">        has to be a positive semi-definite matrix.</span>
+<span class="sd">    dchoi: np.ndarray</span>
+<span class="sd">        Derivative of aChoi-Jamiolkowski matrix of a channel.</span>
+<span class="sd">    dims: tuple[int, int]</span>
+<span class="sd">        Tuple [`din`, `dout`],`din`, `dout` are input/output dimensions of</span>
+<span class="sd">        a channel</span>
+<span class="sd">    eps: float, optional</span>
+<span class="sd">        Eigenvectors of choi with eigenvalues smaller than eps are</span>
+<span class="sd">        ignored.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses: list[np.ndarray]</span>
+<span class="sd">        Kraus operators of a channel (arrays of dimensions `dout` x</span>
+<span class="sd">        `din`).</span>
+<span class="sd">    dkrauses: list[np.ndarray]</span>
+<span class="sd">        Derivatives of Kraus operators of a channel (arrays of dimensions</span>
+<span class="sd">        `dout` x `din`).</span>
+<span class="sd">    </span>
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">        Normalization convention: choi trace is dimension of input space</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">choi</span><span class="p">)</span>
+    <span class="n">din</span><span class="p">,</span> <span class="n">dout</span> <span class="o">=</span> <span class="n">dims</span>
+    <span class="n">krauses</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">vecs</span> <span class="o">=</span> <span class="n">krauses_from_choi</span><span class="p">(</span><span class="n">choi</span><span class="p">,</span> <span class="n">dims</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">hc</span><span class="p">(</span><span class="n">vecs</span><span class="p">)</span> <span class="o">@</span> <span class="n">dchoi</span> <span class="o">@</span> <span class="n">vecs</span> <span class="c1"># X matrix, Choi_to_Krauses.pdf</span>
+    <span class="n">salpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vals</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">vals</span><span class="p">))</span>
+
+    <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">D</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">eps</span><span class="p">:</span>
+            <span class="n">dK</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">salpha</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">vecs</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">D</span><span class="p">)],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">dkrauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">dK</span><span class="p">,</span> <span class="p">(</span><span class="n">dout</span><span class="p">,</span> <span class="n">din</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="choi_dchoi_from_lindblad">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.choi_dchoi_from_lindblad">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">choi_dchoi_from_lindblad</span><span class="p">(</span><span class="n">lindblad</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">dlindblad</span><span class="p">:</span><span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates choi and its derivative of a channel simulating evolution</span>
+<span class="sd">    with a given lindbladian for time t.</span>
+
+<span class="sd">    This function computes choi its derivative over estimated parameter</span>
+<span class="sd">    for continuous time evolution with a fixed lindbladian for some given</span>
+<span class="sd">    time. Computations are done fully algebraically, without numerical</span>
+<span class="sd">    integration</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lindblad: Callable[[np.ndarray], np.ndarray]</span>
+<span class="sd">        Lindbladian: function, that for input density matrix returns its </span>
+<span class="sd">        derivative over time; lindblad(rho) = drho/dt. It is assumed that</span>
+<span class="sd">        Lindbladian is constant over time. For example</span>
+<span class="sd">        dlindblad(rho, omega) =  0.5j * omega* (rho@sigma_z - sigma_z@rho)</span>
+<span class="sd">        for rotation around z with angular velocity omega, sigma_z is a </span>
+<span class="sd">        Z Pauli matrix.</span>
+<span class="sd">    dlindblad: Callable[[np.ndarray], np.ndarray]</span>
+<span class="sd">        Derivative of Lindbladian over estimated parameter. More precisely,</span>
+<span class="sd">        dlindblad(rho) returns double derivative d^2 rho / (dt * dx), x</span>
+<span class="sd">        is an estimated parameter. For example </span>
+<span class="sd">        dlindblad(rho) =  0.5j * (rho@sigma_z - sigma_z@rho) when parameter</span>
+<span class="sd">        is angular velocity around z.</span>
+<span class="sd">    dim: int</span>
+<span class="sd">        Dimension of Hilbert space on which Lindbladian acts</span>
+<span class="sd">    t: float</span>
+<span class="sd">        Evolution time</span>
+<span class="sd">    **kwargs: Any</span>
+<span class="sd">        Additional keyword arguments passed to lindblad and dlindblad</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    choi: </span>
+<span class="sd">        Choi matrix</span>
+<span class="sd">    dchoi:</span>
+<span class="sd">        Derivative of Choi matrix over some parameter</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#processing kwargs: accepted by lindblad or dlindblad?</span>
+    <span class="n">sig_lindblad</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">lindblad</span><span class="p">)</span>
+    <span class="n">sig_dlindblad</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">dlindblad</span><span class="p">)</span>
+
+    <span class="n">lindblad_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sig_lindblad</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="p">}</span>
+    <span class="n">dlindblad_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sig_dlindblad</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="p">}</span>
+
+    <span class="c1">#creating basis matrices #E_ij (element ij = 1, other 0)</span>
+    <span class="n">basis_matrices</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">))</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dim</span><span class="o">**</span><span class="mi">2</span><span class="p">)]</span>
+
+    <span class="n">L_columns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">lindblad</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">lindblad_kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">basis_matrices</span>
+    <span class="p">]</span>
+    <span class="n">L_mat</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">L_columns</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">Lt_exp</span> <span class="o">=</span> <span class="n">expm</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">L_mat</span><span class="p">)</span>
+    <span class="n">choi_elements</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">((</span><span class="n">Lt_exp</span> <span class="o">@</span> <span class="n">b</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)),</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">basis_matrices</span>
+    <span class="p">]</span>
+    <span class="n">choi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">choi_elements</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">dL_columns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">dlindblad</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="o">**</span><span class="n">dlindblad_kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">basis_matrices</span>
+    <span class="p">]</span>
+    <span class="n">dL_mat</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dL_columns</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">dLt_exp</span> <span class="o">=</span> <span class="n">matrix_exp_derivative</span><span class="p">(</span><span class="n">t</span><span class="o">*</span><span class="n">L_mat</span><span class="p">,</span> <span class="n">t</span><span class="o">*</span><span class="n">dL_mat</span><span class="p">)</span>
+    <span class="n">dchoi_elements</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">((</span><span class="n">dLt_exp</span> <span class="o">@</span> <span class="n">b</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">dim</span><span class="p">,</span> <span class="n">dim</span><span class="p">)),</span> <span class="n">b</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">basis_matrices</span>
+    <span class="p">]</span>
+    <span class="n">dchoi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dchoi_elements</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">choi</span><span class="p">,</span> <span class="n">dchoi</span></div>
+
+
+
+<div class="viewcode-block" id="depolarization_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.depolarization_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">depolarization_krauses</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">noise_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">eta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes Kraus operators and their derivatives for a qubit channel</span>
+<span class="sd">    where the signal is rotating Bloch sphere around the z-axis and noise</span>
+<span class="sd">    shrinks the whole sphere towards the point (0, 0, 0), that is</span>
+<span class="sd">    the maximally entangled state. More precisely, it is a channel:</span>
+
+<span class="sd">        rho -&gt; p * rho + (1-p)/2 * Id,</span>
+
+<span class="sd">    which Kraus operators are:</span>
+
+<span class="sd">        sqrt[(3p+2)/5] * Id, sqrt[(1-p)/5] * sigma_i for i=1, 2, 3,</span>
+
+<span class="sd">    multiplied from left or right by the signal:</span>
+<span class="sd">     </span>
+<span class="sd">        U(phi) = exp(-1j/2 * phi * sigma_z), </span>
+<span class="sd">        </span>
+<span class="sd">    where phi = 0 is a measured parameter defining the derivative.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : float | None, optional</span>
+<span class="sd">        Probability that the input state will remain unchanged.</span>
+<span class="sd">    noise_first : bool, optional</span>
+<span class="sd">        Whether noise is before signal, by default True.</span>
+<span class="sd">    eta : float | None, optional</span>
+<span class="sd">        Alternative method of determining the noise strength that when</span>
+<span class="sd">        provided is used instead of p (either p or eta argument has to be</span>
+<span class="sd">        provided). In this parametrisation eta is the scale by which Bloch</span>
+<span class="sd">        sphere gets shrunken. The Kruas operators of the noise become:</span>
+
+<span class="sd">            sqrt(1+3eta)/2 * Id, sqrt(1-eta)/2 * sigma_i for i=1, 2, 3.</span>
+
+<span class="sd">        The relation between eta and p is given by eta = (4p+1)/5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        List of derivatives of Kraus operators.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        When poth p and eta are provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">eta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Either p or eta must be provided.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">eta</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">4</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">eta</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">5</span>
+
+    <span class="n">krauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
+    <span class="n">krauses</span> <span class="o">+=</span> <span class="p">[</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span> <span class="k">for</span> <span class="n">sigma</span> <span class="ow">in</span> <span class="n">PAULIS</span><span class="p">]</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">PAULI_Z</span>
+    <span class="k">if</span> <span class="n">noise_first</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">U</span> <span class="o">@</span> <span class="n">K</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">K</span> <span class="o">@</span> <span class="n">U</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="par_dephasing_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.par_dephasing_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">par_dephasing_krauses</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">noise_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rot_like</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes Kraus operators and their derivatives for a qubit channel</span>
+<span class="sd">    where the signal is rotating Bloch sphere around the z-axis and noise</span>
+<span class="sd">    shrinks the xy-plane preserving the z-axis. More precisely, it is</span>
+<span class="sd">    a channel with Kraus operators:</span>
+
+<span class="sd">        sqrt(p) * Id, sqrt(1-p) * sigma_z,</span>
+
+<span class="sd">    multiplied from left or right by signal:</span>
+<span class="sd">     </span>
+<span class="sd">        U(phi) = exp(-1j/2 * phi * sigma_z), </span>
+<span class="sd">        </span>
+<span class="sd">    where phi = 0 is a measured parameter defining the derivative.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : float | None, optional</span>
+<span class="sd">        Probability that the input state will remain unchanged.</span>
+<span class="sd">    noise_first : bool, optional</span>
+<span class="sd">        Whether noise is before signal, by default True.</span>
+<span class="sd">    eps : float | None, optional</span>
+<span class="sd">        Alternative way of determining the noise strength:</span>
+
+<span class="sd">            p = cos(eps/2)**2,</span>
+<span class="sd">         </span>
+<span class="sd">        that when provided is used instead of p (p argument is ignored).</span>
+<span class="sd">    rot_like : bool, optional</span>
+<span class="sd">        If True then Kraus operators of noise are:</span>
+
+<span class="sd">            exp(-1j/2 * eps * sigma_z) / sqrt(2),</span>
+<span class="sd">            exp(+1j/2 * eps * sigma_z) / sqrt(2),</span>
+
+<span class="sd">        where p = cos(eps/2)**2.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        List of derivatives of Kraus operators.</span>
+<span class="sd">    </span>
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        When both p and eps are provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">eps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Either p or eps must be provided.&#39;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">eps</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">rot_like</span><span class="p">:</span>
+        <span class="n">krauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">expm</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">PAULI_Z</span><span class="p">),</span> <span class="n">expm</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">*</span> <span class="n">PAULI_Z</span><span class="p">)]</span>
+        <span class="n">krauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">krauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">PAULI_Z</span><span class="p">]</span>
+
+    <span class="n">U</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">PAULI_Z</span>
+    <span class="k">if</span> <span class="n">noise_first</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">U</span> <span class="o">@</span> <span class="n">K</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">K</span> <span class="o">@</span> <span class="n">U</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="per_dephasing_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.per_dephasing_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">per_dephasing_krauses</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes Kraus operators and their derivatives for a qubit channel</span>
+<span class="sd">    where the signal is rotating Bloch sphere around the z-axis and noise</span>
+<span class="sd">    shrinks the yz-plane preserving the x-axis. More precisely, it is</span>
+<span class="sd">    a channel with Kraus operators:</span>
+
+<span class="sd">        sqrt(p) * Id, sqrt(1-p) * sigma_x,</span>
+
+<span class="sd">    multiplied from left or right by signal:</span>
+<span class="sd">     </span>
+<span class="sd">        U(phi) = exp(-1j/2 * phi * sigma_z), </span>
+<span class="sd">        </span>
+<span class="sd">    where phi = 0 is a measured parameter defining the derivative.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : float</span>
+<span class="sd">        Probability that the input state will remain unchanged.</span>
+<span class="sd">    noise_first : bool, optional</span>
+<span class="sd">        Whether noise is before signal, by default True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        List of derivatives of Kraus operators.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">krauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">PAULI_X</span><span class="p">]</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">PAULI_Z</span>
+    <span class="k">if</span> <span class="n">noise_first</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">U</span> <span class="o">@</span> <span class="n">K</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">K</span> <span class="o">@</span> <span class="n">U</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="par_amp_damping_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.par_amp_damping_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">par_amp_damping_krauses</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes Kraus operators and their derivatives for a qubit channel</span>
+<span class="sd">    where the signal is rotating Bloch sphere around the z-axis and noise</span>
+<span class="sd">    shrinks the whole sphere towards the point (0, 0, 1) that is | 0 &gt;</span>
+<span class="sd">    state. More precisely, it is a channel with Kraus operators:</span>
+
+<span class="sd">        | 0 &gt;&lt; 0 | + sqrt(p)| 1 &gt;&lt; 1 |, sqrt(1-p)| 0 &gt;&lt; 1|,</span>
+
+<span class="sd">    multiplied from left or right by the signal:</span>
+<span class="sd">     </span>
+<span class="sd">        U(phi) = exp(-1j/2 * phi * sigma_z), </span>
+<span class="sd">        </span>
+<span class="sd">    where phi = 0 is a measured parameter defining the derivative.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : float</span>
+<span class="sd">        Noise parametrization. For p = 1 there is no noise for p = 0</span>
+<span class="sd">        the noise is maximal.</span>
+<span class="sd">    noise_first : bool, optional</span>
+<span class="sd">        Whether noise is before signal, by default True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        List of derivatives of Kraus operators.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">krauses</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ket_bra</span><span class="p">(</span><span class="n">QS2</span><span class="o">.</span><span class="n">ZERO</span><span class="p">,</span> <span class="n">QS2</span><span class="o">.</span><span class="n">ZERO</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">QS2</span><span class="o">.</span><span class="n">ONE</span><span class="p">,</span> <span class="n">QS2</span><span class="o">.</span><span class="n">ONE</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">QS2</span><span class="o">.</span><span class="n">ZERO</span><span class="p">,</span> <span class="n">QS2</span><span class="o">.</span><span class="n">ONE</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">PAULI_Z</span>
+    <span class="k">if</span> <span class="n">noise_first</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">U</span> <span class="o">@</span> <span class="n">K</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">K</span> <span class="o">@</span> <span class="n">U</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="per_amp_damping_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.per_amp_damping_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">per_amp_damping_krauses</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">noise_first</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes Kraus operators and their derivatives for a qubit channel</span>
+<span class="sd">    where the signal is rotating Bloch sphere around the z-axis and noise</span>
+<span class="sd">    shrinks the whole sphere towards the point (1, 0, 0) that is | + &gt;</span>
+<span class="sd">    state. More precisely, it is a channel with Kraus operators:</span>
+
+<span class="sd">        | + &gt;&lt; + | + sqrt(p)| - &gt;&lt; - |, sqrt(1-p)| + &gt;&lt; -|,</span>
+
+<span class="sd">    multiplied from left or right by the signal:</span>
+<span class="sd">     </span>
+<span class="sd">        U(phi) = exp(-1j/2 * phi * sigma_z), </span>
+<span class="sd">        </span>
+<span class="sd">    where phi = 0 is a measured parameter defining the derivative.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : float</span>
+<span class="sd">        Noise parametrization. For p = 1 there is no noise for p = 0</span>
+<span class="sd">        the noise is maximal.</span>
+<span class="sd">    noise_first : bool, optional</span>
+<span class="sd">        Whether noise is before signal, by default True.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        List of derivatives of Kraus operators.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">krauses</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ket_bra</span><span class="p">(</span><span class="n">QS2</span><span class="o">.</span><span class="n">MINUS</span><span class="p">,</span> <span class="n">QS2</span><span class="o">.</span><span class="n">MINUS</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">QS2</span><span class="o">.</span><span class="n">PLUS</span><span class="p">,</span> <span class="n">QS2</span><span class="o">.</span><span class="n">PLUS</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">QS2</span><span class="o">.</span><span class="n">MINUS</span><span class="p">,</span> <span class="n">QS2</span><span class="o">.</span><span class="n">PLUS</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="n">j</span><span class="o">/</span><span class="mi">2</span> <span class="o">*</span> <span class="n">PAULI_Z</span>
+    <span class="k">if</span> <span class="n">noise_first</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">U</span> <span class="o">@</span> <span class="n">K</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">K</span> <span class="o">@</span> <span class="n">U</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="parallel_krauses">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.parallel_krauses">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parallel_krauses</span><span class="p">(</span><span class="n">krauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dkrauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns Kraus operators and their derivatives for n parallel channels.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        Kraus operators of single channel.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        Derivatives of Kraus operators of single channel.</span>
+<span class="sd">    n : int</span>
+<span class="sd">        Number of parallel channels.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        Kraus operators of n channels.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        Derivatives of Kraus operators of n channels.        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses</span><span class="p">)</span>
+    <span class="n">par_krauses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">par_dkrauses</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">rank</span><span class="p">),</span> <span class="n">repeat</span><span class="o">=</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">new_kraus</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+            <span class="n">new_kraus</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">new_kraus</span><span class="p">,</span> <span class="n">krauses</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">par_krauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_kraus</span><span class="p">)</span>
+
+        <span class="n">new_dkraus</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span> <span class="c1"># chain rule</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="n">j</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">dkrauses</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">krauses</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="n">new_dkraus</span> <span class="o">+=</span> <span class="n">tmp</span>
+        <span class="n">par_dkrauses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_dkraus</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">par_krauses</span><span class="p">,</span> <span class="n">par_dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="swap_operator">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.swap_operator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">swap_operator</span><span class="p">(</span><span class="n">dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">i1</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">i2</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a swap operator matrix for a tensor product space,</span>
+<span class="sd">    swapping two specified subsystems.</span>
+
+<span class="sd">    This function returns a matrix that, when applied to a vector or</span>
+<span class="sd">    matrix in the tensor product space `H_1 x H_2 x ... x H_N`, swaps</span>
+<span class="sd">    the specified subsystems with indices `i1` and `i2`.</span>
+<span class="sd">    The resulting space ordering will be:</span>
+<span class="sd">    </span>
+<span class="sd">        - Original structure: `H_1 x ... x H_i1 x ... x H_i2 x ... H_N`</span>
+<span class="sd">        - New structure: `H_1 x ... x H_i2 x ... x H_i1 x ... H_N` </span>
+
+<span class="sd">    If `v` is a vector in the original structure, `swap_operator @ v`</span>
+<span class="sd">    gives the vector in the swapped structure.</span>
+<span class="sd">    If `M` is a matrix in the original structure, `swap_operator @ M @</span>
+<span class="sd">    swap_operator.T` gives the matrix in the swapped structure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dims : tuple of int</span>
+<span class="sd">        Dimensions of each subsystem `H_1`, ..., `H_N` in the tensor</span>
+<span class="sd">        product space.</span>
+<span class="sd">    i1 : int</span>
+<span class="sd">        Index of the first subsystem to swap.</span>
+<span class="sd">    i2 : int</span>
+<span class="sd">        Index of the second subsystem to swap.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray</span>
+<span class="sd">        The swap operator matrix that swaps subsystems `i1` and `i2` in</span>
+<span class="sd">        the tensor product space.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The swap operator constructs the necessary index mappings by</span>
+<span class="sd">    decomposing the tensor product space indices and swapping the basis</span>
+<span class="sd">    states of the specified subsystems.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; dims = (2, 2, 2)</span>
+<span class="sd">    &gt;&gt;&gt; i1, i2 = 0, 1</span>
+<span class="sd">    &gt;&gt;&gt; swap_operator(dims, i1, i2)</span>
+<span class="sd">    array([...])  # Swap operator matrix for a 3-qubit system</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Number of subsystems</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
+
+    <span class="c1"># Create swapped dimensions array</span>
+    <span class="n">swapped_dims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
+    <span class="n">swapped_dims</span><span class="p">[</span><span class="n">i1</span><span class="p">],</span> <span class="n">swapped_dims</span><span class="p">[</span><span class="n">i2</span><span class="p">]</span> <span class="o">=</span> <span class="n">dims</span><span class="p">[</span><span class="n">i2</span><span class="p">],</span> <span class="n">dims</span><span class="p">[</span><span class="n">i1</span><span class="p">]</span>
+
+    <span class="c1"># Calculate total dimension and dimension products</span>
+    <span class="n">total_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
+    <span class="n">dim_products</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="n">swapped_dim_products</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">swapped_dims</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Initialize the swap matrix</span>
+    <span class="n">swap_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">total_dim</span><span class="p">,</span> <span class="n">total_dim</span><span class="p">))</span>
+
+    <span class="c1"># Populate the swap matrix</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_dim</span><span class="p">):</span>
+        <span class="n">j_index</span> <span class="o">=</span> <span class="n">j</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">index_k</span> <span class="o">=</span> <span class="n">j_index</span> <span class="o">//</span> <span class="n">swapped_dim_products</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index_k</span><span class="p">)</span>
+            <span class="n">j_index</span> <span class="o">-=</span> <span class="n">index_k</span> <span class="o">*</span> <span class="n">swapped_dim_products</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+        <span class="c1"># Swap the specified subsystem indices</span>
+        <span class="n">T</span><span class="p">[</span><span class="n">i1</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="n">i2</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="p">[</span><span class="n">i2</span><span class="p">],</span> <span class="n">T</span><span class="p">[</span><span class="n">i1</span><span class="p">]</span>
+
+        <span class="n">i_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">dim_products</span><span class="p">)</span>
+        <span class="n">swap_matrix</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">swap_matrix</span></div>
+
+
+
+<div class="viewcode-block" id="comb_variables">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.comb_variables">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">comb_variables</span><span class="p">(</span><span class="n">dims</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">hermitian</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">trace_constraint</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+        <span class="nb">list</span><span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Constraint</span><span class="p">],</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span> <span class="o">|</span> <span class="nb">float</span>
+    <span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct a sequence of CVXPY variables that represent quantum combs</span>
+<span class="sd">    satisfying causality constraints.</span>
+
+<span class="sd">    Each element in the returned `combs` list represents a quantum comb</span>
+<span class="sd">    matrix acting on progressively larger subsystems of a composite</span>
+<span class="sd">    Hilbert space, where subsystems alternate as input (odd-indexed,</span>
+<span class="sd">    starting from  1) and output (even-indexed) spaces.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dims : tuple of int</span>
+<span class="sd">        Dimensions of each Hilbert space `H_1, H_2, ..., H_2N` in</span>
+<span class="sd">        the composite system. The number of spaces (length of `dims`) must</span>
+<span class="sd">        be even, with N pairs of input-output spaces.</span>
+<span class="sd">    hermitian : bool, optional</span>
+<span class="sd">        If True, each matrix in `combs` is constrained to be Hermitian, by</span>
+<span class="sd">        default True.</span>
+<span class="sd">    trace_constraint : float or None, optional</span>
+<span class="sd">        Specifies the trace constraint on the first comb operator.</span>
+<span class="sd">        If `None`, a trace variable is used instead of a fixed trace, by</span>
+<span class="sd">        default 1.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        A tuple containing:</span>
+<span class="sd">            - combs : list of cp.Variable</span>
+<span class="sd">                List of CVXPY variables representing the quantum comb</span>
+<span class="sd">                operators.</span>
+<span class="sd">            - constraints : list of cp.Constraint</span>
+<span class="sd">                List of CVXPY constraints on the comb operators ensuring</span>
+<span class="sd">                causality.</span>
+<span class="sd">            - trace_var or trace_constraint : cp.Variable or float</span>
+<span class="sd">                If `trace_constraint` is None, returns a trace variable</span>
+<span class="sd">                for the constraint. Otherwise, returns the specified</span>
+<span class="sd">                `trace_constraint` value.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the length of `dims` is not even, as quantum comb spaces must</span>
+<span class="sd">        have matching input-output pairs.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - Element `combs[i]` is a Choi-Jamiolkowski operator acting on</span>
+<span class="sd">        H_2i+2 (x) ... (x)H_2 (x) H_2i+1 (x) ... H_1, so it belongs to</span>
+<span class="sd">        set Comb[(H_1, H_2), ..., (H_2i+1, H_2i+2)]</span>
+<span class="sd">    - The full comb is the last element `combs[N-1]` Comb[(H_1, H_2), ...,</span>
+<span class="sd">        (H_2N-1, H_2N)]</span>
+<span class="sd">    - If `trace_constraint` is not `None`, it represents the trace of</span>
+<span class="sd">        the initial operator scaled by input space dimensions. This is not</span>
+<span class="sd">        the overall comb trace, which includes all input dimensions.</span>
+<span class="sd">    - The function does not assume positivity for the combs. A positivity</span>
+<span class="sd">        constraint can be added externally if needed.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; dims = (2, 2, 2, 2)</span>
+<span class="sd">    &gt;&gt;&gt; combs, constraints, trace_constraint = comb_variables(dims)</span>
+<span class="sd">    &gt;&gt;&gt; len(combs)</span>
+<span class="sd">    2</span>
+<span class="sd">    &gt;&gt;&gt; len(constraints)</span>
+<span class="sd">    2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the number of dimensions is even</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Number of comb spaces must be even.</span><span class="se">\n</span><span class="s1">&#39;</span>\
+            <span class="s1">&#39;When the first tooth has no input, set 1 as the first&#39;</span>\
+            <span class="s1">&#39;dimension.&#39;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Determine the number of comb teeth (N) and total dimension</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+
+    <span class="c1"># Construct SDP variables for each comb matrix</span>
+    <span class="n">combs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dims</span><span class="p">[:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">dims</span><span class="p">[:</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">hermitian</span><span class="p">:</span>
+            <span class="n">comb</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">hermitian</span><span class="o">=</span><span class="n">hermitian</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">comb</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="nb">complex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">combs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">comb</span><span class="p">)</span>
+
+    <span class="c1"># Define constraints on the comb matrices</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">trace_constraint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">trace_var</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="nb">complex</span><span class="o">=</span><span class="ow">not</span> <span class="n">hermitian</span><span class="p">)</span>
+        <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">cp</span><span class="o">.</span><span class="n">partial_trace</span><span class="p">(</span><span class="n">combs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="o">==</span> <span class="n">trace_var</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">cp</span><span class="o">.</span><span class="n">partial_trace</span><span class="p">(</span><span class="n">combs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="o">==</span> <span class="n">trace_constraint</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Initialize subsystem dimensions for current comb</span>
+    <span class="n">even_dim</span><span class="p">,</span> <span class="n">odd_dim</span> <span class="o">=</span> <span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+        <span class="c1"># Dimensions for constructing swap operator and partial trace</span>
+        <span class="c1"># constraints</span>
+        <span class="n">swap_dims</span> <span class="o">=</span> <span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">],</span> <span class="n">even_dim</span><span class="p">,</span> <span class="n">odd_dim</span><span class="p">)</span>
+        <span class="n">even_dim</span> <span class="o">*=</span> <span class="n">dims</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">odd_dim</span> <span class="o">*=</span> <span class="n">dims</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">]</span>
+        <span class="n">partial_trace_dims</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">even_dim</span><span class="o">*</span><span class="n">odd_dim</span> <span class="o">//</span> <span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Apply swap operator to make causality constraints correct</span>
+        <span class="n">swap_op</span> <span class="o">=</span> <span class="n">swap_operator</span><span class="p">(</span><span class="n">swap_dims</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Apply partial trace when the subsystem dimension is greater</span>
+            <span class="c1"># than 1</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">partial_trace</span><span class="p">(</span><span class="n">combs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">partial_trace_dims</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">swap_op</span>
+<div class="viewcode-block" id="krauses_kron">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.krauses_kron">[docs]</a>
+                <span class="o">@</span> <span class="n">cp</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">]),</span> <span class="n">combs</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span> 
+                <span class="o">@</span> <span class="n">swap_op</span><span class="o">.</span><span class="n">T</span>
+            <span class="p">)</span>
+            <span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#Skip partial trace when the action is trivial (dimension is 1)</span>
+            <span class="c1">#constraint is not added, variable is replace with expression</span>
+            <span class="c1">#instead. This is faster  then adding equality constraint</span>
+            <span class="c1">#sometimes more then 10 times faster!</span>
+            <span class="c1">#13s vs 170s for N=4 comb QFI</span>
+            <span class="n">combs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">swap_op</span>
+                <span class="o">@</span> <span class="n">cp</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">]),</span> <span class="n">combs</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+                <span class="o">@</span> <span class="n">swap_op</span><span class="o">.</span><span class="n">T</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Return combs, constraints, and either trace variable or fixed trace</span>
+    <span class="c1"># constant</span>
+    <span class="k">if</span> <span class="n">trace_constraint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">combs</span><span class="p">,</span> <span class="n">constraints</span><span class="p">,</span> <span class="n">trace_var</span>
+    <span class="k">return</span> <span class="n">combs</span><span class="p">,</span> <span class="n">constraints</span><span class="p">,</span> <span class="n">trace_constraint</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">krauses_kron</span><span class="p">(</span>
+    <span class="n">krauses1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dkrauses1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">krauses2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dkrauses2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Kraus representation of the Kronecker product of two</span>
+<span class="sd">    quantum channels and their derivatives.</span>
+
+<span class="sd">    This function creates a representation of the Kronecker product of two</span>
+<span class="sd">    quantum channels, including the combined Kraus operators and their</span>
+<span class="sd">    derivatives.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses1 : list of np.ndarray</span>
+<span class="sd">        List of Kraus operators for the first channel.</span>
+<span class="sd">    dkrauses1 : list of np.ndarray</span>
+<span class="sd">        List of derivatives of Kraus operators for the first channel.</span>
+<span class="sd">    krauses2 : list of np.ndarray</span>
+<span class="sd">        List of Kraus operators for the second channel.</span>
+<span class="sd">    dkrauses2 : list of np.ndarray</span>
+<span class="sd">        List of derivatives of Kraus operators for the second channel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses12 : list of np.ndarray</span>
+<span class="sd">        The Kraus operators of the Kronecker product channel.</span>
+<span class="sd">    dkrauses12 : list of np.ndarray</span>
+<span class="sd">        The derivatives of the Kraus operators for the Kronecker product</span>
+<span class="sd">        channel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute the Kraus operators for the tensor product channel</span>
+    <span class="n">krauses12</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">K1</span><span class="p">,</span> <span class="n">K2</span><span class="p">)</span> <span class="k">for</span> <span class="n">K1</span> <span class="ow">in</span> <span class="n">krauses1</span> <span class="k">for</span> <span class="n">K2</span> <span class="ow">in</span> <span class="n">krauses2</span><span class="p">]</span>
+
+    <span class="c1"># Number of Kraus operators for each channel</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses1</span><span class="p">)</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses2</span><span class="p">)</span>
+
+    <span class="c1"># Compute the derivatives of the Kraus operators using the product</span>
+    <span class="c1"># rule</span>
+    <span class="n">dkrauses12</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">r1</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">r2</span><span class="p">)):</span>
+        <span class="n">dK1i_x_K2j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">dkrauses1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">krauses2</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">K1i_x_dK2j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">krauses1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dkrauses2</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">dkrauses12</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dK1i_x_K2j</span> <span class="o">+</span> <span class="n">K1i_x_dK2j</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">krauses12</span><span class="p">,</span> <span class="n">dkrauses12</span></div>
+
+
+
+<div class="viewcode-block" id="krauses_sequential">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.krauses_sequential">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">krauses_sequential</span><span class="p">(</span>
+    <span class="n">krauses1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dkrauses1</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">krauses2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dkrauses2</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Kraus representation of the sequential composition of two</span>
+<span class="sd">    quantum channels and their derivatives.</span>
+
+<span class="sd">    This function creates a representation of the sequential composition</span>
+<span class="sd">    of two quantum channels (krauses and their derivatives of a resulting</span>
+<span class="sd">    channel). krauses1 go before krauses2</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses1 : list of np.ndarray</span>
+<span class="sd">        List of Kraus operators for the first channel.</span>
+<span class="sd">    dkrauses1 : list of np.ndarray</span>
+<span class="sd">        List of derivatives of Kraus operators for the first channel.</span>
+<span class="sd">    krauses2 : list of np.ndarray</span>
+<span class="sd">        List of Kraus operators for the second channel.</span>
+<span class="sd">    dkrauses2 : list of np.ndarray</span>
+<span class="sd">        List of derivatives of Kraus operators for the second channel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    krauses12 : list of np.ndarray</span>
+<span class="sd">        The Kraus operators of the Kronecker product channel.</span>
+<span class="sd">    dkrauses12 : list of np.ndarray</span>
+<span class="sd">        The derivatives of the Kraus operators for the Kronecker product</span>
+<span class="sd">        channel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute the Kraus operators for the composition channel</span>
+    <span class="n">krauses12</span> <span class="o">=</span> <span class="p">[</span><span class="n">K1</span> <span class="o">@</span> <span class="n">K2</span> <span class="k">for</span> <span class="n">K1</span> <span class="ow">in</span> <span class="n">krauses1</span> <span class="k">for</span> <span class="n">K2</span> <span class="ow">in</span> <span class="n">krauses2</span><span class="p">]</span>
+
+    <span class="c1"># Number of Kraus operators for each channel</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses1</span><span class="p">)</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses2</span><span class="p">)</span>
+
+    <span class="c1"># Compute the derivatives of the Kraus operators using the product</span>
+    <span class="c1"># rule</span>
+    <span class="n">dkrauses12</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">r1</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">r2</span><span class="p">)):</span>
+        <span class="n">dK1i_K2j</span> <span class="o">=</span> <span class="n">dkrauses1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">krauses2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">K1i_dK2j</span> <span class="o">=</span> <span class="n">krauses1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">dkrauses2</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="n">dkrauses12</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dK1i_K2j</span> <span class="o">+</span> <span class="n">K1i_dK2j</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">krauses12</span><span class="p">,</span> <span class="n">dkrauses12</span></div>
+
+
+
+<div class="viewcode-block" id="minimize_alpha">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.minimize_alpha">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">minimize_alpha</span><span class="p">(</span><span class="n">krauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">dkrauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimize the norm of alpha over all Kraus representations for a given</span>
+<span class="sd">    channel.</span>
+
+<span class="sd">    Given a list of Kraus operators and their derivatives, this function</span>
+<span class="sd">    calculates the minimum norm of alpha over all possible Kraus</span>
+<span class="sd">    representations for the input channel.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        List of Kraus operators, each represented as a 2D NumPy array.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        List of derivatives of Kraus operators, each represented as a 2D</span>
+<span class="sd">        NumPy array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The minimum value of norm of alpha over all Kraus representations.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. &amp; Guţă, M.</span>
+<span class="sd">       The elusive Heisenberg limit in quantum-enhanced metrology.</span>
+<span class="sd">       Nat Commun 3, 1063 (2012). https://doi.org/10.1038/ncomms2067</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Number of Kraus operators</span>
+    <span class="n">num_kraus</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses</span><span class="p">)</span>
+
+    <span class="c1"># Dimensions of the input and output spaces</span>
+    <span class="n">dout</span> <span class="o">=</span> <span class="n">krauses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Output dimension</span>
+    <span class="n">din</span> <span class="o">=</span> <span class="n">krauses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>   <span class="c1"># Input dimension</span>
+
+    <span class="c1"># Concatenate Kraus operators and their derivatives along the first</span>
+    <span class="c1"># axis</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">krauses</span><span class="p">)</span>
+    <span class="n">dK</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">dkrauses</span><span class="p">)</span>
+
+    <span class="c1"># Define the hermitian matrix h and scalar t for minimization</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">num_kraus</span><span class="p">,</span> <span class="n">num_kraus</span><span class="p">),</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">()</span>
+
+    <span class="c1"># Construct the block matrix A for the semidefinite constraint</span>
+    <span class="n">A00</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">din</span><span class="p">)</span>  <span class="c1"># Top-left block</span>
+    <span class="n">A11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dout</span> <span class="o">*</span> <span class="n">num_kraus</span><span class="p">)</span>  <span class="c1"># Bottom-right block</span>
+    <span class="n">A10</span> <span class="o">=</span> <span class="n">dK</span> <span class="o">-</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">cp</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">dout</span><span class="p">))</span> <span class="o">@</span> <span class="n">K</span>  <span class="c1"># Top-right block</span>
+    <span class="n">A01</span> <span class="o">=</span> <span class="n">hc</span><span class="p">(</span><span class="n">A10</span><span class="p">)</span>  <span class="c1"># Bottom-left block</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">bmat</span><span class="p">([</span>
+        <span class="p">[</span><span class="n">A00</span><span class="p">,</span> <span class="n">A01</span><span class="p">],</span>
+        <span class="p">[</span><span class="n">A10</span><span class="p">,</span> <span class="n">A11</span><span class="p">]</span>
+    <span class="p">])</span>
+
+    <span class="c1"># Define constraints and objective for the optimization problem</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">A</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Positive semidefinite constraint</span>
+    <span class="n">objective</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">constraints</span><span class="p">)</span>
+
+    <span class="c1"># Solve the optimization problem and return the minimum value of alpha</span>
+    <span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_sld">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.get_sld">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_sld</span><span class="p">(</span><span class="n">rho</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">drho</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">return_qfi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes symmetric logarithmic derivative (SLD) of a parametrized</span>
+<span class="sd">    state.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rho : np.ndarray</span>
+<span class="sd">        Density matrix.</span>
+<span class="sd">    drho : np.ndarray</span>
+<span class="sd">        Derivative of density matrix.</span>
+<span class="sd">    return_qfi : bool, optional</span>
+<span class="sd">        Whether to return also a quantum Fisher information (QFI) of</span>
+<span class="sd">        the state, by default False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    np.ndarray | tuple[float, np.ndarray]</span>
+<span class="sd">        SLD matrix or a pair (SLD, QFI) if return_qfi is True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">L2</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span> <span class="n">hermitian</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">bmat</span><span class="p">([[</span><span class="n">L2</span><span class="p">,</span> <span class="n">L</span><span class="p">],</span> <span class="p">[</span><span class="n">L</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">)]])</span>
+    <span class="n">constraint</span> <span class="o">=</span> <span class="p">[</span><span class="n">A</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">,]</span> <span class="c1"># L2 &gt;&gt; L^2</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">drho</span> <span class="o">@</span> <span class="n">L</span> <span class="o">-</span> <span class="n">rho</span> <span class="o">@</span> <span class="n">L2</span><span class="p">)))</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">constraint</span><span class="p">)</span>
+    <span class="n">qfi</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">return_qfi</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">qfi</span><span class="p">,</span> <span class="n">L</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">return</span> <span class="n">L</span><span class="o">.</span><span class="n">value</span></div>
+
+
+
+<div class="viewcode-block" id="povm_from_sld">
+<a class="viewcode-back" href="../../qmetro.html#qmetro.qtools.povm_from_sld">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">povm_from_sld</span><span class="p">(</span><span class="n">sld</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates optimal measurement POVM from SLD matrix.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sld: np.ndarray</span>
+<span class="sd">        Symmetric logarithmic derivative (SLD) matrix</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list[np.ndarray]</span>
+<span class="sd">        List of optimal measurement operators: projections on eigenvectors</span>
+<span class="sd">        of SLD matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">SLD_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">sld</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">ket_bra</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">vec</span><span class="p">)</span> <span class="k">for</span> <span class="n">vec</span> <span class="ow">in</span> <span class="n">SLD_vecs</span><span class="o">.</span><span class="n">T</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Piotr Dulian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmetro.qmtensor.creators package &mdash; QMetro++ 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="qmetro.qmtensor.classes package" href="qmetro.qmtensor.classes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QMetro++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qmetro.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="qmetro.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="qmetro.bounds.html">qmetro.bounds package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.iss_opt.html">qmetro.iss_opt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.param_channel.html">qmetro.param_channel package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.protocols.html">qmetro.protocols package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="qmetro.qmtensor.html">qmetro.qmtensor package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="qmetro.qmtensor.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="qmetro.qmtensor.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="qmetro.qmtensor.html#module-qmetro.qmtensor.operations">qmetro.qmtensor.operations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="qmetro.qmtensor.html#module-qmetro.qmtensor">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.consts">qmetro.consts module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.qtools">qmetro.qtools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.utils">qmetro.utils module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QMetro++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="qmetro.html">Documentation</a></li>
+          <li class="breadcrumb-item"><a href="qmetro.qmtensor.html">qmetro.qmtensor package</a></li>
+      <li class="breadcrumb-item active">qmetro.qmtensor.creators package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/qmetro.qmtensor.creators.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="qmetro-qmtensor-creators-package">
+<h1>qmetro.qmtensor.creators package<a class="headerlink" href="#qmetro-qmtensor-creators-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-qmetro.qmtensor.creators.single">
+<span id="qmetro-qmtensor-creators-single-module"></span><h2>qmetro.qmtensor.creators.single module<a class="headerlink" href="#module-qmetro.qmtensor.creators.single" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.single.choi_identity">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.single.</span></span><span class="sig-name descname"><span class="pre">choi_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces:</span> <span class="pre">list[~collections.abc.Hashable]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs:</span> <span class="pre">~typing.Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/single.html#choi_identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.single.choi_identity" title="Link to this definition"></a></dt>
+<dd><p>Creates tensor form of identity Choi matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Tensor spaces, by default empty list.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary, by default DEFAULT_SDICT</p></li>
+<li><p><strong>**kwargs</strong> – Key-word arguments passed to ConstTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tensor</strong> – Choi-like constant tensor of identity matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor">ConstTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.single.const_tensor_from_fun">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.single.</span></span><span class="sig-name descname"><span class="pre">const_tensor_from_fun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">fun:</span> <span class="pre">~typing.Callable[[~numpy.ndarray],</span> <span class="pre">~numpy.ndarray],</span> <span class="pre">input_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">output_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">**kwargs:</span> <span class="pre">~typing.Any</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/single.html#const_tensor_from_fun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.single.const_tensor_from_fun" title="Link to this definition"></a></dt>
+<dd><p>Returns a tensor form of Choi matrix created from a quantum channel
+using Choi-Jemiolkowski isomorphism.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fun</strong> (<em>Callable</em><em>[</em><em>[</em><em>np.ndarray</em><em>]</em><em>, </em><em>np.ndarray</em><em>]</em>) – Function defining the quantum channel.</p></li>
+<li><p><strong>input_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Input spaces.</p></li>
+<li><p><strong>output_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Output spaces.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>**kwargs</strong> – Key-word arguments passed to ConstTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tensor</strong> – Tensor form of the Choi matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor">ConstTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.single.cptp_var">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.single.</span></span><span class="sig-name descname"><span class="pre">cptp_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">input_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">output_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor"><span class="pre">VarTensor</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/single.html#cptp_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.single.cptp_var" title="Link to this definition"></a></dt>
+<dd><p>Creates a CPTP variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Input spaces.</p></li>
+<li><p><strong>output_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Output spaces.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary of the result, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>**kwargs</strong> – Key-word arguments passed to VarTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tensor</strong> – CPTP variable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ParamTensor" title="qmetro.qmtensor.classes.tensors.ParamTensor">ParamTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.single.tensor_from_krauses">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.single.</span></span><span class="sig-name descname"><span class="pre">tensor_from_krauses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">krauses:</span> <span class="pre">list[~numpy.ndarray],</span> <span class="pre">input_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">output_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">dkrauses:</span> <span class="pre">list[~numpy.ndarray]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs:</span> <span class="pre">~typing.Any</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ParamTensor" title="qmetro.qmtensor.classes.tensors.ParamTensor"><span class="pre">ParamTensor</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/single.html#tensor_from_krauses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.single.tensor_from_krauses" title="Link to this definition"></a></dt>
+<dd><p>Computes tensor form of a Choi matrix from Kraus operators
+and their derivatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – Kraus operators.</p></li>
+<li><p><strong>input_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Input spaces.</p></li>
+<li><p><strong>output_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Output spaces.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary of the result, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>dkrauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) – Derivatives of Kraus operators. If provided the result will be
+a ParamTensor with derivative coming from these operators,
+by default None.</p></li>
+<li><p><strong>**kwargs</strong> – Key-word arguments passed to ConstTensor/ParamTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>matrix</strong> – Tensor form of the Choi matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor">ConstTensor</a> | <a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ParamTensor" title="qmetro.qmtensor.classes.tensors.ParamTensor">ParamTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.single.zero">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.single.</span></span><span class="sig-name descname"><span class="pre">zero</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spaces:</span> <span class="pre">list[~collections.abc.Hashable]</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs:</span> <span class="pre">~typing.Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/single.html#zero"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.single.zero" title="Link to this definition"></a></dt>
+<dd><p>Creates constant tensor filled with zeros with sdict=self.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Tensor spaces, by default empty list.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary, by default DEFAULT_SDICT</p></li>
+<li><p><strong>**kwargs</strong> – Key-word arguments passed to ConstTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>tensor</strong> – Zero const tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor">ConstTensor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-qmetro.qmtensor.creators.structures">
+<span id="qmetro-qmtensor-creators-structures-module"></span><h2>qmetro.qmtensor.creators.structures module<a class="headerlink" href="#module-qmetro.qmtensor.creators.structures" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.structures.cmarkov_param_tnet">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.structures.</span></span><span class="sig-name descname"><span class="pre">cmarkov_param_tnet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">krauses:</span> <span class="pre">list[~numpy.ndarray],</span> <span class="pre">dkrauses:</span> <span class="pre">list[~numpy.ndarray],</span> <span class="pre">input_spaces:</span> <span class="pre">list[list[~collections.abc.Hashable]],</span> <span class="pre">output_spaces:</span> <span class="pre">list[list[~collections.abc.Hashable]],</span> <span class="pre">transition_mat:</span> <span class="pre">~numpy.ndarray,</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">initial_prob:</span> <span class="pre">~numpy.ndarray</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">trace_end:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">True,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/structures.html#cmarkov_param_tnet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.structures.cmarkov_param_tnet" title="Link to this definition"></a></dt>
+<dd><p>Returns Choi matrices of channels whith classical Markovian
+correlation of their Kraus operators. The number of repetitions is
+derived from the number of lists in input_spaces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – Kraus operators.</p></li>
+<li><p><strong>dkrauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – Derivatives of Kraus operators.</p></li>
+<li><p><strong>input_spaces</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>Hashable</em><em>]</em><em>]</em>) – List of lists of input spaces. The ith list is a list of input
+spaces of the ith channel.</p></li>
+<li><p><strong>output_spaces</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>Hashable</em><em>]</em><em>]</em>) – List of lists of output spaces. The ith list is a list of output
+spaces of the ith channel.</p></li>
+<li><p><strong>transition_mat</strong> (<em>np.ndarray</em>) – Matrix M of conditional probabilities. The coefficient M[i, j] is
+equal to P(i|j) - the conditional probability of ith Kraus operator
+given the occurence of jth operator in the previous step.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the result. Elements have names in format f”{name}, {i}”
+where i is the element number and its input and output correlation
+spaces are (name, ‘ENVIRONMENT’, i) and (name, ‘ENVIRONMENT’, i+1)
+respectively.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary of the result, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>initial_prob</strong> (<em>np.ndarray</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Initial probabilities in a Markov chain. If None then the input of
+the correlation space - (name, ‘ENVIRONMENT’, 0) is left open, by
+default None.</p></li>
+<li><p><strong>trace_end</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to trace out the output of the correlation space -
+(name, ‘ENVIRONMENT’, n_of_repetitions), by default True.</p></li>
+<li><p><strong>**kwargs</strong> – Arguments passed to ParamTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>corrlated_channels</strong> (<em>TensorNetwork</em>) – Tensor network rerpresenting the Choi matrices of correlated
+channels.</p></li>
+<li><p><strong>channel_names</strong> (<em>list[str]</em>) – List of channels’ names. In order from i=0 to i=n-1.</p></li>
+<li><p><strong>environments</strong> (<em>list[Hashable]</em>) – List of environment spaces’ names. In order from i=0 to i=n-2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.structures.comb_var">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.structures.</span></span><span class="sig-name descname"><span class="pre">comb_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">structure:</span> <span class="pre">list[tuple[list[~collections.abc.Hashable],</span> <span class="pre">list[~collections.abc.Hashable]]],</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">ancilla_dim:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor"><span class="pre">VarTensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/structures.html#comb_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.structures.comb_var" title="Link to this definition"></a></dt>
+<dd><p>Creates a comb variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>list</em><em>[</em><em>Hashable</em><em>]</em><em>, </em><em>list</em><em>[</em><em>Hashable</em><em>]</em><em>]</em><em>]</em>) – List defining the spaces of every tooth. For i-th tooth and
+<cite>inp_i, out_i = structure[i]</cite> inp_i (out_i) is a list of input
+(output) spaces of the i-th tooth excluding ancilla.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the result. Elements have names in format f”{name}, {i}”
+where i is the element number and its input and output ancilla
+spaces are (name, ‘ANCILLA’, i-1) and (name, ‘ANCILLA’, i)
+respectively.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>ancilla_dim</strong> (<em>int</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Dimension of ancilla spaces. When this argument is:
+- a number: a tensor network of control operations will be
+created,
+- None: one comb-like variable tensor will be created,
+by default None.</p></li>
+<li><p><strong>**kwargs</strong> – Arguments passed to VarTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensor of comb variable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor">VarTensor</a> | <a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork">TensorNetwork</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.structures.comb_var_tnet">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.structures.</span></span><span class="sig-name descname"><span class="pre">comb_var_tnet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">structure:</span> <span class="pre">list[tuple[list[~collections.abc.Hashable],</span> <span class="pre">list[~collections.abc.Hashable]]],</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">ancilla_dim:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/structures.html#comb_var_tnet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.structures.comb_var_tnet" title="Link to this definition"></a></dt>
+<dd><p>Returns a network of variable tensors representing channels in a
+sequence such that part of the output of one channel is a part of the
+input of the next one.</p>
+<p>More precisely, it returns a network of n variable tensor representing
+channels called teeth:</p>
+<blockquote>
+<div><p>T_i: L(I_i (x) A_i-1) -&gt; L(O_i (x) A_i),</p>
+</div></blockquote>
+<p>where:
+- I_i, O_i and A_i are input, output and ancilla Hilbert spaces,
+- (x) is a tensor product,
+- L(H) is a set of linear operators on H,
+- A_(-1) and A_n are trivial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>structure</strong> (<em>list</em><em>[</em><em>tuple</em><em>[</em><em>list</em><em>[</em><em>Hashable</em><em>]</em><em>, </em><em>list</em><em>[</em><em>Hashable</em><em>]</em><em>]</em><em>]</em>) – List defining the spaces of every tooth. For i-th tooth and
+<cite>inp_i, out_i = structure[i]</cite> inp_i (out_i) is a list of input
+(output) spaces of the i-th tooth excluding ancilla.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the result. Elements have names in format f”{name}, {i}”
+where i is the element number and its input and output ancilla
+spaces are (name, ‘ANCILLA’, i-1) and (name, ‘ANCILLA’, i)
+respectively.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>ancilla_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Dimension of ancilla spaces, by default 1.</p></li>
+<li><p><strong>**kwargs</strong> – Arguments passed to VarTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>network</strong> (<em>TensorNetwork</em>) – Tensor network of a comb.</p></li>
+<li><p><strong>channel_names</strong> (<em>list[str]</em>) – List of teeth’s names: [T_0, T_1, …, T_n-1].</p></li>
+<li><p><strong>ancillas</strong> (<em>list[Hashable]</em>) – List of ancilla spaces’ names: [A_0, A_1, …, A_n-2].</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.structures.input_state_var">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.structures.</span></span><span class="sig-name descname"><span class="pre">input_state_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">output_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">mps_bond_dim:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor"><span class="pre">VarTensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/structures.html#input_state_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.structures.input_state_var" title="Link to this definition"></a></dt>
+<dd><p>Creates a state variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Spaces of the state.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the result. If mps_bond_dim is provided it will use the
+naming convention of mps_var_tnet.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary of the result, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>mps_bond_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Dimension of the MPS connecting (bond) spaces. If None then it will
+return the state on the whole product Hilbert space (as if bond
+dimension was infinite). By default None.</p></li>
+<li><p><strong>**kwargs</strong> – Arguments passed to VarTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>state</strong> – Tesnor representing the density matrix.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor">VarTensor</a> | <a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork">TensorNetwork</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>In case one needs names of the MPS elements and bond spaces use
+<cite>mps_var_tnet</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.structures.measure_var">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.structures.</span></span><span class="sig-name descname"><span class="pre">measure_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">input_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">bond_dim:</span> <span class="pre">int</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor"><span class="pre">VarTensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/structures.html#measure_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.structures.measure_var" title="Link to this definition"></a></dt>
+<dd><p>Creates a measurement variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Measured spaces.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the result. If mps_bond_dim is provided it will use the
+naming convention of mpo_measure_var_tnet.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a>) – Space dictionary of the result, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>bond_dim</strong> (<em>int</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Dimension of the connecting (bond) spaces. If None then it will
+return the measurement on the whole product Hilbert space (as if
+bond dimension was infinite). By default None.</p></li>
+<li><p><strong>**kwargs</strong> – Arguments passed to VarTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tensor representing the measurement.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor">VarTensor</a> | <a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork">TensorNetwork</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>In case one needs names of the MPS elements and bond spaces use
+<cite>mpo_measure_var_tnet</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.structures.mpo_measure_var_tnet">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.structures.</span></span><span class="sig-name descname"><span class="pre">mpo_measure_var_tnet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">input_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">bond_dim:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/structures.html#mpo_measure_var_tnet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.structures.mpo_measure_var_tnet" title="Link to this definition"></a></dt>
+<dd><p>Creates a variable measurement (SLD) matrix product operator (MPO).</p>
+<p>The result is a network of variable tensors: T_0, T_1, …, T_n-1.
+The i-th tensor has inidices called: I_i, B_i-1, B_i where
+- I_i represent Hilbert spaces which are measured (input spaces),
+- B_i are bond spaces,
+- <a href="#id1"><span class="problematic" id="id2">B_</span></a>-1 and B_n-1 do not exist.
+Then the contraction of all tensors by the bond spaces with the same
+name yields a variable of a measurement on I_0 (x) … (x) I_n-1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Measured spaces, i-th element is the space I_i.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the result. Elements will have names in format
+f”{name}, {i}” and connecting spaces in (name, ‘BOND’, i),
+where i is the element/space number.</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary of the result, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>bond_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Dimension of the connecting (bond) spaces, by default 1.</p></li>
+<li><p><strong>**kwargs</strong> – Arguments passed to VarTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sld</strong> (<em>TensorNetwork</em>) – Tensor network representing MPO of the measurement (SLD).</p></li>
+<li><p><strong>elements</strong> (<em>list[str]</em>) – List of elements’ names. In order from i=0 to i=n-1.</p></li>
+<li><p><strong>bonds</strong> (<em>list[Hashable]</em>) – List of bond spaces’ names. In order from i=0 to i=n-2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.qmtensor.creators.structures.mps_var_tnet">
+<span class="sig-prename descclassname"><span class="pre">qmetro.qmtensor.creators.structures.</span></span><span class="sig-name descname"><span class="pre">mps_var_tnet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">output_spaces:</span> <span class="pre">list[~collections.abc.Hashable],</span> <span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">sdict:</span> <span class="pre">~qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">=</span> <span class="pre">&lt;qmetro.qmtensor.classes.tensors.SpaceDict</span> <span class="pre">object&gt;,</span> <span class="pre">mps_bond_dim:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/qmtensor/creators/structures.html#mps_var_tnet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.qmtensor.creators.structures.mps_var_tnet" title="Link to this definition"></a></dt>
+<dd><p>Creates a variable density matrix of a pure matrix product state
+(MPS). This density matrix is a matrix product operaotr (MPO).</p>
+<p>The result is a network of variable tensors: T_0, T_1, …, T_n-1.
+The i-th tensor has inidices called: O_i, B_i-1, B_i where
+- O_i represent Hilbert spaces on which the state acts (output
+spaces),
+- B_i are bond spaces,
+- <a href="#id3"><span class="problematic" id="id4">B_</span></a>-1 and B_n-1 do not exist.
+Then the contraction of all tensors by the bond spaces with the same
+name yields a density matrix of a pure state on O_0 (x) … (x) O_n-1.</p>
+<p>Bond spaces are defined for MPO elements and thus their dimension is
+the square of the MPS bond dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_spaces</strong> (<em>list</em><em>[</em><em>Hashable</em><em>]</em>) – Spaces of the state, i-th element is the space O_i.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the result. Tensors will have names in format
+f”{name}, {i}” and connecting spaces B_i = (name, ‘BOND’, i).</p></li>
+<li><p><strong>sdict</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><em>SpaceDict</em></a><em>, </em><em>optional</em>) – Space dictionary of the result, by default DEFAULT_SDICT.</p></li>
+<li><p><strong>mps_bond_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Dimension of the MPS connecting (bond) spaces, by default 1.</p></li>
+<li><p><strong>**kwargs</strong> – Arguments passed to VarTensor constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mps</strong> (<em>TensorNetwork</em>) – Tensor network of variable tensors representing MPO of the density
+matrix.</p></li>
+<li><p><strong>tensor_names</strong> (<em>list[str]</em>) – List of tensors’ names. In order from i=0 to i=n-1.</p></li>
+<li><p><strong>bonds</strong> (<em>list[Hashable]</em>) – List of bond spaces’ names. In order from i=0 to i=n-2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-qmetro.qmtensor.creators">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-qmetro.qmtensor.creators" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qmetro.qmtensor.classes.html" class="btn btn-neutral float-left" title="qmetro.qmtensor.classes package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Piotr Dulian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

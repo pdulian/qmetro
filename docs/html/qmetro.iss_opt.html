@@ -1,0 +1,500 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmetro.iss_opt package &mdash; QMetro++ 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="qmetro.param_channel package" href="qmetro.param_channel.html" />
+    <link rel="prev" title="qmetro.bounds package" href="qmetro.bounds.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QMetro++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qmetro.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="qmetro.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="qmetro.bounds.html">qmetro.bounds package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">qmetro.iss_opt package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt.artnoise">qmetro.iss_opt.artnoise module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt.consts">qmetro.iss_opt.consts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt.errors">qmetro.iss_opt.errors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt.iss_config">qmetro.iss_opt.iss_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt.iss_warnings">qmetro.iss_opt.iss_warnings module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt.main">qmetro.iss_opt.main module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt.optimize">qmetro.iss_opt.optimize module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.iss_opt">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.param_channel.html">qmetro.param_channel package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.protocols.html">qmetro.protocols package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.qmtensor.html">qmetro.qmtensor package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.consts">qmetro.consts module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.qtools">qmetro.qtools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.utils">qmetro.utils module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QMetro++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="qmetro.html">Documentation</a></li>
+      <li class="breadcrumb-item active">qmetro.iss_opt package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/qmetro.iss_opt.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="qmetro-iss-opt-package">
+<h1>qmetro.iss_opt package<a class="headerlink" href="#qmetro-iss-opt-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-qmetro.iss_opt.artnoise">
+<span id="qmetro-iss-opt-artnoise-module"></span><h2>qmetro.iss_opt.artnoise module<a class="headerlink" href="#module-qmetro.iss_opt.artnoise" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qmetro.iss_opt.artnoise.ArtNoise">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.artnoise.</span></span><span class="sig-name descname"><span class="pre">ArtNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space_packs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sdict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.SpaceDict" title="qmetro.qmtensor.classes.tensors.SpaceDict"><span class="pre">SpaceDict</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/artnoise.html#ArtNoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.artnoise.ArtNoise" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qmetro.iss_opt.artnoise.ArtNoise.new_tensors" title="qmetro.iss_opt.artnoise.ArtNoise.new_tensors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">new_tensors</span></code></a>(tn)</p></td>
+<td><p>Creates a list of tensors from tn with added artificial noise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#qmetro.iss_opt.artnoise.ArtNoise.primed" title="qmetro.iss_opt.artnoise.ArtNoise.primed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">primed</span></code></a>(space)</p></td>
+<td><p>Returns a tuple (space, 'prime')</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qmetro.iss_opt.artnoise.ArtNoise.unprimed" title="qmetro.iss_opt.artnoise.ArtNoise.unprimed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unprimed</span></code></a>(space)</p></td>
+<td><p>Performs:</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>channel</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>get_dim_type</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>update</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.artnoise.ArtNoise.channel">
+<span class="sig-name descname"><span class="pre">channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/artnoise.html#ArtNoise.channel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.artnoise.ArtNoise.channel" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.artnoise.ArtNoise.get_dim_type">
+<span class="sig-name descname"><span class="pre">get_dim_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space_pack</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/artnoise.html#ArtNoise.get_dim_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.artnoise.ArtNoise.get_dim_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.artnoise.ArtNoise.new_tensors">
+<span class="sig-name descname"><span class="pre">new_tensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.GeneralTensor" title="qmetro.qmtensor.classes.tensors.GeneralTensor"><span class="pre">GeneralTensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ParamTensor" title="qmetro.qmtensor.classes.tensors.ParamTensor"><span class="pre">ParamTensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.VarTensor" title="qmetro.qmtensor.classes.tensors.VarTensor"><span class="pre">VarTensor</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/artnoise.html#ArtNoise.new_tensors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.artnoise.ArtNoise.new_tensors" title="Link to this definition"></a></dt>
+<dd><p>Creates a list of tensors from tn with added artificial noise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.artnoise.ArtNoise.primed">
+<span class="sig-name descname"><span class="pre">primed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/artnoise.html#ArtNoise.primed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.artnoise.ArtNoise.primed" title="Link to this definition"></a></dt>
+<dd><p>Returns a tuple (space, ‘prime’)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.artnoise.ArtNoise.unprimed">
+<span class="sig-name descname"><span class="pre">unprimed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Hashable</span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/artnoise.html#ArtNoise.unprimed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.artnoise.ArtNoise.unprimed" title="Link to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Performs:</dt><dd><p>(space, ‘prime’) -&gt; space
+space -&gt; space</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.artnoise.ArtNoise.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_qn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/artnoise.html#ArtNoise.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.artnoise.ArtNoise.update" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qmetro.iss_opt.consts">
+<span id="qmetro-iss-opt-consts-module"></span><h2>qmetro.iss_opt.consts module<a class="headerlink" href="#module-qmetro.iss_opt.consts" title="Link to this heading"></a></h2>
+</section>
+<section id="module-qmetro.iss_opt.errors">
+<span id="qmetro-iss-opt-errors-module"></span><h2>qmetro.iss_opt.errors module<a class="headerlink" href="#module-qmetro.iss_opt.errors" title="Link to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="qmetro.iss_opt.errors.MaxIterExceededError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.errors.</span></span><span class="sig-name descname"><span class="pre">MaxIterExceededError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qfi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qfis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/errors.html#MaxIterExceededError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.errors.MaxIterExceededError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="qmetro.iss_opt.errors.NonHermitianError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.errors.</span></span><span class="sig-name descname"><span class="pre">NonHermitianError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonhermiticity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/errors.html#NonHermitianError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.errors.NonHermitianError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="qmetro.iss_opt.errors.NormMatZeroEigenval">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.errors.</span></span><span class="sig-name descname"><span class="pre">NormMatZeroEigenval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">eigval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/errors.html#NormMatZeroEigenval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.errors.NormMatZeroEigenval" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="qmetro.iss_opt.errors.SingleIterError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.errors.</span></span><span class="sig-name descname"><span class="pre">SingleIterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qfi</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qfis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/errors.html#SingleIterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.errors.SingleIterError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="qmetro.iss_opt.errors.SolverError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.errors.</span></span><span class="sig-name descname"><span class="pre">SolverError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cause</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/errors.html#SolverError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.errors.SolverError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+</section>
+<section id="module-qmetro.iss_opt.iss_config">
+<span id="qmetro-iss-opt-iss-config-module"></span><h2>qmetro.iss_opt.iss_config module<a class="headerlink" href="#module-qmetro.iss_opt.iss_config" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.iss_config.</span></span><span class="sig-name descname"><span class="pre">IssConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str</span> <span class="pre">|</span> <span class="pre">None'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_error_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'TensorNetwork</span> <span class="pre">|</span> <span class="pre">None'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'bool</span> <span class="pre">|</span> <span class="pre">str'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sld_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">art_noise_spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'list[list[Hashable]]</span> <span class="pre">|</span> <span class="pre">None'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">art_noise_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'tuple[float,</span> <span class="pre">float]'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contraction_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'list[str]</span> <span class="pre">|</span> <span class="pre">None'</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adaptive_art_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'bool'</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/iss_config.html#IssConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>print_full</strong></dt><dd></dd>
+<dt><strong>print_partial</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#qmetro.iss_opt.iss_config.IssConfig.check" title="qmetro.iss_opt.iss_config.IssConfig.check"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check</span></code></a>(tn)</p></td>
+<td><p>Check correctness of the parameters of the ISS algorithm.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>check_art_noise_params</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><strong>check_contraction_order</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><strong>check_cptp_vars</strong></p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.adaptive_art_noise">
+<span class="sig-name descname"><span class="pre">adaptive_art_noise</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.adaptive_art_noise" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.art_noise_params">
+<span class="sig-name descname"><span class="pre">art_noise_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.art_noise_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.art_noise_spaces">
+<span class="sig-name descname"><span class="pre">art_noise_spaces</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.art_noise_spaces" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/iss_config.html#IssConfig.check"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.check" title="Link to this definition"></a></dt>
+<dd><p>Check correctness of the parameters of the ISS algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tn</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><em>TensorNetwork</em></a>) – Tensor network to be optimized.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the parameters are not correct.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.check_art_noise_params">
+<span class="sig-name descname"><span class="pre">check_art_noise_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/iss_config.html#IssConfig.check_art_noise_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.check_art_noise_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.check_contraction_order">
+<span class="sig-name descname"><span class="pre">check_contraction_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/iss_config.html#IssConfig.check_contraction_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.check_contraction_order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.check_cptp_vars">
+<span class="sig-name descname"><span class="pre">check_cptp_vars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/qmetro/iss_opt/iss_config.html#IssConfig.check_cptp_vars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.check_cptp_vars" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.contraction_order">
+<span class="sig-name descname"><span class="pre">contraction_order</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.contraction_order" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.eps">
+<span class="sig-name descname"><span class="pre">eps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.eps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.init_tn">
+<span class="sig-name descname"><span class="pre">init_tn</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.init_tn" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.max_error_iterations">
+<span class="sig-name descname"><span class="pre">max_error_iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.max_error_iterations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.max_iterations">
+<span class="sig-name descname"><span class="pre">max_iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.max_iterations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.min_iterations">
+<span class="sig-name descname"><span class="pre">min_iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.min_iterations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.print_full">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">print_full</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.print_full" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.print_messages">
+<span class="sig-name descname"><span class="pre">print_messages</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.print_messages" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.print_partial">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">print_partial</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.print_partial" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.sld_iterations">
+<span class="sig-name descname"><span class="pre">sld_iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.sld_iterations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_config.IssConfig.var_iterations">
+<span class="sig-name descname"><span class="pre">var_iterations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#qmetro.iss_opt.iss_config.IssConfig.var_iterations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-qmetro.iss_opt.iss_warnings">
+<span id="qmetro-iss-opt-iss-warnings-module"></span><h2>qmetro.iss_opt.iss_warnings module<a class="headerlink" href="#module-qmetro.iss_opt.iss_warnings" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_warnings.non_herimitan_message">
+<span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.iss_warnings.</span></span><span class="sig-name descname"><span class="pre">non_herimitan_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/iss_warnings.html#non_herimitan_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.iss_warnings.non_herimitan_message" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.iss_opt.iss_warnings.parameter_norm_message">
+<span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.iss_warnings.</span></span><span class="sig-name descname"><span class="pre">parameter_norm_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/iss_warnings.html#parameter_norm_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.iss_warnings.parameter_norm_message" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-qmetro.iss_opt.main">
+<span id="qmetro-iss-opt-main-module"></span><h2>qmetro.iss_opt.main module<a class="headerlink" href="#module-qmetro.iss_opt.main" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.iss_opt.main.iss_opt">
+<span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.main.</span></span><span class="sig-name descname"><span class="pre">iss_opt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_error_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sld_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">art_noise_spaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">art_noise_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0.5,</span> <span class="pre">0.1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contraction_order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adaptive_art_noise</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/main.html#iss_opt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.main.iss_opt" title="Link to this definition"></a></dt>
+<dd><p>Computes quantum Fisher information (QFI) for strategy provided in
+a form of a tensor network using iterative see-saw algorithm.</p>
+<p>Function takes as an arguemnt an object of TensorNetwork class then
+maximizes its QFI optimizing over nodes which are variable tensors
+(members of <cite>VarTensor</cite> class).</p>
+<p>To make the algorithm more stable it adds an additional artificial
+depolarizing noise <a class="reference internal" href="#rfa2b510932f5-2" id="id1">[2]</a> which decays exponentially with each
+iteration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tn</strong> (<a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><em>TensorNetwork</em></a>) – Network that is being optimized.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Name of returned network. If None then the name will be
+tn.name + ‘ optimized’, by default None.</p></li>
+<li><p><strong>max_error_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximal number of times the function will restart
+computation after error occurence, by default 10.</p></li>
+<li><p><strong>max_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximal number of algorithm iterations, by default 500.</p></li>
+<li><p><strong>min_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimal number of algorithm iterations, by default 10.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – The algorithm stops when QFI in 5 consecutive iterations changes
+by less then eps, by default 1e-4.</p></li>
+<li><p><strong>init_tn</strong> (<em>QNetwork</em><em> | </em><em>None</em><em>, </em><em>optional</em>) – Network from which initial values of variables will be taken.
+If None then initial values will be random, by default None</p></li>
+<li><p><strong>print_messages</strong> (<em>bool</em><em> | </em><em>str</em><em>, </em><em>optional</em>) – Wheter to print messages about progress it made. Possible options:
+- True: all messages will be printed,
+- False: no messages will be printed,
+- ‘partial’: print only iteration summary.
+By default False.</p></li>
+<li><p><strong>var_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations done solely over non measure variables (CPTP
+and MPS) before proceeding to measure (SLD) variables, by default
+1.</p></li>
+<li><p><strong>sld_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of iterations done solely over variable SLDs before
+proceeding to other variables, by default 1.</p></li>
+<li><p><strong>art_noise_spaces</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>Hashable</em><em>]</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) – Spaces on which artificial noise
+will act. For a list: [[s00, s01, …], [s10, s11, …], …]
+noise will be applied to the whole list of spaces [s00, s01, …]
+combined. If set to None then only spaces of ParamTensor elements
+will be noisy (separately), by default None.</p></li>
+<li><p><strong>art_noise_params</strong> (<em>tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – <p>For a tupple (a, l) noise will take a form:</p>
+<p>rho -&gt; p * rho + (1 - p) * Id,</p>
+<p>where p = 1 - a * exp(-l * i), i is the iteration number and Id is
+theidentity matrix, by default (0.5, 0.1).</p>
+</p></li>
+<li><p><strong>contraction_order</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em><em>, </em><em>optional</em>) – Names of tensors in the required order of contraction and
+therfore also the order of optimization. If None then the program
+will use BFS starting from a smallest variable without input
+spaces, by default None.</p></li>
+<li><p><strong>adaptive_art_noise</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True then when in a given iteration the increase of QFI coming
+from variable optimization is smaller then that coming from the
+artificial noise decay the l parameter of the noise will be
+doubled, by default True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>qfi</strong> (<em>float</em>) – Quantum Fisher information.</p></li>
+<li><p><strong>qfiss</strong> (<em>list[list[float]]</em>) – QFI by connected component by iteration number.</p></li>
+<li><p><strong>tn_opt</strong> (<em>TensorNetwork</em>) – Copy of tn with variables substituted with computed optimal
+values.</p></li>
+<li><p><strong>status</strong> (<em>bool</em>) – True if the algorithm converged, False otherwise.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="rfa2b510932f5-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
+in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
+<a class="reference external" href="https://doi.org/10.1038/s41467-019-13735-9">https://doi.org/10.1038/s41467-019-13735-9</a></p>
+</div>
+<div class="citation" id="rfa2b510932f5-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">2</a><span class="fn-bracket">]</span></span>
+<p>S. Kurdziałek et al. Quantum metrology using quantum combs and
+tensor network formalism, New Journal of Physics (2024).
+<a class="reference external" href="https://doi.org/10.1088/1367-2630/ada8d1">https://doi.org/10.1088/1367-2630/ada8d1</a></p>
+</div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-qmetro.iss_opt.optimize">
+<span id="qmetro-iss-opt-optimize-module"></span><h2>qmetro.iss_opt.optimize module<a class="headerlink" href="#module-qmetro.iss_opt.optimize" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.iss_opt.optimize.optimize_var">
+<span class="sig-prename descclassname"><span class="pre">qmetro.iss_opt.optimize.</span></span><span class="sig-name descname"><span class="pre">optimize_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">_tn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.TensorNetwork" title="qmetro.qmtensor.classes.tensors.TensorNetwork"><span class="pre">TensorNetwork</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m0</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cptp_vs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mps_vs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mps_left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">mps_rights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#qmetro.iss_opt.iss_config.IssConfig" title="qmetro.iss_opt.iss_config.IssConfig"><span class="pre">IssConfig</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="qmetro.qmtensor.classes.html#qmetro.qmtensor.classes.tensors.ConstTensor" title="qmetro.qmtensor.classes.tensors.ConstTensor"><span class="pre">ConstTensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/iss_opt/optimize.html#optimize_var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.iss_opt.optimize.optimize_var" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-qmetro.iss_opt">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-qmetro.iss_opt" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qmetro.bounds.html" class="btn btn-neutral float-left" title="qmetro.bounds package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qmetro.param_channel.html" class="btn btn-neutral float-right" title="qmetro.param_channel package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Piotr Dulian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

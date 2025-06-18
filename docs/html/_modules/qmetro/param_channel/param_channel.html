@@ -1,0 +1,1591 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmetro.param_channel.param_channel &mdash; QMetro++ 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            QMetro++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../install.html">Installation guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../qmetro.html">Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">QMetro++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qmetro.param_channel.param_channel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qmetro.param_channel.param_channel</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">repeat</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..qmtensor</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParamTensor</span><span class="p">,</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span> <span class="n">SpaceDict</span><span class="p">,</span> <span class="n">ConstTensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..qtools</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">choi_from_krauses</span><span class="p">,</span> <span class="n">dchoi_from_krauses</span><span class="p">,</span> <span class="n">ket_bra</span><span class="p">,</span> <span class="n">hc</span><span class="p">,</span>
+    <span class="n">krauses_from_choi</span><span class="p">,</span> <span class="n">dkrauses_from_choi</span><span class="p">,</span> <span class="n">krauses_kron</span><span class="p">,</span>
+    <span class="n">krauses_sequential</span><span class="p">,</span> <span class="n">choi_dchoi_from_lindblad</span>
+<span class="p">)</span>
+
+
+
+
+<div class="viewcode-block" id="ParamChannel">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParamChannel</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class representing parametrized channels which can additionally act</span>
+<span class="sd">    on an &quot;environment&quot; space that is used to construct correlations</span>
+<span class="sd">    between multiple channels [1]_.</span>
+<span class="sd">    </span>
+<span class="sd">    More precisely it is representing a CPTP map parametrized by t:</span>
+
+<span class="sd">        F_t: L(E_i (x) I) -&gt; L(E_o (x) O),</span>
+<span class="sd">    </span>
+<span class="sd">    where L(X) is the space of linear operators on Hilbert space X and</span>
+<span class="sd">    - (x) is tensor product of spaces,</span>
+<span class="sd">    - I and O are spaces of input and output respectively,</span>
+<span class="sd">    - E_i and E_o are input and output environment spaces respectively.</span>
+<span class="sd">    </span>
+<span class="sd">    Note that formally the input space of F_t is E_i (x) I. Thus to avoid</span>
+<span class="sd">    confusion E_i (x) I is called &#39;total input space&#39; and I is called</span>
+<span class="sd">    &#39;input space&#39;. Anlogously, E_o (x) O is called &#39;total output space&#39; </span>
+<span class="sd">    and O is called &#39;output space&#39;.</span>
+
+<span class="sd">    Objects can be initialized in three different ways:</span>
+<span class="sd">    1) By providing kraus operators and their derivatives</span>
+<span class="sd">    2) By providing choi matrix and its derivative</span>
+<span class="sd">    3) By providing lindbladian function, its derivative over parameter,</span>
+<span class="sd">    time of evolution and dimension of Hilber space. In this mode, choi</span>
+<span class="sd">    and dchoi are calculated firstly.</span>
+<span class="sd">    </span>
+<span class="sd">    Class constructor takes keyword-only arguments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses : list[np.ndarray] | None, optional</span>
+<span class="sd">        Kraus operators, by default None. Each operator is assumed to act</span>
+<span class="sd">        from E_i (x) I to E_o (x) O.</span>
+<span class="sd">    choi : np.ndarray | None, optional</span>
+<span class="sd">        Choi matrix, by default None. It is assumed to be a matrix on</span>
+<span class="sd">        E_o (x) O (x) E_i (x) I.</span>
+<span class="sd">    dkrauses : list[np.ndarray] | None, optional</span>
+<span class="sd">        Derivatives of Kraus operators, by default None. Each operator is</span>
+<span class="sd">        assumed to act from E_i (x) I to E_o (x) O.</span>
+<span class="sd">    dchoi : np.ndarray | None, optional</span>
+<span class="sd">        Derivative of Choi matrix, by default None. It is assumed to be a</span>
+<span class="sd">        matrix on E_o (x) O (x) E_i (x) I.</span>
+<span class="sd">    lindblad: Callable[[np.ndarray], np.ndarray], optional</span>
+<span class="sd">        Lindbladian: function, that for input density matrix returns its </span>
+<span class="sd">        derivative over time; lindblad(rho) = drho/dt. It is assumed that</span>
+<span class="sd">        Lindbladian is constant over time. rho is matrix on E_i (x) I,</span>
+<span class="sd">        drho/dt is matrix on E_o (x) O, dim(rho) = dim(drho/dt)</span>
+<span class="sd">    dlindblad: Callable[[np.ndarray], np.ndarray], optional</span>
+<span class="sd">        Function that for input density matrix returns derivative of</span>
+<span class="sd">        Lindbladian over some parameter. For example </span>
+<span class="sd">        dlindblad(rho) =  0.5j * (rho@sigma_z - sigma_z@rho) when parameter</span>
+<span class="sd">        is angular velocity around z, sigma_z is a z Pauli matrix.</span>
+<span class="sd">    time: float, optional</span>
+<span class="sd">        Time of evolution with a given lindbladian</span>
+<span class="sd">    env_dim : int | tuple[int,int], optional</span>
+<span class="sd">        Environment dimension, that is the value of dimE_i = dimE_o or a</span>
+<span class="sd">        tuple (E_i, E_o). By default 1.</span>
+<span class="sd">    sdict : SpaceDict, optional</span>
+<span class="sd">        Space distionary of the tensor, by default DEFAULT_SDICT.</span>
+<span class="sd">    input_dim : int | None, optional</span>
+<span class="sd">        Dimenion of input space I or for I = I_0 (x) ... (x) I_n-1 it</span>
+<span class="sd">        should be a list [dimI_0, ..., dimI_n-1]. If None then this</span>
+<span class="sd">        dimension is derived from other arguments. Must be provided in</span>
+<span class="sd">        lindbladian input mode.</span>
+<span class="sd">    output_dim : int | None, optional</span>
+<span class="sd">        Dimenion of output space O or for O = O_0 (x) ... (x) O_n-1 it</span>
+<span class="sd">        should be a list [dimO_0, ..., dimO_n-1]. If None then this</span>
+<span class="sd">        dimension is derived from other arguments.</span>
+<span class="sd">    **kwargs: Any</span>
+<span class="sd">        Keyword arguments passed to lindblad and dlindblad</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Raised when 2 out of 3 possible input modes are mixed or</span>
+<span class="sd">        when `env_dim` and/or `channel_out_dim` are incompatible with the</span>
+<span class="sd">        shape of Kraus operators/Choi matrix.</span>
+<span class="sd">    </span>
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    [1] S. Kurdziałek et al. Quantum metrology using quantum combs and</span>
+<span class="sd">    tensor network formalism</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name_prefix</span> <span class="o">=</span> <span class="s1">&#39;PARAM CHANNEL &#39;</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">krauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">choi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dkrauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dchoi</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lindblad</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dlindblad</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">env_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span>
+        <span class="n">input_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+        <span class="n">kraus_like_inp</span> <span class="o">=</span> <span class="n">krauses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dkrauses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">krauses</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dkrauses</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dkrauses</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">]</span>
+
+        <span class="n">choi_like_inp</span> <span class="o">=</span> <span class="n">choi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dchoi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">choi</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dchoi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dchoi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">choi</span><span class="p">)</span>
+        
+        <span class="n">lindblad_like_inp</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">lindblad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">dlindblad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">input_dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">lindblad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dlindblad</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_dlindblad</span><span class="p">(</span><span class="n">rho</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
+            <span class="n">dlindblad</span> <span class="o">=</span> <span class="n">_dlindblad</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">kraus_like_inp</span> <span class="o">=</span> <span class="n">kraus_like_inp</span>
+        <span class="c1">#when lindblad is given, choi will be computed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">choi_like_inp</span> <span class="o">=</span> <span class="n">choi_like_inp</span> <span class="ow">or</span> <span class="n">lindblad_like_inp</span>
+
+        <span class="n">not_enough_inputs</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">kraus_like_inp</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">choi_like_inp</span>
+                            <span class="ow">and</span> <span class="ow">not</span> <span class="n">lindblad_like_inp</span><span class="p">)</span>
+        
+        <span class="n">too_many_inputs</span> <span class="o">=</span> <span class="p">((</span><span class="n">kraus_like_inp</span> <span class="ow">and</span> <span class="n">choi_like_inp</span><span class="p">)</span> <span class="ow">or</span>
+                           <span class="p">(</span><span class="n">kraus_like_inp</span> <span class="ow">and</span> <span class="n">lindblad_like_inp</span><span class="p">)</span> <span class="ow">or</span>
+                           <span class="p">(</span><span class="n">choi_like_inp</span> <span class="ow">and</span> <span class="n">lindblad_like_inp</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">not_enough_inputs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Either krauses, dkrauses or choi, dchoi or lindblad, &#39;</span>\
+                <span class="s1">&#39;dlindblad, time, input_dim sets of arguments must be &#39;</span>\
+                <span class="s1">&#39;provided.&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">too_many_inputs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Only one of krauses, dkrauses or choi, dchoi or &#39;</span>\
+                <span class="s1">&#39;lindblad, dlindblad, time, input_dim sets of arguments &#39;</span>\
+                <span class="s1">&#39;must be provided.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span> <span class="o">=</span> <span class="n">env_dim</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span> <span class="o">=</span> <span class="n">env_dim</span>
+
+        <span class="k">if</span> <span class="n">kraus_like_inp</span><span class="p">:</span>
+            <span class="n">total_out_dim</span><span class="p">,</span> <span class="n">total_inp_dim</span> <span class="o">=</span> <span class="n">krauses</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+            <span class="k">if</span> <span class="n">total_inp_dim</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Kraus operator input dimension (</span><span class="si">{</span><span class="n">total_inp_dim</span><span class="si">}</span><span class="s1">) &#39;</span>\
+                    <span class="s1">&#39;must be divisible by env_inp_dim (&#39;</span>\
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="si">}</span><span class="s1">).&#39;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">total_out_dim</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Kraus operator output dimension (</span><span class="si">{</span><span class="n">total_out_dim</span><span class="si">}</span><span class="s1">) &#39;</span>\
+                    <span class="sa">f</span><span class="s1">&#39;must be divisible by env_out_dim (&#39;</span>\
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="si">}</span><span class="s1">).&#39;</span>
+                <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="n">total_out_dim</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">total_inp_dim</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span>
+
+            <span class="k">if</span> <span class="n">output_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">output_dim</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;Output tensor structure </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">output_dim</span><span class="p">)</span><span class="si">}</span><span class="s1"> is&#39;</span>\
+                        <span class="s1">&#39; incompatible with output dimension derived &#39;</span>\
+                        <span class="sa">f</span><span class="s1">&#39;from Kraus operators (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="si">}</span><span class="s1">).&#39;</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_dim</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">]</span>
+                <span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;When Kraus operators are provided output dimension &#39;</span>\
+                    <span class="s1">&#39;is derived from Kruas operators.&#39;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">input_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">input_dim</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;input tensor structure </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span><span class="si">}</span><span class="s1"> is&#39;</span>\
+                        <span class="s1">&#39; incompatible with input dimension derived &#39;</span>\
+                        <span class="sa">f</span><span class="s1">&#39;from Kraus operators (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="si">}</span><span class="s1">).&#39;</span>
+                    <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">]</span>
+                <span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;When Kraus operators are provided input dimension &#39;</span>\
+                    <span class="s1">&#39;is derived from Kruas operators.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#choi or lindblad like input</span>
+            <span class="c1">#for lindbladian input, first calculate choi, dchoi</span>
+            <span class="c1">#then proceed like for choi input</span>
+            <span class="k">if</span> <span class="n">lindblad_like_inp</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;In lindblad input mode input_dim cannot be a &#39;</span>
+                        <span class="s1">&#39;list, it must be an integer.&#39;</span>
+                    <span class="p">)</span>
+                <span class="c1">#TODO: maybe allow input_dim to be a list</span>
+
+                <span class="n">choi</span><span class="p">,</span> <span class="n">dchoi</span> <span class="o">=</span> <span class="n">choi_dchoi_from_lindblad</span><span class="p">(</span>
+                    <span class="n">lindblad</span><span class="p">,</span> <span class="n">dlindblad</span><span class="p">,</span> <span class="n">input_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span>
+                    <span class="n">time</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+                <span class="p">)</span>
+            
+            <span class="n">choi_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">choi</span><span class="p">)</span>
+            <span class="n">env_inp_out_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span>
+
+            <span class="k">if</span> <span class="n">choi_dim</span> <span class="o">%</span> <span class="p">(</span><span class="n">env_inp_out_dim</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Choi matrix dimension (</span><span class="si">{</span><span class="n">choi_dim</span><span class="si">}</span><span class="s1">) must be &#39;</span>\
+                    <span class="s1">&#39;divisible by the product of env_inp_dim and &#39;</span>\
+                    <span class="sa">f</span><span class="s1">&#39;env_out_dim (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="si">}</span><span class="s1"> * &#39;</span>\
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">env_inp_out_dim</span><span class="si">}</span><span class="s1">).&#39;</span>
+                <span class="p">)</span>
+            <span class="n">inp_out_dim</span> <span class="o">=</span> <span class="n">choi_dim</span> <span class="o">//</span> <span class="n">env_inp_out_dim</span>
+
+            <span class="k">if</span> <span class="n">output_dim</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">input_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">inp_out_dim</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">!=</span> <span class="n">inp_out_dim</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s1">&#39;If output_dim and input_dim are not provided &#39;</span>\
+                        <span class="s1">&#39;input and output dimensions are assumed to be &#39;</span>\
+                        <span class="s1">&#39;equal which requires that Choi matrix dimension&#39;</span>\
+                        <span class="s1">&#39;divided by dimensions of environments (&#39;</span>\
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">choi_dim</span><span class="si">}</span><span class="s1"> / </span><span class="si">{</span><span class="n">env_inp_out_dim</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">inp_out_dim</span><span class="si">}</span><span class="s1">&#39;</span>\
+                        <span class="s1">&#39;) is a square of natural number.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">output_dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">output_dim</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">output_dim</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="n">output_dim</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_dim</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">input_dim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_dim</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">inp_out_dim</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1"># input_dim is not None</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">input_dim</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_dim</span><span class="p">]</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="n">inp_out_dim</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">!=</span> <span class="n">inp_out_dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Provided input_dim (</span><span class="si">{</span><span class="n">input_dim</span><span class="si">}</span><span class="s1">), output_dim (&#39;</span>\
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">output_dim</span><span class="si">}</span><span class="s1">) and env_dim (</span><span class="si">{</span><span class="n">env_dim</span><span class="si">}</span><span class="s1">) are not &#39;</span>\
+                    <span class="s1">&#39;compatible with the dimension of the Choi &#39;</span>\
+                    <span class="sa">f</span><span class="s1">&#39;matrix (</span><span class="si">{</span><span class="n">choi_dim</span><span class="si">}</span><span class="s1">).&#39;</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_choi</span> <span class="o">=</span> <span class="n">choi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dchoi</span> <span class="o">=</span> <span class="n">dchoi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span> <span class="o">=</span> <span class="n">krauses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dkrauses</span> <span class="o">=</span> <span class="n">dkrauses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Arguments input_dim (</span><span class="si">{</span><span class="n">input_dim</span><span class="si">}</span><span class="s1">) and output_dim (&#39;</span>\
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">output_dim</span><span class="si">}</span><span class="s1">) should define the same number of spaces. &#39;</span>\
+                <span class="s1">&#39;Note that one can alwyays define a trivial i.e. one-&#39;</span>\
+                <span class="s1">&#39;dimensional space.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1">#removing trivial teeth (with input and output 1)</span>
+        <span class="n">input_dims_new</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">output_dims_new</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">inp_dim</span><span class="p">,</span> <span class="n">out_dim</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">inp_dim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">out_dim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">input_dims_new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp_dim</span><span class="p">)</span>
+                <span class="n">output_dims_new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_dim</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_dims_new</span><span class="p">:</span> <span class="c1">#trivial input and output</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">=</span> <span class="n">input_dims_new</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">=</span> <span class="n">output_dims_new</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">ParamChannel</span><span class="o">.</span><span class="n">counter</span>
+        <span class="n">ParamChannel</span><span class="o">.</span><span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sdict</span> <span class="o">=</span> <span class="n">sdict</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">):</span>
+            <span class="n">space</span> <span class="o">=</span> <span class="s1">&#39;INPUT&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">[</span><span class="n">space</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span><span class="p">):</span>
+            <span class="n">space</span> <span class="o">=</span> <span class="s1">&#39;OUTPUT&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">space</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">[</span><span class="n">space</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span> <span class="o">=</span> <span class="s1">&#39;ENV INP&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env_out</span> <span class="o">=</span> <span class="s1">&#39;ENV OUT&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">single_tooth</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tells whether the channel is a single-tooth comb</span>
+<span class="sd">        (i.e. it has only one input and one output space).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            `len(self.input_spaces) == 1`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trivial_env_inp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tells whether the input environment space E_i is trivial.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            `self.env_inp_dim == 1`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span> <span class="o">==</span> <span class="mi">1</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trivial_env_out</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tells whether the input environment space E_o is trivial.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            `self.env_out_dim == 1`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span> <span class="o">==</span> <span class="mi">1</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trivial_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tells whether the channel has trivial environment.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            `self.trivial_env_inp and self.trivial_env_out`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trivial_env_inp</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">trivial_env_out</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_input_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Dimension of the total input space, dim E_i (x) I.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_output_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Dimension of the total output space, dim E_o (x) O.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_input_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Dimensions of the total input space, [dimE_i, I_0, ...].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_output_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Dimensions of the total output space, [dimE_o, O_0, ...].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_input_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Names of factors in the total input space, [E_i, I_0, ...].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_output_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Names of factors in the total output space, [E_o, O_0, ...].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span>
+    
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_comb</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Whether the object represent a comb (True) or a single</span>
+<span class="sd">            channel (False).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+    
+    
+<div class="viewcode-block" id="ParamChannel.tensor">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.tensor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">env_inp</span><span class="p">:</span> <span class="n">Hashable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">env_out</span><span class="p">:</span> <span class="n">Hashable</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamTensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns parametrized tensor of self&#39;s Choi matrix. Names of its</span>
+<span class="sd">        inidices are in attributes of self:</span>
+<span class="sd">        - input_spaces, output_spaces,</span>
+<span class="sd">        - env_inp_space, env_out_space,</span>
+<span class="sd">        - total_input_spaces which is equal to [env_inp_space,</span>
+<span class="sd">        *input_spaces],</span>
+<span class="sd">        - total_output_spaces which is equal to [env_out_space,</span>
+<span class="sd">        *output_spaces].</span>
+
+<span class="sd">        or can be provided in arguments.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_spaces : list[Hashable] | None, optional</span>
+<span class="sd">            Tensor&#39;s input spaces names. They should be in the causal order</span>
+<span class="sd">            (as in self.input dims), by default None.</span>
+<span class="sd">        output_spaces : list[Hashable] | None, optional</span>
+<span class="sd">            Tensor&#39;s output spaces names. They should be in the causal</span>
+<span class="sd">            order (as in self.output dims), by default None.</span>
+<span class="sd">        env_inp : Hashable | None, optional</span>
+<span class="sd">            Name of the environment input space. If the environment input</span>
+<span class="sd">            is trivial this space will be omitted. By default None.</span>
+<span class="sd">        env_out : Hashable | None, optional</span>
+<span class="sd">            Name of the environment output space. If the environment output</span>
+<span class="sd">            is trivial this space will be omitted. By default None.</span>
+<span class="sd">        sdict : SpaceDict, optional</span>
+<span class="sd">            Tensor&#39;s space dicitionary, by default `self.sdict`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamTensor</span>
+<span class="sd">            Parametrized tensor of channel&#39;s Choi matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">provided_spaces</span> <span class="o">=</span> <span class="nb">any</span><span class="p">([</span>
+            <span class="n">input_spaces</span><span class="p">,</span> <span class="n">output_spaces</span><span class="p">,</span> <span class="n">env_inp</span><span class="p">,</span> <span class="n">env_out</span><span class="p">,</span> <span class="n">sdict</span>
+        <span class="p">])</span>
+        <span class="n">sd</span> <span class="o">=</span> <span class="n">sdict</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">sdict</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">provided_spaces</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span> <span class="o">=</span> <span class="n">ParamTensor</span><span class="p">(</span>
+                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span><span class="p">,</span>
+                    <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span><span class="p">],</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+                    <span class="n">output_spaces</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span><span class="p">,</span>
+                    <span class="n">choi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="n">dchoi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span>
+        
+        <span class="c1"># Check if necessary spaces are provided.</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="p">(</span><span class="n">input_spaces</span><span class="p">,</span> <span class="n">output_spaces</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Both input and output spaces must be provided&#39;</span>
+            <span class="p">)</span>
+        <span class="n">env_inps</span> <span class="o">=</span> <span class="p">[</span><span class="n">env_inp</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">env_inp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trivial_env_inp</span><span class="p">:</span>
+                <span class="n">env_inps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;For channel with non-trivial environment input&#39;</span>
+                    <span class="s1">&#39;env_inp must be provided.&#39;</span>
+                <span class="p">)</span>
+        <span class="n">env_outs</span> <span class="o">=</span> <span class="p">[</span><span class="n">env_out</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">env_out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trivial_env_out</span><span class="p">:</span>
+                <span class="n">env_outs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s1">&#39;For channel with non-trivial environment output&#39;</span>
+                    <span class="s1">&#39;env_out must be provided.&#39;</span>
+                <span class="p">)</span>
+        
+        <span class="c1"># Check if spaces are in sdict and have correct dimensions.</span>
+        <span class="n">spaces</span> <span class="o">=</span> <span class="n">env_outs</span> <span class="o">+</span> <span class="n">output_spaces</span> <span class="o">+</span> <span class="n">env_inps</span> <span class="o">+</span> <span class="n">input_spaces</span>
+
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">env_outs</span><span class="p">:</span>
+            <span class="n">dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">)</span>
+        <span class="n">dims</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span>
+        <span class="k">if</span> <span class="n">env_inps</span><span class="p">:</span>
+            <span class="n">dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">)</span>
+        <span class="n">dims</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span>
+
+        <span class="k">for</span> <span class="n">space</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">dims</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">space</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sd</span><span class="o">.</span><span class="n">spaces</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Space </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s1"> not in space dictionary </span><span class="si">{</span><span class="n">sd</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">sd</span><span class="p">[</span><span class="n">space</span><span class="p">]</span> <span class="o">!=</span> <span class="n">dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Space dimension sdict[</span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s1">] = </span><span class="si">{</span><span class="n">sd</span><span class="p">[</span><span class="n">space</span><span class="p">]</span><span class="si">}</span><span class="s1"> is &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;differnt than apropriate dimension in self (</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s1">).&#39;</span>
+                <span class="p">)</span>
+        
+        <span class="n">comb_str</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_spaces</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">tooth_inp</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_spaces</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+            <span class="n">tooth_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_spaces</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+            
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tooth_inp</span> <span class="o">=</span> <span class="n">env_inps</span> <span class="o">+</span> <span class="n">tooth_inp</span>
+            
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">tooth_out</span> <span class="o">=</span> <span class="n">env_outs</span> <span class="o">+</span> <span class="n">tooth_out</span>
+            
+            <span class="n">comb_str</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tooth_inp</span><span class="p">,</span> <span class="n">tooth_out</span><span class="p">))</span>
+        
+        <span class="k">return</span> <span class="n">ParamTensor</span><span class="p">(</span>
+            <span class="n">spaces</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="n">sd</span><span class="p">,</span> <span class="n">dchoi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(),</span>
+            <span class="n">output_spaces</span><span class="o">=</span><span class="n">env_outs</span> <span class="o">+</span> <span class="n">output_spaces</span><span class="p">,</span>
+            <span class="n">comb_structure</span><span class="o">=</span><span class="n">comb_str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.krauses">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.krauses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">krauses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_computation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes Kraus operators of the channel.</span>
+
+<span class="sd">        If the object was defined using Kraus operators it will</span>
+<span class="sd">        return the same Kraus operators it was defined with unless</span>
+<span class="sd">        `force_computation` is true.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        force_computation : bool, optional</span>
+<span class="sd">            Whether to force computation of new Kraus operators.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        krauses : list[np.ndarray]</span>
+<span class="sd">            List of Kraus operators. Each acting from</span>
+<span class="sd">            E_i (x) I to E_o (x) O.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">force_computation</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">krauses</span> <span class="o">=</span> <span class="n">krauses_from_choi</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_output_dim</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">force_computation</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span> <span class="o">=</span> <span class="n">krauses</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.dkrauses">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.dkrauses">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dkrauses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_computation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+            <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+        <span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes Kraus operatiors of the channel.</span>
+
+<span class="sd">        In case the object was defined using Kraus operators it will</span>
+<span class="sd">        return the same Kraus operators it was defined with unless</span>
+<span class="sd">        `force_computation` is true.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        force_computation : bool, optional</span>
+<span class="sd">            Whether to force computation of new Kraus operators.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        krauses : list[np.ndarray]</span>
+<span class="sd">            List of Kraus operators.</span>
+<span class="sd">        dkrauses : list[np.ndarray]</span>
+<span class="sd">            List of derivatives of Kraus operators.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">force_computation</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dkrauses</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span> <span class="o">=</span> <span class="n">dkrauses_from_choi</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(),</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_output_dim</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">force_computation</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span> <span class="o">=</span> <span class="n">krauses</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dkrauses</span> <span class="o">=</span> <span class="n">dkrauses</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dkrauses</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.choi">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.choi">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">choi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute Choi matrix of the channel.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matrix : np.ndarray</span>
+<span class="sd">            Choi matrix.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_choi</span> <span class="o">=</span> <span class="n">choi_from_krauses</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_choi</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.dchoi">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.dchoi">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dchoi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute derivative of the Choi matrix of the channel.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matrix : np.ndarray</span>
+<span class="sd">            Derivative of the Choi matrix.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dchoi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dchoi</span> <span class="o">=</span> <span class="n">dchoi_from_krauses</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_krauses</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dkrauses</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dchoi</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.duplicate">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.duplicate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create new ParamChannel object representing the same channel</span>
+<span class="sd">        but with different names of spaces.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            New ParamChannel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kraus_like_inp</span><span class="p">:</span>
+            <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">()</span>
+            <span class="n">inp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;krauses&#39;</span><span class="p">:</span> <span class="n">krauses</span><span class="p">,</span> <span class="s1">&#39;dkrauses&#39;</span><span class="p">:</span> <span class="n">dkrauses</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inp</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;choi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="s1">&#39;dchoi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dchoi</span><span class="p">()</span>
+            <span class="p">}</span>
+
+        <span class="n">new</span> <span class="o">=</span>  <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">inp</span><span class="p">,</span> <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">),</span>
+            <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">old_spaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_output_spaces</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_spaces</span>
+            <span class="n">new_spaces</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">total_output_spaces</span> <span class="o">+</span> <span class="n">new</span><span class="o">.</span><span class="n">total_input_spaces</span>
+            <span class="n">duplicate_space</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">old_spaces</span><span class="p">,</span> <span class="n">new_spaces</span><span class="p">))</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tensor</span><span class="o">.</span><span class="n">respace</span><span class="p">(</span>
+                <span class="n">space_map</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">duplicate_space</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.merge_spaces">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.merge_spaces">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merges spaces of the channel to make it single-tooth.</span>
+
+<span class="sd">        When input channel is from E_i (x) I_1 (x) ... (x) I_n to</span>
+<span class="sd">        E_o (x) O_1 (x) ... (x) O_n it will be transformed to a channel</span>
+<span class="sd">        from E_i (x) I to E_o (x) O, where I = I_1 (x) ... (x) I_n and</span>
+<span class="sd">        O = O_1 (x) ... (x) O_n are single, high-dimensional spaces.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            New single-tooth ParamChannel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kraus_like_inp</span><span class="p">:</span>
+            <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+                <span class="n">krauses</span><span class="o">=</span><span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span><span class="o">=</span><span class="n">dkrauses</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+                <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">)</span>
+            <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="n">dchoi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(),</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">),</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span>
+        <span class="p">)</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_kron_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes Kronecker product of two elementary channels.</span>
+
+<span class="sd">        Both channels A and B must be elementary i.e. they must have one</span>
+<span class="sd">        input and one output space (single-tooth comb). The corresponding </span>
+<span class="sd">        spaces are of A and B are merged, so the resulting channel is from</span>
+<span class="sd">        E_iAB (x) IAB to E_oAB (x) OAB, AB denotes merged spaces of A and</span>
+<span class="sd">        B.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ParamChannel</span>
+<span class="sd">            Channel to compute Kronecker product with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Kronecker product of two channels (single-tooth channel).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When channels are not single-tooth.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_tooth</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">single_tooth</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Kronecker product is possible only between single-tooth &#39;</span>\
+                <span class="s1">&#39;channels (each has to have one input and one output)&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">res_env_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">env_out_dim</span>
+        <span class="n">res_env_inp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">env_inp_dim</span>
+        <span class="n">res_out_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">output_dim</span>
+        <span class="n">res_inp_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">input_dim</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kraus_like_inp</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">kraus_like_inp</span> <span class="ow">and</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">trivial_env</span><span class="p">):</span>
+
+            <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span> <span class="o">=</span> <span class="n">krauses_kron</span><span class="p">(</span>
+                <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">(),</span> <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>  
+                <span class="n">krauses</span><span class="o">=</span><span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span><span class="o">=</span><span class="n">dkrauses</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>  
+                <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="n">res_env_inp</span><span class="p">,</span> <span class="n">res_env_out</span><span class="p">)</span>  
+            <span class="p">)</span>
+
+        <span class="c1">#else calculate the result based on choi</span>
+        <span class="n">self_spaces</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_spaces</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">total_output_spaces</span>
+        <span class="p">}</span>
+        <span class="n">other_spaces</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">total_input_spaces</span><span class="p">,</span> <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">total_output_spaces</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">self_spaces</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">other_spaces</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+        <span class="n">tensor</span><span class="p">:</span> <span class="n">ParamTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="o">*</span> <span class="n">other</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
+        <span class="n">spaces</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">env_out</span><span class="p">]</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">output_spaces</span>
+            <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">env_inp</span><span class="p">]</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">input_spaces</span>
+        <span class="p">)</span>
+        <span class="n">choi</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+        <span class="n">dchoi</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">choi</span><span class="p">,</span> <span class="n">dchoi</span><span class="o">=</span><span class="n">dchoi</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">res_inp_dim</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="n">res_out_dim</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="n">res_env_inp</span><span class="p">,</span> <span class="n">res_env_out</span><span class="p">)</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="ParamChannel.kron">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.kron">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kron</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes Kronecker product of channels A (x) B (x) C (x) ...</span>
+
+<span class="sd">        Each channel must be elementary i.e. they must have one</span>
+<span class="sd">        input and one output space (single-tooth comb). The corresponding</span>
+<span class="sd">        spaces of two channels are merged, so the resulting channel has a </span>
+<span class="sd">        single input, single env_input, single output, single env_output.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        others[0...*] : ParamChannel</span>
+<span class="sd">            Channels to compute Kronecker product with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Kronecker product of channels (single-tooth channel).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When channels are not single-tooth.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">others</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">_kron_one</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.kron_pow">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.kron_pow">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kron_pow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a n-th Kronecker power of channel with trivial environment</span>
+<span class="sd">        space.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Exponent.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            n-th Kronecker power</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If channels are not single-tooth</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="o">*</span><span class="n">repeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Kronecker power is undefined for n = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_link_env_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes link product of two channels connecting them by their </span>
+<span class="sd">        environment.</span>
+
+<span class="sd">        For a product of channels A and B all spaces of A will be before</span>
+<span class="sd">        spaces of B e.g. A._kron_one(B).input_spaces == A.input_spaces + </span>
+<span class="sd">        B.input_spaces</span>
+
+<span class="sd">        Link produckt is possible only between channels A and B such</span>
+<span class="sd">        that `A.env_out_dim == B.env_inp_dim`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ParamChannel</span>
+<span class="sd">            Channel to compute link product with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Link product of two channels.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When the appropriate environment spaces have different</span>
+<span class="sd">            dimensions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;self.env_out_dim = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="si">}</span><span class="s1"> and &#39;</span>\
+                <span class="sa">f</span><span class="s1">&#39;other.env_inp_dim = </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="si">}</span><span class="s1"> do not match.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">self_spaces</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_spaces</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">total_output_spaces</span>
+        <span class="p">}</span>
+        <span class="n">other_spaces</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">total_input_spaces</span><span class="p">,</span> <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">total_output_spaces</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">self_spaces</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">other_spaces</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">trivial_env</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">kraus_like_inp</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">kraus_like_inp</span><span class="p">):</span>
+
+            <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span> <span class="o">=</span> <span class="n">krauses_kron</span><span class="p">(</span>
+                <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">(),</span> <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+                <span class="n">krauses</span><span class="o">=</span><span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span><span class="o">=</span><span class="n">dkrauses</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+                <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span>
+                <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">output_dims</span>
+            <span class="p">)</span>
+
+        <span class="n">tensor0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
+        <span class="n">tensor1</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span><span class="o">.</span><span class="n">respace</span><span class="p">(</span>
+            <span class="n">space_map</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span> <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">env_inp</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out</span>
+        <span class="p">)</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor0</span> <span class="o">*</span> <span class="n">tensor1</span>
+        <span class="n">spaces</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">[</span><span class="n">other</span><span class="o">.</span><span class="n">env_out</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">output_spaces</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_spaces</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">input_spaces</span>
+        <span class="p">)</span>
+        <span class="n">choi</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+        <span class="n">dchoi</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">choi</span><span class="p">,</span> <span class="n">dchoi</span><span class="o">=</span><span class="n">dchoi</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span>
+            <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">output_dims</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">)</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="ParamChannel.link_env">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.link_env">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">link_env</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes link product of channels A * B * C * ...  Connecting</span>
+<span class="sd">        them by their environment.</span>
+
+<span class="sd">        For a product of channels A and B all spaces of A will be before</span>
+<span class="sd">        spaces of B e.g. A._kron_one(B).input_spaces == A.input_spaces + </span>
+<span class="sd">        B.input_spaces</span>
+
+<span class="sd">        Link produckt is possible only between channels A and B such</span>
+<span class="sd">        that `A.env_out_dim == B.env_inp_dim`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        others[0...*] : ParamChannel</span>
+<span class="sd">            Channels to compute link product with.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Link product of channels.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When the appropriate environment spaces have different</span>
+<span class="sd">            dimensions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">others</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">_link_env_one</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.scalar_mul">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.scalar_mul">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">scalar_mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Multiplies the channel by scalar by multiplying its choi and dchoi.</span>
+
+<span class="sd">        Breaks trace preservation, useful to construct convex combinations</span>
+<span class="sd">        of channels (together with add_channel). </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        factor: float</span>
+<span class="sd">            The factor by which a channel is multiplied</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Input channel multiplied by a scalar.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">choi_new</span><span class="p">,</span> <span class="n">dchoi_new</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="n">factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dchoi</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">choi_new</span><span class="p">,</span> <span class="n">dchoi</span><span class="o">=</span><span class="n">dchoi_new</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">),</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span>
+        <span class="p">)</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ParamChannel</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ParamChannel</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_env</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalar_mul</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalar_mul</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ParamChannel.add">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.add">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds two ParamChannels by adding their chois and dchois.</span>
+
+<span class="sd">        Breaks trace preservation, useful to construct convex combinations</span>
+<span class="sd">        of channels (together with scalar_mul)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other: ParamChannel</span>
+<span class="sd">            channel to be added to self</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Sum of two ParamChannels.</span>
+<span class="sd">        </span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When two channels do not act on spaces of the same dimensions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_dims</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">total_input_dims</span> <span class="ow">or</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total_output_dims</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">total_output_dims</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Two channels must act on spaces of the same dimensions.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">choi_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">choi</span><span class="p">()</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">choi</span><span class="p">()</span>
+        <span class="n">dchoi_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dchoi</span><span class="p">()</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">dchoi</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">choi_sum</span><span class="p">,</span> <span class="n">dchoi</span><span class="o">=</span><span class="n">dchoi_sum</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">),</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span>
+        <span class="p">)</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">scalar_mul</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compose_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">,</span>
+        <span class="n">simplify_krauses</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the sequential composition of self and other.</span>
+
+<span class="sd">        The returned channel represents a map rho -&gt; self(other(rho)),</span>
+<span class="sd">        which is a result of concatenation of output of other with input</span>
+<span class="sd">        of self.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other: ParamChannel</span>
+<span class="sd">            Channel to be composed with self</span>
+<span class="sd">        simplify_krauses: bool, optional</span>
+<span class="sd">            If True, then output is always computed based on chois to</span>
+<span class="sd">            ensure the minimal possible Kraus represantation of output.</span>
+<span class="sd">            By default True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Sequential composition of channels</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When channels are not single-tooth or dimensions of connected</span>
+<span class="sd">            input and output do not match.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_tooth</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">single_tooth</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Sequential composition works for single-tooth channels &#39;</span>\
+                <span class="s1">&#39;only&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">output_dim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;self input dimension </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="si">}</span><span class="s1"> and other output &#39;</span>\
+                <span class="sa">f</span><span class="s1">&#39;dimension </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">output_dim</span><span class="si">}</span><span class="s1"> do not match.&#39;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;self environment input dimension </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="si">}</span><span class="s1"> and&#39;</span>\
+                <span class="sa">f</span><span class="s1">&#39; other environment output dimension </span><span class="si">{</span><span class="n">other</span><span class="o">.</span><span class="n">env_out_dim</span><span class="si">}</span><span class="s1">&#39;</span>\
+                <span class="s1">&#39;do not match.&#39;</span>
+            <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kraus_like_inp</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">kraus_like_inp</span> <span class="ow">and</span> 
+            <span class="ow">not</span> <span class="n">simplify_krauses</span><span class="p">):</span>
+
+            <span class="n">krauses12</span><span class="p">,</span> <span class="n">dkrauses12</span> <span class="o">=</span> <span class="n">krauses_sequential</span><span class="p">(</span>
+                <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">(),</span> <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+                <span class="n">krauses</span><span class="o">=</span><span class="n">krauses12</span><span class="p">,</span> <span class="n">dkrauses</span> <span class="o">=</span> <span class="n">dkrauses12</span><span class="p">,</span>
+                <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">),</span>
+                <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span>
+            <span class="p">)</span>
+        
+        <span class="n">self_spaces</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">total_input_spaces</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">total_output_spaces</span>
+        <span class="p">}</span>
+        <span class="n">other_spaces</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">total_input_spaces</span><span class="p">,</span> <span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">total_output_spaces</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">self_spaces</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">other_spaces</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">space_map_other</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">env_out</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">output_spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">s</span>
+
+        <span class="n">tensor0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span>
+        <span class="n">tensor1</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span><span class="o">.</span><span class="n">respace</span><span class="p">(</span><span class="n">space_map</span><span class="o">=</span><span class="n">space_map_other</span><span class="p">)</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">tensor1</span> <span class="o">*</span> <span class="n">tensor0</span>
+        <span class="n">spaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_output_spaces</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">total_input_spaces</span>
+
+        <span class="n">choi</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+        <span class="n">dchoi</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">choi</span><span class="p">,</span> <span class="n">dchoi</span><span class="o">=</span><span class="n">dchoi</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">)</span>
+        <span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="ParamChannel.compose">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.compose">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">others</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">,</span>  
+        <span class="n">simplify_krauses</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the sequential composition of self and others.</span>
+
+<span class="sd">        The returned channel represents a map </span>
+<span class="sd">        rho -&gt; self( others[0]( others[1] ( ... (others[-1]( rho ))...),</span>
+<span class="sd">        which is a result of concatenation of output of others[i] with</span>
+<span class="sd">        input of other[i-1] and output of others[0] with input of self.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        others[0...*]: ParamChannel</span>
+<span class="sd">            Channels to be composed with self</span>
+<span class="sd">        simplify_krauses: bool, optional</span>
+<span class="sd">            If True, then output is always computed based on chois to</span>
+<span class="sd">            ensure the minimal possible Kraus represantation of output.</span>
+<span class="sd">            By default True.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Sequential composition of channels</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When channels are not single-tooth or dimensions of connected</span>
+<span class="sd">            inputs and outputs do not match.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">others</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">_compose_one</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">simplify_krauses</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new</span></div>
+
+    
+
+<div class="viewcode-block" id="ParamChannel.act">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.act">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Act on a state with the channel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        state: np.ndarray | tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">            Input state density matrix (when np.ndarray)</span>
+<span class="sd">            Input state density matrix and its derivative </span>
+<span class="sd">            (when tuple[np.ndarray, np.ndarray])</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple[np.ndarray, np.ndarray]</span>
+<span class="sd">            Density matrix of the output state and its derivative </span>
+<span class="sd">            after action of ParamChannel on input state.</span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When state is neither 2d np.ndarray nor tuple of 2 2d</span>
+<span class="sd">            np.ndarrays</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">state</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="n">state</span>
+            <span class="n">drho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">correct_input</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rho</span><span class="p">,</span> <span class="n">drho</span> <span class="o">=</span> <span class="n">state</span>
+                <span class="n">correct_input</span> <span class="o">=</span> <span class="n">rho</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">drho</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
+            
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="n">correct_input</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">correct_input</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Input argument state must be either 2d np.array or tuple&#39;</span>\
+                <span class="s1">&#39;of two 2d np.arrays.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kraus_like_inp</span><span class="p">:</span>
+            <span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dkrauses</span><span class="p">()</span>
+            <span class="n">rho_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">K</span><span class="nd">@rho@hc</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">drho_out_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">K</span><span class="nd">@drho@hc</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="k">for</span> <span class="n">K</span> <span class="ow">in</span> <span class="n">krauses</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">drho_out_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">dK</span><span class="nd">@rho@hc</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">+</span> <span class="n">K</span><span class="nd">@rho@hc</span><span class="p">(</span><span class="n">dK</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">K</span><span class="p">,</span> <span class="n">dK</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">krauses</span><span class="p">,</span> <span class="n">dkrauses</span><span class="p">)</span>
+                <span class="p">],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">drho_out</span> <span class="o">=</span> <span class="n">drho_out_1</span> <span class="o">+</span> <span class="n">drho_out_2</span>
+            <span class="k">return</span> <span class="n">rho_out</span><span class="p">,</span> <span class="n">drho_out</span>
+
+
+        <span class="n">state_chan</span> <span class="o">=</span> <span class="n">ParamChannel</span><span class="p">(</span>  
+            <span class="n">choi</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">dchoi</span><span class="o">=</span><span class="n">drho</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">)</span>  
+        <span class="p">)</span>
+        <span class="n">state_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">state_chan</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">state_out</span><span class="o">.</span><span class="n">choi</span><span class="p">(),</span> <span class="n">state_out</span><span class="o">.</span><span class="n">dchoi</span><span class="p">()</span></div>
+
+
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+        <span class="n">other</span><span class="p">:</span><span class="n">ParamChannel</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">ParamChannel</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ParamChannel.trace_env_inp">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.trace_env_inp">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trace_env_inp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_inp_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trace environment input space using provided input state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        env_inp_state : np.ndarray | None, optional</span>
+<span class="sd">            Density matrix of the state. If None then maximally mixed</span>
+<span class="sd">            state is used. By default None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            New channel with traced out environment input space.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When input state dimension does not match environment input</span>
+<span class="sd">            space dimension.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">env_inp_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span>
+        <span class="k">if</span> <span class="n">env_inp_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env_inp_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">env_inp_dim</span><span class="p">)</span> <span class="o">/</span> <span class="n">env_inp_dim</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_inp_state</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">env_inp_state</span> <span class="o">=</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">env_inp_state</span><span class="p">,</span> <span class="n">env_inp_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">env_inp_state</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">env_inp_dim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Provided density matrix </span><span class="si">{</span><span class="n">env_inp_state</span><span class="si">}</span><span class="s1"> does not match&#39;</span>\
+                <span class="sa">f</span><span class="s1">&#39; channel environment dimension </span><span class="si">{</span><span class="n">env_inp_dim</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trivial_env_inp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+
+        <span class="n">inp_state_ten</span> <span class="o">=</span> <span class="n">ConstTensor</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span><span class="p">],</span> <span class="n">env_inp_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sdict</span>
+        <span class="p">)</span>
+        <span class="n">new_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="o">*</span> <span class="n">inp_state_ten</span>
+
+        <span class="n">spaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_output_spaces</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span>
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">new_tensor</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">),</span>
+            <span class="n">dchoi</span><span class="o">=</span><span class="n">new_tensor</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(</span><span class="n">spaces</span><span class="p">),</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_out_dim</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.trace_env_out">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.trace_env_out">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trace_env_out</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trace environment output space.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            New channel with traced out environment output space.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trivial_env_out</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+
+        <span class="n">new_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span><span class="o">.</span><span class="n">choi_trace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out</span><span class="p">)</span>
+
+        <span class="n">spaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_input_spaces</span>
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">new_tensor</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">),</span>
+            <span class="n">dchoi</span><span class="o">=</span><span class="n">new_tensor</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(</span><span class="n">spaces</span><span class="p">),</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span><span class="p">,</span>
+            <span class="n">env_dim</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.trace_env">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.trace_env">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">trace_env</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_inp_state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Trace environment input space using provided input state and then</span>
+<span class="sd">        trace environment output space.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        env_inp_state : np.ndarray | None, optional</span>
+<span class="sd">            Density matrix of the state. If None then maximally mixed</span>
+<span class="sd">            state is used. By default None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            New channel with traced out environment spaces.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            When input state dimension does not match environment input</span>
+<span class="sd">            space dimension.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">env_inp_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_inp_dim</span>
+        <span class="k">if</span> <span class="n">env_inp_state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env_inp_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">env_inp_dim</span><span class="p">)</span> <span class="o">/</span> <span class="n">env_inp_dim</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_inp_state</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">env_inp_state</span> <span class="o">=</span> <span class="n">ket_bra</span><span class="p">(</span><span class="n">env_inp_state</span><span class="p">,</span> <span class="n">env_inp_state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">env_inp_state</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">env_inp_dim</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Provided density matrix </span><span class="si">{</span><span class="n">env_inp_state</span><span class="si">}</span><span class="s1"> does not match&#39;</span>\
+                <span class="sa">f</span><span class="s1">&#39; channel environment dimension </span><span class="si">{</span><span class="n">env_inp_dim</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trivial_env_inp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+
+        <span class="n">inp_state_ten</span> <span class="o">=</span> <span class="n">ConstTensor</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">env_inp</span><span class="p">],</span> <span class="n">choi</span><span class="o">=</span><span class="n">env_inp_state</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span>
+        <span class="p">)</span>
+        <span class="n">new_tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tensor</span><span class="p">()</span> <span class="o">*</span> <span class="n">inp_state_ten</span>
+        <span class="n">new_tensor</span> <span class="o">=</span> <span class="n">new_tensor</span><span class="o">.</span><span class="n">choi_trace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_out</span><span class="p">)</span>
+
+        <span class="n">spaces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_spaces</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_spaces</span>
+        <span class="k">return</span> <span class="n">ParamChannel</span><span class="p">(</span>
+            <span class="n">choi</span><span class="o">=</span><span class="n">new_tensor</span><span class="o">.</span><span class="n">choi</span><span class="p">(</span><span class="n">spaces</span><span class="p">),</span>
+            <span class="n">dchoi</span><span class="o">=</span><span class="n">new_tensor</span><span class="o">.</span><span class="n">dchoi</span><span class="p">(</span><span class="n">spaces</span><span class="p">),</span> <span class="n">sdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sdict</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dims</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dims</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ParamChannel.markov_series">
+<a class="viewcode-back" href="../../../qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel.markov_series">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">markov_series</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">ParamChannel</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParamChannel</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes link product of n channel copies each connected by their</span>
+<span class="sd">        environment space.</span>
+
+<span class="sd">        Roughly equivalent to `self.link_env(*repeat(self, n - 1))`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : int</span>
+<span class="sd">            Number of copies.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ParamChannel</span>
+<span class="sd">            Channel representing correlated channels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">link_env</span><span class="p">(</span><span class="o">*</span><span class="n">repeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Markov series is undefined for n = </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Piotr Dulian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

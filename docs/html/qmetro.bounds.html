@@ -1,0 +1,742 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmetro.bounds package &mdash; QMetro++ 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="qmetro.iss_opt package" href="qmetro.iss_opt.html" />
+    <link rel="prev" title="Documentation" href="qmetro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            QMetro++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="qmetro.html">Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="qmetro.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">qmetro.bounds package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.bounds.bounds">qmetro.bounds.bounds module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-qmetro.bounds">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.iss_opt.html">qmetro.iss_opt package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.param_channel.html">qmetro.param_channel package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.protocols.html">qmetro.protocols package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qmetro.qmtensor.html">qmetro.qmtensor package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.consts">qmetro.consts module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.qtools">qmetro.qtools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="qmetro.html#module-qmetro.utils">qmetro.utils module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">QMetro++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="qmetro.html">Documentation</a></li>
+      <li class="breadcrumb-item active">qmetro.bounds package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/qmetro.bounds.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="qmetro-bounds-package">
+<h1>qmetro.bounds package<a class="headerlink" href="#qmetro-bounds-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-qmetro.bounds.bounds">
+<span id="qmetro-bounds-bounds-module"></span><h2>qmetro.bounds.bounds module<a class="headerlink" href="#module-qmetro.bounds.bounds" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.ad_asym_bound_correlated">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">ad_asym_bound_correlated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#ad_asym_bound_correlated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.ad_asym_bound_correlated" title="Link to this definition"></a></dt>
+<dd><p>Calculate the asymptotic bound for QFI for adaptive strategies
+for correlated models.</p>
+<p>This function returns an upper bound for scaling coefficient
+and the scaling power (1 for standard scaling, 2 for Heisenberg).
+Unlike for uncorrelated models, this is just upper bound, not the
+exact value. The bound becomes tighter for larger <cite>block_size</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing an elementary channel or comb and its
+derivative.</p></li>
+<li><p><strong>block_size</strong> (<em>int</em>) – The number of channels merged in one sub-chain during the
+algorithm. The larger it is, the tighter the bounds, but also
+computations are slower and more memory-consuming. It is denoted
+by <cite>m</cite> in <a class="reference internal" href="#r7499972bb8e7-1" id="id1">[1]</a>.</p></li>
+<li><p><strong>power</strong> (<em>int</em><em> | </em><em>None optional</em>) – Power in the QFI scaling law. It can be 1 (standard scaling) or
+2 (Heisenberg scaling). When not provided, the scaling type is
+determined by the algorithm.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>coef</strong> (<em>float</em>) – Coefficient in the QFI asymptotic bound.</p></li>
+<li><p><strong>power</strong> (<em>int</em>) – Power in the QFI asymptotic bound. Can be 1 or 2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The QFI for asymptotically large number of channels <cite>n</cite> is upper
+bounded by <cite>coef</cite> * <cite>n</cite> ^ <cite>power</cite></p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r7499972bb8e7-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Kurdzialek, S. , Albarelli, F. &amp; Demkowicz-Dobrzanski , R.
+“Universal bounds for quantum metrology in the presence of
+correlated noise”, arxiv: 2410.01881</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.ad_bounds">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">ad_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#ad_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.ad_bounds" title="Link to this definition"></a></dt>
+<dd><p>Calculate adaptive (AD) bounds for the Quantum Fisher Information
+(QFI).</p>
+<p>This function computes the set of AD bounds for the QFIs of up to
+<cite>nmax</cite> channels probed sequentially with arbitrary controls between,
+utilizing arbitrarily large ancilla.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing a single channel and its derivative</p></li>
+<li><p><strong>nmax</strong> (<em>int</em>) – Maximum number of channels for which the bounds are computed.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – <p>Method used to calculate bounds, there are two possibilities:
+- ‘default’: calculates the bound using the iterative procedure</p>
+<blockquote>
+<div><p>involing calculation of extended comb QFI described in <a class="reference internal" href="#r5d39a0c96f1b-2" id="id2">[2]</a>.</p>
+</div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt>’ab_chart’: construct minimal alpha vs beta chart and then</dt><dd><p>calculates the bound for each n <a class="reference internal" href="#r5d39a0c96f1b-1" id="id3">[1]</a>. Faster for large <cite>nmax</cite>,
+may give slightly less tight bounds then ‘default’ (but
+asymptotically both methods are equivalent).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples of beta for precision in bound calculation, by
+default 40, used for ‘ab_chart’ method only.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Small epsilon added to beta bounds in sampling to avoid numerical
+issues, by default 0.0, used for ‘ab_chart’ method only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of AD bounds for QFI with up to <cite>nmax</cite> channels (starting
+from n=1).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r5d39a0c96f1b-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">1</a><span class="fn-bracket">]</span></span>
+<p>Kurdziałek, S., Górecki, W., Albarelli, F., &amp;
+Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+superpositions against noise in quantum metrology. Physical
+Review Letters, 131(9), 090801.</p>
+</div>
+<div class="citation" id="r5d39a0c96f1b-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Kurdzialek, S., Albarelli, F., &amp; Demkowicz-Dobrzanski, R.
+(2024). Universal bounds for quantum metrology in the presence
+of correlated noise. arXiv:2410.01881.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.ad_bounds_correlated">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">ad_bounds_correlated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">for_every_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">close_last_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_inp_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_messages</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#ad_bounds_correlated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.ad_bounds_correlated" title="Link to this definition"></a></dt>
+<dd><p>Calculate QFI bounds for adaptive strategies for general correlated
+models.</p>
+<p>This function computes the upper bounds for QFI when n copies of
+the given channel are linked using their environments. It is assumed
+that information leaks from environment aftery every <cite>block_size</cite> copies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing an elementary channel or comb and its derivative.</p></li>
+<li><p><strong>nmax</strong> (<em>int</em>) – Maximal number of elementary channels for which the bound is computed.</p></li>
+<li><p><strong>block_size</strong> (<em>int</em>) – The number of channels merged in one sub-chain during the algorithm.
+The larger it is, the tighter the bounds, but also computations are
+slower and more memory-consuming. It is denoted by <cite>m</cite> in <a class="reference internal" href="#r1022293acfa6-1" id="id4">[1]</a>.</p></li>
+<li><p><strong>for_every_n</strong> (<em>bool</em><em>, </em><em>optional</em>) – When False (default), then the bound is calculated for number of copies
+which are multiples of <cite>block_size</cite> only. When True, bounds are computed
+for all number of copies up to <cite>nmax</cite>. In the latter case, the algorithm
+is slower, but bounds may be slightly tighter.</p></li>
+<li><p><strong>close_last_env</strong> (<em>bool</em><em>, </em><em>optional</em>) – When True, then it is assumed that in the last channel in the chain,
+no information leaks from environment. This makes the bounds slightly tighter,
+but slower the algorithm, since the QFI with environment leakage must be computed
+anyway for the sake of next iteration step.</p></li>
+<li><p><strong>env_inp_state</strong> (<em>np.ndarray</em><em>|</em><em>None</em><em>, </em><em>optional</em>) – When specified, this state is contracted with first environment input
+of the chain. Otherwise, control can arbitrarily act on first input environment.</p></li>
+<li><p><strong>print_messages</strong> (<em>bool</em><em>, </em><em>optional</em>) – When True, then calculated bounds are printed in real time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>n_list</strong> (<em>np.ndarray</em>) – Array of <cite>n</cite> values (number of elementary channel copies)
+for which the bounds were computed.</p></li>
+<li><p><strong>bounds</strong> (<em>np.ndarray</em>) – Array of corresponding upper bounds for QFI.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r1022293acfa6-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">1</a><span class="fn-bracket">]</span></span>
+<p>Kurdzialek, S. , Albarelli, F. &amp; Demkowicz-Dobrzanski , R.
+“Universal bounds for quantum metrology in the presence of
+correlated noise”, arxiv: 2410.01881</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.asym_scaling_qfi">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">asym_scaling_qfi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">power</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#asym_scaling_qfi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.asym_scaling_qfi" title="Link to this definition"></a></dt>
+<dd><p>Calculate the scaling of QFI (with constant) when asymptotically many
+copies of an input channel are probed paralelly (PAR) using optimal
+input (possibly with ancilla) <a class="reference internal" href="#r06e1a1b92431-1" id="id5">[1]</a> .</p>
+<p>The result is also QFI scaling for optimal adaptive (AD) or causal
+superpostions (CS) strategy, see <a class="reference internal" href="#r06e1a1b92431-2" id="id6">[2]</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing a single channel and its derivative</p></li>
+<li><p><strong>power</strong> (<em>int</em><em> | </em><em>None optional</em>) – Power in the QFI scaling law. It can be 1 (standard scaling) or
+2 (Heisenberg scaling). When not provided, the scaling type is
+determined by the algorithm.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>coef</strong> (<em>float</em>) – Coefficient in the QFI scaling law</p></li>
+<li><p><strong>power</strong> (<em>int</em>) – Power in the QFI scaling law. Can be 1 or 2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The QFI for asymptotically large number of channels <cite>n</cite> scales as
+<cite>coef</cite> * <cite>n</cite> ^ <cite>power</cite>.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r06e1a1b92431-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
+<p>Demkowicz-Dobrzański, R., Kołodyński, J. &amp; Guţă, M.
+The elusive Heisenberg limit in quantum-enhanced metrology.
+Nat Commun 3, 1063 (2012). <a class="reference external" href="https://doi.org/10.1038/ncomms2067">https://doi.org/10.1038/ncomms2067</a></p>
+</div>
+<div class="citation" id="r06e1a1b92431-2" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">2</a><span class="fn-bracket">]</span></span>
+<p>Kurdziałek, S., Górecki, W., Albarelli, F., &amp;
+Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+superpositions against noise in quantum metrology.
+Physical Review Letters, 131(9), 090801.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.beta_alpha_chart">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">beta_alpha_chart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">krauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dkrauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#beta_alpha_chart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.beta_alpha_chart" title="Link to this definition"></a></dt>
+<dd><p>Generate a chart of minimal alpha values given constraints on beta.</p>
+<p>This function calculates a list of minimal alpha values (<cite>a_list</cite>)
+for a range of beta values (<cite>b_list</cite>) for a given channel, for beta
+values between its minimum and the square root of the minimal alpha
+value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of Kraus operators, each represented as a 2D NumPy array.</p></li>
+<li><p><strong>dkrauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of derivatives of Kraus operators, each represented as a 2D
+NumPy array.</p></li>
+<li><p><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of beta samples, by default 20.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Small epsilon added to beta bounds to avoid numerical issues, by
+default 0.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>b_list</strong> (<em>np.ndarray</em>) – Array of beta values sampled between the minimum beta and maximum
+alpha.</p></li>
+<li><p><strong>a_list</strong> (<em>np.ndarray</em>) – Array of minimal alpha values corresponding to each beta in
+<cite>b_list</cite>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function first calculates <cite>bmin</cite> as the minimum achievable beta
+for the channel, and <cite>bmax</cite> as the square root of the minimum alpha.
+The <cite>b_list</cite> array is then generated with <cite>n</cite> samples between
+<cite>bmin + eps</cite> and <cite>bmax + 2*eps</cite>. For each beta value in <cite>b_list</cite>, the
+minimum alpha under that beta constraint is calculated using
+<cite>minimize_alpha_given_beta</cite>.</p>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r22ac4f062660-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Kurdziałek, S., Górecki, W., Albarelli, F., &amp;
+Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+superpositions against noise in quantum metrology. Physical Review
+Letters, 131(9), 090801.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.cs_bounds">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">cs_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#cs_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.cs_bounds" title="Link to this definition"></a></dt>
+<dd><p>Calculate causal superpositions (CS) bounds for the Quantum Fisher
+Information (QFI).</p>
+<p>This function computes the set of CS bounds for the QFIs of up to
+<cite>nmax</cite> channels probed using arbitrary causal superposition scheme
+involving arbitrary controls between channels. The alpha vs beta chart
+is constructed, and then the bound is computed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing a single channel and its derivative</p></li>
+<li><p><strong>nmax</strong> (<em>int</em>) – Maximum number of channels for which the bounds are computed.</p></li>
+<li><p><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples of beta for precision in bound calculation, by
+default 40, used for ‘ab_chart’ method only.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Small epsilon added to beta bounds in sampling to avoid numerical
+issues, by default 0.0, used for ‘ab_chart’ method only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of CS bounds for QFI with up to <cite>nmax</cite> channels (starting
+from n=1).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="rf91d50b4267b-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Kurdziałek, S., Górecki, W., Albarelli, F., &amp;
+Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+superpositions against noise in quantum metrology. Physical
+Review Letters, 131(9), 090801.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.minimize_alpha_beta_0_correlated">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">minimize_alpha_beta_0_correlated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">krauses_comb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dkrauses_comb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#minimize_alpha_beta_0_correlated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.minimize_alpha_beta_0_correlated" title="Link to this definition"></a></dt>
+<dd><p>Computes the minimal ‘comb-norm’ of a correlated alpha matrix assuming
+beta_1=0.</p>
+<p>When the returned minimal <cite>a</cite> value is finite, then
+- Heisenberg scaling (HS) is not possible.
+- Asymptotic upper bound for Quantum Fisher Information (QFI)</p>
+<blockquote>
+<div><p>is <cite>4 a N/m</cite>, <cite>m</cite> is the number of channels in comb,
+<cite>N</cite> is the total number of channels.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krauses_comb</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of Kraus operators for the comb. Each operator is a linear
+map from <cite>H_2m-1 x H_2m-3 x … x H1</cite> to <cite>H_2m x H_2m-2 x … x
+H2</cite>.</p></li>
+<li><p><strong>dkrauses_comb</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of derivatives of Kraus operators for the comb.</p></li>
+<li><p><strong>dims</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) – Dimensions of the spaces <cite>[H1, H2, …, H_2m]</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The minimal value of a, representing the optimization result.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>First input (<cite>H_1</cite>) and last output (<cite>H_2m</cite>) should also contain
+register spaces <cite>R</cite> containing information about correlations.</p></li>
+<li><p>This is an implementation of algorithm from appendix C2 from <a class="reference internal" href="#r75273d74e0e2-1" id="id7">[1]</a>.</p></li>
+</ul>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r75273d74e0e2-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">1</a><span class="fn-bracket">]</span></span>
+<p>Kurdzialek, S. , Albarelli, F. &amp; Demkowicz-Dobrzanski , R.
+“Universal bounds for quantum metrology in the presence of
+correlated noise”, arxiv: 2410.01881</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.minimize_alpha_given_beta">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">minimize_alpha_given_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">krauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dkrauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#minimize_alpha_given_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.minimize_alpha_given_beta" title="Link to this definition"></a></dt>
+<dd><p>Minimize the norm of alpha given a constraint on norm of beta.</p>
+<p>This function calculates the minimum norm of alpha over all possible
+Kraus representations for a channel, given a constraint that norm of
+beta is less than or equal to a specified maximum (<cite>bmax</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of Kraus operators, each represented as a 2D NumPy array.</p></li>
+<li><p><strong>dkrauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of derivatives of Kraus operators, each represented as a 2D
+NumPy array.</p></li>
+<li><p><strong>bmax</strong> (<em>float</em>) – Upper bound on beta for the optimization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The minimum value of alpha given the constraint on beta.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r84458e44ea54-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Kurdziałek, S., Górecki, W., Albarelli, F., &amp;
+Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+superpositions against noise in quantum metrology. Physical Review
+Letters, 131(9), 090801.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.minimize_beta">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">minimize_beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">krauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dkrauses</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#minimize_beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.minimize_beta" title="Link to this definition"></a></dt>
+<dd><p>Minimize the norm of beta over all Kraus representations for a given
+channel.</p>
+<p>This function calculates the minimum norm of beta over all possible
+Kraus representations of a channel, given a list of Kraus operators
+and their derivatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of Kraus operators, each represented as a 2D NumPy array.</p></li>
+<li><p><strong>dkrauses</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of derivatives of Kraus operators, each represented as a 2D
+NumPy array.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The minimum value of norm of beta over all Kraus representations.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r74c3e3767561-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Demkowicz-Dobrzański, R., Kołodyński, J. &amp; Guţă, M.
+The elusive Heisenberg limit in quantum-enhanced metrology.
+Nat Commun 3, 1063 (2012). <a class="reference external" href="https://doi.org/10.1038/ncomms2067">https://doi.org/10.1038/ncomms2067</a></p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.minimize_beta_correlated">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">minimize_beta_correlated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">krauses_comb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dkrauses_comb</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#minimize_beta_correlated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.minimize_beta_correlated" title="Link to this definition"></a></dt>
+<dd><p>Computes the minimal ‘comb-norm’ of a correlated beta matrix.</p>
+<p>The returned minimal b value has significant physical implications:
+- When <cite>b=0</cite>, Heisenberg scaling (HS) is not possible.
+- When <cite>b&gt;0</cite>, asymptotic upper bound for Quantum Fisher</p>
+<blockquote>
+<div><p>Information (QFI) as <cite>4 b^2 (N/m)^2</cite>, <cite>m</cite> is the number of channels
+in comb, <cite>N</cite> is the total number of channels.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krauses_comb</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of Kraus operators for the comb. Each operator is a linear
+map from <cite>H_2m-1 x H_2m-3 x … x H1</cite> to <cite>H_2m x H_2m-2 x … x
+H2</cite>.</p></li>
+<li><p><strong>dkrauses_comb</strong> (<em>list</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of derivatives of Kraus operators for the comb.</p></li>
+<li><p><strong>dims</strong> (<em>tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em>) – Dimensions of the spaces <cite>[H1, H2, …, H_2m]</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The minimal value of b, representing the optimization result.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>First input (<cite>H_1</cite>) and last output (<cite>H_2m</cite>) should also contain
+register spaces <cite>R</cite> containing information about correlations.</p></li>
+<li><p>This is an implementation of algorithm from appendix C2 from <a class="reference internal" href="#r1e3be3418e12-1" id="id8">[1]</a>.</p></li>
+</ul>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r1e3be3418e12-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">1</a><span class="fn-bracket">]</span></span>
+<p>Kurdzialek, S. , Albarelli, F. &amp; Demkowicz-Dobrzanski , R.
+“Universal bounds for quantum metrology in the presence of
+correlated noise”, arxiv: 2410.01881</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.par_ad_cs_bounds">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">par_ad_cs_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#par_ad_cs_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.par_ad_cs_bounds" title="Link to this definition"></a></dt>
+<dd><p>Calculate parallel (PAR), adaptive (AD) and  causal superpositions (CS)
+bounds for the Quantum Fisher Information (QFI) using alpha vs beta
+chart method.</p>
+<p>This function computes three sets of bounds, PAR, AD and CS by
+constructing list of minimal alpha for given beta constraints (see
+<cite>beta_alpha_chart</cite>). It is equivalent to calling par_bounds, ad_bounds
+and cs_bounds functions with method = ‘ab_chart’.
+Calling this function is faster, since ab_chart is created only once.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing a single channel and its derivative</p></li>
+<li><p><strong>nmax</strong> (<em>int</em>) – Maximum number of channels for which the bounds are computed.</p></li>
+<li><p><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples of beta for precision in bound calculation, by
+default 40.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Small epsilon added to beta bounds in sampling to avoid numerical
+issues, by default 0.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>PAR_bounds_list<span class="classifier">np.ndarray</span></dt><dd><p>Array of AD bounds for QFI with up to <cite>nmax</cite> channels
+(starting from n=1).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>AD_bounds_list<span class="classifier">np.ndarray</span></dt><dd><p>Array of AD bounds for QFI with up to <cite>nmax</cite> channels
+(starting from n=1).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>CS_bounds_list<span class="classifier">np.ndarray</span></dt><dd><p>Array of CS bounds for QFI with up to <cite>nmax</cite> channels
+(starting from n=1).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="rb690996b1c85-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Kurdziałek, S., Górecki, W., Albarelli, F., &amp;
+Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+superpositions against noise in quantum metrology. Physical Review
+Letters, 131(9), 090801.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.par_bound_single_n">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">par_bound_single_n</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#par_bound_single_n"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.par_bound_single_n" title="Link to this definition"></a></dt>
+<dd><p>Calculate parallel (PAR) bound for the Quantum Fisher Information
+(QFI) for a specific number of channels <cite>n</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing a single channel and its derivative</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of channels for which the bounds are computed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>PAR bounds for QFI for <cite>n</cite> channels probed in parallel.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r0d504100d7cc-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Kołodyński, J., &amp; Demkowicz-Dobrzański, R. (2013).
+Efficient tools for quantum metrology with uncorrelated noise.
+New Journal of Physics, 15(7), 073043.</p>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="qmetro.bounds.bounds.par_bounds">
+<span class="sig-prename descclassname"><span class="pre">qmetro.bounds.bounds.</span></span><span class="sig-name descname"><span class="pre">par_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><span class="pre">ParamChannel</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">nmax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/qmetro/bounds/bounds.html#par_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#qmetro.bounds.bounds.par_bounds" title="Link to this definition"></a></dt>
+<dd><p>Calculate parallel (par) bounds for the Quantum Fisher Information
+(QFI).</p>
+<p>This function computes the set of PAR bounds for the QFIs of up to
+<cite>nmax</cite> channels probed paralelly using arbitrary, possibly entangled
+probe (with ancilla).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<a class="reference internal" href="qmetro.param_channel.html#qmetro.param_channel.param_channel.ParamChannel" title="qmetro.param_channel.param_channel.ParamChannel"><em>ParamChannel</em></a>) – Object representing a single channel and its derivative</p></li>
+<li><p><strong>nmax</strong> (<em>int</em>) – Maximum number of channels for which the bounds are computed.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – <p>Method used to calculate bounds, there are two possibilities:
+- ‘default’: calculates the bound by solving SDP for each number</p>
+<blockquote>
+<div><p>of channels separately. This method calls function
+<cite>par_bound_single_n</cite> for each n.</p>
+</div></blockquote>
+<ul>
+<li><dl class="simple">
+<dt>’ab_chart’: construct minimal alpha vs beta chart and then</dt><dd><p>calculates the bound for each n. Faster for large <cite>nmax</cite>, may
+give slightly less tight bounds then ‘default’ (but
+asymptotically both methods are equivalent).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>p</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of samples of beta for precision in bound calculation, by
+default 40, used for ‘ab_chart’ method only.</p></li>
+<li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – Small epsilon added to beta bounds in sampling to avoid numerical
+issues, by default 0.0, used for ‘ab_chart’ method only.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Array of PAR bounds for QFI with up to <cite>nmax</cite> channels (starting
+from n=1).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<div role="list" class="citation-list">
+<div class="citation" id="r2bc03cbaf896-1" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Kołodyński, J., &amp; Demkowicz-Dobrzański, R. (2013).
+Efficient tools for quantum metrology with uncorrelated noise.
+New Journal of Physics, 15(7), 073043.</p>
+</div>
+<div class="citation" id="id9" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<p>Kurdziałek, S., Górecki, W., Albarelli, F., &amp;
+Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+superpositions against noise in quantum metrology. Physical Review
+Letters, 131(9), 090801.</p>
+</div>
+</div>
+</dd></dl>
+
+</section>
+<section id="module-qmetro.bounds">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-qmetro.bounds" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="qmetro.html" class="btn btn-neutral float-left" title="Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="qmetro.iss_opt.html" class="btn btn-neutral float-right" title="qmetro.iss_opt package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Piotr Dulian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,581 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>qmetro.qmtensor.creators.structures &mdash; QMetro++ 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            QMetro++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../qmetro.html">QMetro++ package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">QMetro++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">qmetro.qmtensor.creators.structures</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for qmetro.qmtensor.creators.structures</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hashable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">...utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">flatten</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..classes</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SpaceDict</span><span class="p">,</span> <span class="n">ConstTensor</span><span class="p">,</span> <span class="n">VarTensor</span><span class="p">,</span> <span class="n">TensorNetwork</span><span class="p">,</span> <span class="n">DEFAULT_SDICT</span>
+<span class="p">)</span>
+
+
+
+
+<div class="viewcode-block" id="mps_var_tnet">
+<a class="viewcode-back" href="../../../../qmetro.qmtensor.creators.html#qmetro.qmtensor.creators.structures.mps_var_tnet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mps_var_tnet</span><span class="p">(</span><span class="n">output_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span> <span class="n">mps_bond_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TensorNetwork</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a variable density matrix of a pure matrix product state</span>
+<span class="sd">    (MPS). This density matrix is a matrix product operaotr (MPO).</span>
+
+<span class="sd">    The result is a network of variable tensors: T_0, T_1, ..., T_n-1.</span>
+<span class="sd">    The i-th tensor has inidices called: O_i, B_i-1, B_i where</span>
+<span class="sd">    - O_i represent Hilbert spaces on which the state acts (output</span>
+<span class="sd">    spaces),</span>
+<span class="sd">    - B_i are bond spaces,</span>
+<span class="sd">    - B_-1 and B_n-1 do not exist.</span>
+<span class="sd">    Then the contraction of all tensors by the bond spaces with the same</span>
+<span class="sd">    name yields a density matrix of a pure state on O_0 (x) ... (x) O_n-1.</span>
+
+<span class="sd">    Bond spaces are defined for MPO elements and thus their dimension is</span>
+<span class="sd">    the square of the MPS bond dimension.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_spaces : list[Hashable]</span>
+<span class="sd">        Spaces of the state, i-th element is the space O_i.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the result. Tensors will have names in format</span>
+<span class="sd">        f&quot;{name}, {i}&quot; and connecting spaces B_i = (name, &#39;BOND&#39;, i).</span>
+<span class="sd">    sdict : SpaceDict, optional</span>
+<span class="sd">        Space dictionary of the result, by default DEFAULT_SDICT.</span>
+<span class="sd">    mps_bond_dim : int, optional</span>
+<span class="sd">        Dimension of the MPS connecting (bond) spaces, by default 1.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Arguments passed to VarTensor constructor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mps : TensorNetwork</span>
+<span class="sd">        Tensor network of variable tensors representing MPO of the density</span>
+<span class="sd">        matrix.</span>
+<span class="sd">    tensor_names : list[str]</span>
+<span class="sd">        List of tensors&#39; names. In order from i=0 to i=n-1.</span>
+<span class="sd">    bonds : list[Hashable]</span>
+<span class="sd">        List of bond spaces&#39; names. In order from i=0 to i=n-2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_spaces</span><span class="p">)</span>
+    <span class="n">sd</span> <span class="o">=</span> <span class="n">sdict</span>
+
+    <span class="n">bonds</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">arrange_bonds</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mps_bond_dim</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;BOND&#39;</span><span class="p">))</span>
+
+    <span class="n">mps_elements</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">loc_bonds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">loc_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bonds</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">loc_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bonds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="n">el_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el_name</span><span class="p">)</span>
+
+        <span class="n">spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_spaces</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="n">loc_bonds</span>
+        <span class="n">mps</span> <span class="o">=</span> <span class="n">VarTensor</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">el_name</span><span class="p">,</span> <span class="p">[</span><span class="n">output_spaces</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">mps_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mps</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">TensorNetwork</span><span class="p">(</span><span class="n">mps_elements</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">names</span><span class="p">,</span> <span class="n">bonds</span></div>
+
+
+
+<div class="viewcode-block" id="input_state_var">
+<a class="viewcode-back" href="../../../../qmetro.qmtensor.creators.html#qmetro.qmtensor.creators.structures.input_state_var">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">input_state_var</span><span class="p">(</span><span class="n">output_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span> <span class="n">mps_bond_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarTensor</span> <span class="o">|</span> <span class="n">TensorNetwork</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a state variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    output_spaces : list[Hashable]</span>
+<span class="sd">        Spaces of the state.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the result. If mps_bond_dim is provided it will use the</span>
+<span class="sd">        naming convention of mps_var_tnet.</span>
+<span class="sd">    sdict : SpaceDict, optional</span>
+<span class="sd">        Space dictionary of the result, by default DEFAULT_SDICT.</span>
+<span class="sd">    mps_bond_dim : int, optional</span>
+<span class="sd">        Dimension of the MPS connecting (bond) spaces. If None then it will</span>
+<span class="sd">        return the state on the whole product Hilbert space (as if bond</span>
+<span class="sd">        dimension was infinite). By default None.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Arguments passed to VarTensor constructor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    state : VarTensor | TensorNetwork</span>
+<span class="sd">        Tesnor representing the density matrix.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">    In case one needs names of the MPS elements and bond spaces use</span>
+<span class="sd">    `mps_var_tnet`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mps_bond_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarTensor</span><span class="p">(</span>
+            <span class="n">output_spaces</span><span class="p">,</span> <span class="n">sdict</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">output_spaces</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mps_bond_dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">vts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sd</span> <span class="o">=</span> <span class="n">sdict</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output_spaces</span><span class="p">):</span>
+            <span class="n">vt</span> <span class="o">=</span> <span class="n">VarTensor</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">space</span><span class="p">],</span> <span class="n">sd</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">output_spaces</span><span class="o">=</span><span class="p">[</span><span class="n">space</span><span class="p">],</span>
+                <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">vts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">TensorNetwork</span><span class="p">(</span><span class="n">vts</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mps_var_tnet</span><span class="p">(</span>
+        <span class="n">output_spaces</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sdict</span><span class="p">,</span> <span class="n">mps_bond_dim</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="mpo_measure_var_tnet">
+<a class="viewcode-back" href="../../../../qmetro.qmtensor.creators.html#qmetro.qmtensor.creators.structures.mpo_measure_var_tnet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mpo_measure_var_tnet</span><span class="p">(</span><span class="n">input_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span> <span class="n">bond_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TensorNetwork</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a variable measurement (SLD) matrix product operator (MPO).</span>
+
+<span class="sd">    The result is a network of variable tensors: T_0, T_1, ..., T_n-1.</span>
+<span class="sd">    The i-th tensor has inidices called: I_i, B_i-1, B_i where</span>
+<span class="sd">    - I_i represent Hilbert spaces which are measured (input spaces),</span>
+<span class="sd">    - B_i are bond spaces,</span>
+<span class="sd">    - B_-1 and B_n-1 do not exist.</span>
+<span class="sd">    Then the contraction of all tensors by the bond spaces with the same</span>
+<span class="sd">    name yields a variable of a measurement on I_0 (x) ... (x) I_n-1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_spaces : list[Hashable]</span>
+<span class="sd">        Measured spaces, i-th element is the space I_i.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the result. Elements will have names in format</span>
+<span class="sd">        f&quot;{name}, {i}&quot; and connecting spaces in (name, &#39;BOND&#39;, i),</span>
+<span class="sd">        where i is the element/space number.</span>
+<span class="sd">    sdict : SpaceDict, optional</span>
+<span class="sd">        Space dictionary of the result, by default DEFAULT_SDICT.</span>
+<span class="sd">    bond_dim : int, optional</span>
+<span class="sd">        Dimension of the connecting (bond) spaces, by default 1.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Arguments passed to VarTensor constructor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sld : TensorNetwork</span>
+<span class="sd">        Tensor network representing MPO of the measurement (SLD).</span>
+<span class="sd">    elements : list[str]</span>
+<span class="sd">        List of elements&#39; names. In order from i=0 to i=n-1.</span>
+<span class="sd">    bonds : list[Hashable]</span>
+<span class="sd">        List of bond spaces&#39; names. In order from i=0 to i=n-2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sd</span> <span class="o">=</span> <span class="n">sdict</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_spaces</span><span class="p">)</span>
+    <span class="n">bonds</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">arrange_bonds</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">bond_dim</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;BOND&#39;</span><span class="p">))</span>
+
+    <span class="n">measures</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">loc_bonds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">loc_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bonds</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">loc_bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bonds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="n">el_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">el_name</span><span class="p">)</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">VarTensor</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">input_spaces</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="n">loc_bonds</span><span class="p">,</span> <span class="n">sdict</span><span class="o">=</span><span class="n">sd</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">el_name</span><span class="p">,</span>
+            <span class="n">is_measurement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="n">measures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">TensorNetwork</span><span class="p">(</span><span class="n">measures</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">names</span><span class="p">,</span> <span class="n">bonds</span></div>
+
+
+
+<div class="viewcode-block" id="measure_var">
+<a class="viewcode-back" href="../../../../qmetro.qmtensor.creators.html#qmetro.qmtensor.creators.structures.measure_var">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">measure_var</span><span class="p">(</span><span class="n">input_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span> <span class="n">bond_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarTensor</span> <span class="o">|</span> <span class="n">TensorNetwork</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a measurement variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    input_spaces : list[Hashable]</span>
+<span class="sd">        Measured spaces.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the result. If mps_bond_dim is provided it will use the</span>
+<span class="sd">        naming convention of mpo_measure_var_tnet.</span>
+<span class="sd">    sdict : SpaceDict</span>
+<span class="sd">        Space dictionary of the result, by default DEFAULT_SDICT.</span>
+<span class="sd">    bond_dim : int | None, optional</span>
+<span class="sd">        Dimension of the connecting (bond) spaces. If None then it will</span>
+<span class="sd">        return the measurement on the whole product Hilbert space (as if</span>
+<span class="sd">        bond dimension was infinite). By default None.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Arguments passed to VarTensor constructor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    VarTensor | TensorNetwork</span>
+<span class="sd">        Tensor representing the measurement.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -------</span>
+<span class="sd">    In case one needs names of the MPS elements and bond spaces use</span>
+<span class="sd">    `mpo_measure_var_tnet`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">bond_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarTensor</span><span class="p">(</span>
+            <span class="n">input_spaces</span><span class="p">,</span> <span class="n">sdict</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">is_measurement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">bond_dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">vts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sd</span> <span class="o">=</span> <span class="n">sdict</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_spaces</span><span class="p">):</span>
+            <span class="n">vt</span> <span class="o">=</span> <span class="n">VarTensor</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">space</span><span class="p">],</span> <span class="n">sd</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">is_measurement</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+            <span class="n">vts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">TensorNetwork</span><span class="p">(</span><span class="n">vts</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mpo_measure_var_tnet</span><span class="p">(</span>
+        <span class="n">input_spaces</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sdict</span><span class="p">,</span> <span class="n">bond_dim</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="cmarkov_param_tnet">
+<a class="viewcode-back" href="../../../../qmetro.qmtensor.creators.html#qmetro.qmtensor.creators.structures.cmarkov_param_tnet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cmarkov_param_tnet</span><span class="p">(</span><span class="n">krauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">dkrauses</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">input_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]],</span>
+    <span class="n">output_spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]],</span> <span class="n">transition_mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sdict</span> <span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span>
+    <span class="n">initial_prob</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trace_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TensorNetwork</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns Choi matrices of channels whith classical Markovian</span>
+<span class="sd">    correlation of their Kraus operators. The number of repetitions is</span>
+<span class="sd">    derived from the number of lists in input_spaces.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    krauses : list[np.ndarray]</span>
+<span class="sd">        Kraus operators.</span>
+<span class="sd">    dkrauses : list[np.ndarray]</span>
+<span class="sd">        Derivatives of Kraus operators.</span>
+<span class="sd">    input_spaces : list[list[Hashable]]</span>
+<span class="sd">        List of lists of input spaces. The ith list is a list of input</span>
+<span class="sd">        spaces of the ith channel.</span>
+<span class="sd">    output_spaces : list[list[Hashable]]</span>
+<span class="sd">        List of lists of output spaces. The ith list is a list of output</span>
+<span class="sd">        spaces of the ith channel.</span>
+<span class="sd">    transition_mat : np.ndarray</span>
+<span class="sd">        Matrix M of conditional probabilities. The coefficient M[i, j] is</span>
+<span class="sd">        equal to P(i|j) - the conditional probability of ith Kraus operator</span>
+<span class="sd">        given the occurence of jth operator in the previous step.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the result. Elements have names in format f&quot;{name}, {i}&quot;</span>
+<span class="sd">        where i is the element number and its input and output correlation</span>
+<span class="sd">        spaces are (name, &#39;ENVIRONMENT&#39;, i) and (name, &#39;ENVIRONMENT&#39;, i+1)</span>
+<span class="sd">        respectively.</span>
+<span class="sd">    sdict : SpaceDict, optional</span>
+<span class="sd">        Space dictionary of the result, by default DEFAULT_SDICT.</span>
+<span class="sd">    initial_prob : np.ndarray | None, optional</span>
+<span class="sd">        Initial probabilities in a Markov chain. If None then the input of</span>
+<span class="sd">        the correlation space - (name, &#39;ENVIRONMENT&#39;, 0) is left open, by</span>
+<span class="sd">        default None.</span>
+<span class="sd">    trace_end : bool, optional</span>
+<span class="sd">        Whether to trace out the output of the correlation space -</span>
+<span class="sd">        (name, &#39;ENVIRONMENT&#39;, n_of_repetitions), by default True.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Arguments passed to ParamTensor constructor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    corrlated_channels : TensorNetwork</span>
+<span class="sd">        Tensor network rerpresenting the Choi matrices of correlated</span>
+<span class="sd">        channels.</span>
+<span class="sd">    channel_names : list[str]</span>
+<span class="sd">        List of channels&#39; names. In order from i=0 to i=n-1.</span>
+<span class="sd">    environments : list[Hashable]</span>
+<span class="sd">        List of environment spaces&#39; names. In order from i=0 to i=n-2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    <span class="n">sd</span> <span class="o">=</span> <span class="n">sdict</span>
+    <span class="n">d_env</span><span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">krauses</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_spaces</span><span class="p">)</span>
+
+    <span class="n">envs</span> <span class="o">=</span> <span class="n">sd</span><span class="o">.</span><span class="n">arrange_spaces</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">d_env</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;ENVIRONMENT&#39;</span><span class="p">))</span>
+
+    <span class="n">corr_ks</span> <span class="o">=</span> <span class="n">cmarkov_krauses</span><span class="p">(</span><span class="n">krauses</span><span class="p">,</span> <span class="n">transition_mat</span><span class="p">)</span>
+    <span class="n">corr_dks</span> <span class="o">=</span> <span class="n">cmarkov_krauses</span><span class="p">(</span><span class="n">dkrauses</span><span class="p">,</span> <span class="n">transition_mat</span><span class="p">)</span>
+
+    <span class="n">pchs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">loc_inp</span> <span class="o">=</span> <span class="p">[</span><span class="n">envs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">*</span><span class="n">input_spaces</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">loc_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">envs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="o">*</span><span class="n">output_spaces</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">loc_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">pch</span> <span class="o">=</span> <span class="n">choi_tensor_from_krauses</span><span class="p">(</span>
+            <span class="n">corr_ks</span><span class="p">,</span> <span class="n">loc_inp</span><span class="p">,</span> <span class="n">loc_out</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">corr_dks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">initial_prob</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pch</span> <span class="o">*=</span> <span class="n">ConstTensor</span><span class="p">(</span>
+                <span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">choi</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">initial_prob</span><span class="p">),</span> <span class="n">sdict</span><span class="o">=</span><span class="n">sd</span>
+            <span class="p">)</span>
+            <span class="n">loc_inp</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">envs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">trace_end</span><span class="p">:</span>
+            <span class="n">pch</span> <span class="o">=</span> <span class="n">pch</span><span class="o">.</span><span class="n">choi_trace</span><span class="p">(</span><span class="n">envs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+            <span class="n">loc_out</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">envs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">pch</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">loc_name</span>
+        <span class="n">pch</span><span class="o">.</span><span class="n">input_spaces</span> <span class="o">=</span> <span class="n">loc_inp</span>
+
+        <span class="n">pchs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pch</span><span class="p">)</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loc_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">TensorNetwork</span><span class="p">(</span><span class="n">pchs</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">names</span><span class="p">,</span> <span class="n">envs</span></div>
+
+
+
+<div class="viewcode-block" id="comb_var_tnet">
+<a class="viewcode-back" href="../../../../qmetro.qmtensor.creators.html#qmetro.qmtensor.creators.structures.comb_var_tnet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">comb_var_tnet</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]],</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span> <span class="n">ancilla_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TensorNetwork</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a network of variable tensors representing channels in a</span>
+<span class="sd">    sequence such that part of the output of one channel is a part of the</span>
+<span class="sd">    input of the next one.</span>
+
+<span class="sd">    More precisely, it returns a network of n variable tensor representing</span>
+<span class="sd">    channels called teeth:</span>
+
+<span class="sd">        T_i: L(I_i (x) A_i-1) -&gt; L(O_i (x) A_i),</span>
+
+<span class="sd">    where:</span>
+<span class="sd">    - I_i, O_i and A_i are input, output and ancilla Hilbert spaces,</span>
+<span class="sd">    - (x) is a tensor product,</span>
+<span class="sd">    - L(H) is a set of linear operators on H,</span>
+<span class="sd">    - A_(-1) and A_n are trivial.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    structure : list[tuple[list[Hashable], list[Hashable]]]</span>
+<span class="sd">        List defining the spaces of every tooth. For i-th tooth and</span>
+<span class="sd">        `inp_i, out_i = structure[i]` inp_i (out_i) is a list of input</span>
+<span class="sd">        (output) spaces of the i-th tooth excluding ancilla.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the result. Elements have names in format f&quot;{name}, {i}&quot;</span>
+<span class="sd">        where i is the element number and its input and output ancilla</span>
+<span class="sd">        spaces are (name, &#39;ANCILLA&#39;, i-1) and (name, &#39;ANCILLA&#39;, i)</span>
+<span class="sd">        respectively.</span>
+<span class="sd">    sdict : SpaceDict, optional</span>
+<span class="sd">        Space dictionary, by default DEFAULT_SDICT.</span>
+<span class="sd">    ancilla_dim : int, optional</span>
+<span class="sd">        Dimension of ancilla spaces, by default 1.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Arguments passed to VarTensor constructor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    network : TensorNetwork</span>
+<span class="sd">        Tensor network of a comb.</span>
+<span class="sd">    channel_names : list[str]</span>
+<span class="sd">        List of teeth&#39;s names: [T_0, T_1, ..., T_n-1].</span>
+<span class="sd">    ancillas : list[Hashable]</span>
+<span class="sd">        List of ancilla spaces&#39; names: [A_0, A_1, ..., A_n-2].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+    <span class="n">ancillas</span> <span class="o">=</span> <span class="n">sdict</span><span class="o">.</span><span class="n">arrange_spaces</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ancilla_dim</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;ANCILLA&#39;</span><span class="p">))</span>
+
+    <span class="n">teeth</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">exter_tooth_inp</span><span class="p">,</span> <span class="n">exter_tooth_out</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">structure</span><span class="p">):</span>
+        <span class="n">tooth_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">, tooth: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">tooth_inputs</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">exter_tooth_inp</span><span class="p">)</span>
+        <span class="n">tooth_outputs</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">exter_tooth_out</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tooth_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ancillas</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">tooth_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ancillas</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="n">tooth</span> <span class="o">=</span> <span class="n">VarTensor</span><span class="p">(</span>
+            <span class="n">tooth_inputs</span> <span class="o">+</span> <span class="n">tooth_outputs</span><span class="p">,</span> <span class="n">sdict</span><span class="p">,</span> <span class="n">tooth_name</span><span class="p">,</span> <span class="n">tooth_outputs</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+        <span class="n">teeth</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tooth</span><span class="p">)</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tooth_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">TensorNetwork</span><span class="p">(</span><span class="n">teeth</span><span class="p">,</span> <span class="n">sdict</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">names</span><span class="p">,</span> <span class="n">ancillas</span></div>
+
+
+
+<div class="viewcode-block" id="comb_var">
+<a class="viewcode-back" href="../../../../qmetro.qmtensor.creators.html#qmetro.qmtensor.creators.structures.comb_var">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">comb_var</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Hashable</span><span class="p">]]],</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sdict</span><span class="p">:</span> <span class="n">SpaceDict</span> <span class="o">=</span> <span class="n">DEFAULT_SDICT</span><span class="p">,</span>
+    <span class="n">ancilla_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VarTensor</span> <span class="o">|</span> <span class="n">TensorNetwork</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a comb variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    structure : list[tuple[list[Hashable], list[Hashable]]]</span>
+<span class="sd">        List defining the spaces of every tooth. For i-th tooth and</span>
+<span class="sd">        `inp_i, out_i = structure[i]` inp_i (out_i) is a list of input</span>
+<span class="sd">        (output) spaces of the i-th tooth excluding ancilla.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the result. Elements have names in format f&quot;{name}, {i}&quot;</span>
+<span class="sd">        where i is the element number and its input and output ancilla</span>
+<span class="sd">        spaces are (name, &#39;ANCILLA&#39;, i-1) and (name, &#39;ANCILLA&#39;, i)</span>
+<span class="sd">        respectively.</span>
+<span class="sd">    sdict : SpaceDict, optional</span>
+<span class="sd">        Space dictionary, by default DEFAULT_SDICT.</span>
+<span class="sd">    ancilla_dim : int | None, optional</span>
+<span class="sd">        Dimension of ancilla spaces. When this argument is:</span>
+<span class="sd">        - a number: a tensor network of control operations will be</span>
+<span class="sd">        created,</span>
+<span class="sd">        - None: one comb-like variable tensor will be created,</span>
+<span class="sd">        by default None.</span>
+<span class="sd">    **kwargs :</span>
+<span class="sd">        Arguments passed to VarTensor constructor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    VarTensor | TensorNetwork</span>
+<span class="sd">        Tensor of comb variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ancilla_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">VarTensor</span><span class="p">(</span>
+            <span class="n">flatten</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">sdict</span><span class="o">=</span><span class="n">sdict</span><span class="p">,</span> <span class="n">comb_structure</span><span class="o">=</span><span class="n">structure</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">comb_var_tnet</span><span class="p">(</span>
+        <span class="n">structure</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sdict</span><span class="p">,</span> <span class="n">ancilla_dim</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Piotr Dulian.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
