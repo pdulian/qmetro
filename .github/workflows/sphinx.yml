@@ -17,7 +17,8 @@ jobs:
     - uses: actions/setup-python@v5
     - name: Install Sphinx
       run: |
-        pip install sphinx
+        pip install "sphinx>=6.0.0"
+
     - name: Install rtd
       run: |
         pip install sphinx-rtd-theme
