@@ -43,23 +43,19 @@ def iss_opt(tn: TensorNetwork, name: str | None = None,
     TensorNetwork, bool]:
     """
     Computes quantum Fisher information (QFI) for strategy provided in
-    a form of a tensor network using iterative see-saw algorithm [1]_,
-    [2]_.
+    a form of a tensor network using iterative see-saw algorithm.
 
-    Function takes as an arguemnt an object of QNetwork class then
-    maximizes its QFI optimizing over nodes which are variable Choi
-    matrices (members of VarChoiMatrix) or variable measurements (members
-    of MeasureChoi) called also variable semi-logarithmic derivatives
-    (SLD).
+    Function takes as an arguemnt an object of TensorNetwork class then
+    maximizes its QFI optimizing over nodes which are variable tensors
+    (members of `VarTensor` class).
 
     To make the algorithm more stable it adds an additional artificial
     depolarizing noise [2]_ which decays exponentially with each
     iteration.
     
-
     Parameters
     ----------
-    tn : QNetwork
+    tn : TensorNetwork
         Network that is being optimized.
     name : str | None, optional
         Name of returned network. If None then the name will be
@@ -101,8 +97,8 @@ def iss_opt(tn: TensorNetwork, name: str | None = None,
 
         rho -> p * rho + (1 - p) * Id,
         
-        where p = 1 - a * exp(-l * i) and i is the iteration number, by
-        default (0.5, 0.1).
+        where p = 1 - a * exp(-l * i), i is the iteration number and Id is
+        theidentity matrix, by default (0.5, 0.1).
     contraction_order : list[str] | None, optional
         Names of tensors in the required order of contraction and
         therfore also the order of optimization. If None then the program
@@ -126,14 +122,14 @@ def iss_opt(tn: TensorNetwork, name: str | None = None,
     status : bool
         True if the algorithm converged, False otherwise.
 
-    Bibliography
-    -------
+    References
+    ----------
     .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
-           in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
-           https://doi.org/10.1038/s41467-019-13735-9
+        in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
+        https://doi.org/10.1038/s41467-019-13735-9
     .. [2] S. Kurdziałek et al. Quantum metrology using quantum combs and
-           tensor network formalism, New Journal of Physics (2024).
-           https://doi.org/10.1088/1367-2630/ada8d1
+        tensor network formalism, New Journal of Physics (2024).
+        https://doi.org/10.1088/1367-2630/ada8d1
     """
     config = IssConfig(
         name, max_error_iterations, max_iterations, min_iterations, eps,

@@ -63,7 +63,7 @@ def iss_channel_qfi(channel: ParamChannel, ancilla_dim: int = 1,
     status : bool
         True if the algorithm converged, False otherwise.
 
-    Bibliography
+    References
     ------
     .. [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
            tensor network formalism, New Journal of Physics (2024).
@@ -162,7 +162,7 @@ def iss_parallel_qfi(channel: ParamChannel, number_of_channels: int,
     status : bool
         True if the algorithm converged, False otherwise.
 
-    Bibliography
+    References
     -------
     .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
            in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
@@ -257,7 +257,7 @@ def iss_tnet_parallel_qfi(channel: ParamChannel, number_of_channels: int,
     status : bool
         True if the algorithm converged, False otherwise.
 
-    Bibliography
+    References
     -------
     .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
            in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
@@ -451,7 +451,7 @@ def iss_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
     status : bool
         True if the algorithm converged, False otherwise.
 
-    Bibliography
+    References
     -------
     .. [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
            tensor network formalism, New Journal of Physics (2024).
@@ -652,7 +652,7 @@ def iss_tnet_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
     status : bool
         True if the algorithm converged, False otherwise.
 
-    Bibliography
+    References
     -------
     .. [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
            tensor network formalism, New Journal of Physics (2024).
@@ -922,7 +922,7 @@ def iss_tnet_collisional_qfi(channel: ParamChannel,
     status : bool
         True if the algorithm converged, False otherwise.
     
-    Bibliography
+    References
     -------
     .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
            in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).

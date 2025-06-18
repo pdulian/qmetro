@@ -24,7 +24,8 @@ extensions =  [
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
     'sphinx_simplepdf',
-    'sphinx.ext.mathjax'
+    'sphinx.ext.mathjax',
+    'numpydoc'
 ]
 
 templates_path = ['_templates']

@@ -996,7 +996,7 @@ def minimize_alpha(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
     float
         The minimum value of norm of alpha over all Kraus representations.
 
-    Bibliography
+    References
     --------
     .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M.
        The elusive Heisenberg limit in quantum-enhanced metrology.

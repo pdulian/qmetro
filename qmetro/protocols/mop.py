@@ -37,7 +37,7 @@ def mop_channel_qfi(channel: ParamChannel,
     qfi : float 
         maximal QFI of a single channel.
 
-    Bibliography
+    References
     --------
     .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
            The elusive Heisenberg limit in quantum-enhanced metrology.
@@ -74,7 +74,7 @@ def mop_parallel_qfi(channel: ParamChannel, number_of_channels: int,
     qfi : float
         Qunatum Fisher information.
 
-    Bibliography
+    References
     --------
     .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
            The elusive Heisenberg limit in quantum-enhanced metrology.
@@ -137,7 +137,7 @@ def mop_adaptive_qfi(channel: ParamChannel, number_of_channels: int,
     float
         Quantum Fisher Information optimized over all comb controls.
       
-    Bibliography
+    References
     ------------
     .. [1] Altherr, A. & Yang, Y.(2021). 
        "Quantum Metrology for Non-Markovian Processes"

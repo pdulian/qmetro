@@ -35,7 +35,7 @@ def minimize_beta(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
     float
         The minimum value of norm of beta over all Kraus representations.
         
-    Bibliography
+    References
     --------
     .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
        The elusive Heisenberg limit in quantum-enhanced metrology. 
@@ -101,7 +101,7 @@ def minimize_alpha_given_beta(krauses: list[np.ndarray],
     float
         The minimum value of alpha given the constraint on beta.
         
-    Bibliography
+    References
     --------
     .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
         Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
@@ -196,7 +196,7 @@ def beta_alpha_chart(krauses: list[np.ndarray],
     minimum alpha under that beta constraint is calculated using
     `minimize_alpha_given_beta`.
 
-    Bibliography
+    References
     --------
     .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
         Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
@@ -236,7 +236,7 @@ def par_bound_single_n(channel: ParamChannel, n: int) -> float:
     float
         PAR bounds for QFI for `n` channels probed in parallel.
     
-    Bibliography
+    References
     --------
     .. [1] Kołodyński, J., & Demkowicz-Dobrzański, R. (2013).
        Efficient tools for quantum metrology with uncorrelated noise.
@@ -338,7 +338,7 @@ def par_bounds(channel: ParamChannel, nmax: int,
         Array of PAR bounds for QFI with up to `nmax` channels (starting
         from n=1).
     
-    Bibliography
+    References
     --------
     .. [1] Kołodyński, J., & Demkowicz-Dobrzański, R. (2013).
        Efficient tools for quantum metrology with uncorrelated noise.
@@ -433,15 +433,15 @@ def ad_bounds(channel: ParamChannel,
         Array of AD bounds for QFI with up to `nmax` channels (starting
         from n=1).
     
-    Bibliography
-    --------
+    References
+    ----------
     .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
-           Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-           superpositions against noise in quantum metrology. Physical
-           Review Letters, 131(9), 090801.
-    .. [1] Kurdzialek, S., Albarelli, F., & Demkowicz-Dobrzanski, R.
-           (2024). Universal bounds for quantum metrology in the presence
-           of correlated noise. arXiv:2410.01881.
+        Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
+        superpositions against noise in quantum metrology. Physical
+        Review Letters, 131(9), 090801.
+    .. [2] Kurdzialek, S., Albarelli, F., & Demkowicz-Dobrzanski, R.
+        (2024). Universal bounds for quantum metrology in the presence
+        of correlated noise. arXiv:2410.01881.
     """
     #minimal n for which warning is displayed for 'default' method
     AB_CHART_WARNING_THRESHOLD = 500
@@ -533,7 +533,7 @@ def cs_bounds(channel: ParamChannel,
         Array of CS bounds for QFI with up to `nmax` channels (starting
         from n=1).
     
-    Bibliography
+    References
     --------
     .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
            Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
@@ -597,7 +597,7 @@ def par_ad_cs_bounds(channel: ParamChannel,
             - CS_bounds_list : np.ndarray
                 Array of CS bounds for QFI with up to `nmax` channels
                 (starting from n=1).
-    Bibliography
+    References
     --------
     .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
         Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
@@ -662,9 +662,10 @@ def asym_scaling_qfi(channel: ParamChannel, power: int | None = None
     Notes
     -----
     The QFI for asymptotically large number of channels `n` scales as 
-    `coef` * `n` ^ `power`
+    `coef` * `n` ^ `power`.
     
-    Bibliography
+    References
+    ----------
     .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
            The elusive Heisenberg limit in quantum-enhanced metrology. 
            Nat Commun 3, 1063 (2012). https://doi.org/10.1038/ncomms2067
@@ -763,7 +764,7 @@ def ad_bounds_correlated(channel: ParamChannel, nmax: int,
     bounds : np.ndarray  
         Array of corresponding upper bounds for QFI.  
 
-    Bibliography
+    References
     --------
     .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
         "Universal bounds for quantum metrology in the presence of
@@ -936,7 +937,7 @@ def minimize_beta_correlated(krauses_comb: list[np.ndarray],
       register spaces `R` containing information about correlations.
     - This is an implementation of algorithm from appendix C2 from [1]_.
     
-    Bibliography
+    References
     --------
     .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
         "Universal bounds for quantum metrology in the presence of
@@ -1052,7 +1053,7 @@ def minimize_alpha_beta_0_correlated(krauses_comb: list[np.ndarray],
       register spaces `R` containing information about correlations.
     - This is an implementation of algorithm from appendix C2 from [1]_.
     
-    Bibliography
+    References
     --------
     .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
         "Universal bounds for quantum metrology in the presence of
@@ -1165,8 +1166,8 @@ def ad_asym_bound_correlated(channel: ParamChannel, block_size: int,
     The QFI for asymptotically large number of channels `n` is upper
     bounded by `coef` * `n` ^ `power`
         
-    Bibliography
-    --------
+    References
+    ----------
     .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
         "Universal bounds for quantum metrology in the presence of
         correlated noise", arxiv: 2410.01881

@@ -89,18 +89,17 @@ class ParamChannel():
     **kwargs: Any
         Keyword arguments passed to lindblad and dlindblad
 
-    Bibliography
-    ------
-    [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
-    tensor network formalism
-
-
     Raises
     ------
     ValueError
         Raised when 2 out of 3 possible input modes are mixed or
         when `env_dim` and/or `channel_out_dim` are incompatible with the
         shape of Kraus operators/Choi matrix.
+    
+    References
+    ----------
+    [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
+    tensor network formalism
     """
     name_prefix = 'PARAM CHANNEL '
     counter = 0

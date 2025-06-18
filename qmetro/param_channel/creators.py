@@ -147,7 +147,7 @@ def per_amp_damping(p: float, noise_first: bool = True, **kwargs: Any
     sphere towards the point (1, 0, 0) that is | + > state. More
     precisely, it is a channel with Kraus operators:
 
-        | + >< + | + sqrt(p)| - >< - |, sqrt(1-p)| + >< -|,
+        K0 = | + >< + | + sqrt(p)| - >< - | and K1 = sqrt(1-p)| + >< -|,
 
     multiplied from left or right by the signal:
 
@@ -177,12 +177,12 @@ def per_amp_damping(p: float, noise_first: bool = True, **kwargs: Any
 def par_amp_damping(p: float, noise_first: bool = True, **kwargs
     ) -> ParamChannel:
     """
-    Returnes paramtrised channel of qubit channel where the signal is
+    Returnes parametrised channel of qubit channel where the signal is
     rotating Bloch sphere around the z-axis and noise shrinks the whole
     sphere towards the point (0, 0, 1) that is | 0 > state. More
     precisely, it is a channel with Kraus operators:
 
-        | 0 >< 0 | + sqrt(p)| 1 >< 1 |, sqrt(1-p)| 0 >< 1|,
+        K0 = | 0 >< 0 | + sqrt(p)| 1 >< 1 | and K1 = sqrt(1-p)| 0 >< 1 |,
 
     multiplied from left or right by the signal:
 

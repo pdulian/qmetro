@@ -46,7 +46,7 @@ def multiple_measurements_qfi(single_qfis: list[float],
         of single measurements constituting the optimal strategy for i
         probes.
     
-    Bibliography
+    References
     -------
     .. [1] https://en.wikipedia.org/wiki/Knapsack_problem
     """
