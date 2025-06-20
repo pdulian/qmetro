@@ -29,7 +29,7 @@ QMetro++ requires `ncon <https://github.com/mhauru/ncon>`_ package for tensor ne
 
 .. code-block:: console
    
-   pip install --user 
+   pip install --user ncon
 
 Then to install QMetro++:
 
