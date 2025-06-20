@@ -5,7 +5,8 @@
 
 Welcome to QMetro++ documentation!
 ====================================
-QMetro++ is a Python package containing a set of tools dedicated to
+`QMetro++ <https://github.com/pdulian/qmetro>`_ is a Python package
+containing a set of tools dedicated to
 identifying optimal estimation protocols that maximize quantum Fisher
 information (QFI). Optimization can be performed for an arbitrary
 arrangement of input states, parameter encoding channels, noise
@@ -22,11 +23,25 @@ interface which enables defining strategies at various levels of detail.
 
 See detiled description in `our article <>`_.
 
+Installation
+=============
+QMetro++ requires `ncon <https://github.com/mhauru/ncon>`_ package for tensor network contraction. To install ncon:
+
+.. code-block:: console
+   
+   pip install --user 
+
+Then to install QMetro++:
+
+.. code-block:: console
+
+   pip install --user qmetropp
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   install
    qmetro
 
 Indices and tables
