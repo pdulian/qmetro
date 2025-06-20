@@ -35,7 +35,7 @@ Then to install QMetro++:
 
 .. code-block:: console
 
-   pip install qmetropp
+   pip install qmetro
 
 
 .. toctree::
