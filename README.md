@@ -14,7 +14,7 @@ serve as benchmarks of optimality of the outcomes of numerical
 optimization. All functionalities are wrapped up in a user-friendly
 interface which enables defining strategies at various levels of detail.
 
-See detiled description in [our article]() and [documentation](https://qmetro.readthedocs.io/en/latest/).
+See detailed description in [our article]() and [documentation](https://qmetro.readthedocs.io/en/latest/).
 
 ## Installation
 QMetro++ requires [ncon](https://github.com/mhauru/ncon) package for tensor network contraction. To install ncon:
