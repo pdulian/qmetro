@@ -21,7 +21,7 @@ serve as benchmarks of optimality of the outcomes of numerical
 optimization. All functionalities are wrapped up in a user-friendly
 interface which enables defining strategies at various levels of detail.
 
-See detailed description in `our article <>`_.
+See detailed description in `our article <https://arxiv.org/abs/2506.16524>`_.
 
 Installation
 =============

@@ -8,7 +8,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='qmetro',
-    version='1.0.2',
+    version='1.0.3',
     packages=find_packages(),
     python_requires='>=3.10',
     install_requires=[
