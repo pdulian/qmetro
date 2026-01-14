@@ -1,4 +1,15 @@
 class EnvDimsError(ValueError):
+    """
+    Raised when channel's environment input and output dimensions
+    are not the same.
+
+    Parameters
+    ----------
+    env_inp_dim : int
+        Environment input dimension.
+    env_out_dim : int
+        Environment output dimension.
+    """    
     def __init__(self, env_inp_dim: int, env_out_dim: int, *args,
         **kwargs):
         self.env_inp_dim = env_inp_dim
@@ -9,6 +20,17 @@ class EnvDimsError(ValueError):
 
 
 class UnitalDimsError(ValueError):
+    """
+    Raised when comb's teeth are unital but channel input and output
+    dimensions are not the same.
+
+    Parameters
+    ----------
+    inp_dims : list[int]
+        Input dimensions.
+    out_dims : list[int]
+        Output dimensions.
+    """
     def __init__(self, inp_dims: list[int], out_dims: list[int], *args,
         **kwargs):
         self.inp_dims = inp_dims

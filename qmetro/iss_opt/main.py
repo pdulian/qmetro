@@ -42,34 +42,36 @@ def iss_opt(tn: TensorNetwork, name: str | None = None,
     adaptive_art_noise: bool = True) -> tuple[float, list[list[float]],
     TensorNetwork, bool]:
     """
-    Computes quantum Fisher information (QFI) for strategy provided in
-    a form of a tensor network using iterative see-saw algorithm.
+    Computes the quantum Fisher information (QFI) for a strategy provided
+    in the form of a tensor network using the iterative see-saw (ISS)
+    algorithm :cite:`dulian2025,Chabuda2020,kurdzialek2024`.
 
     Function takes as an arguemnt an object of TensorNetwork class then
     maximizes its QFI optimizing over nodes which are variable tensors
-    (members of `VarTensor` class).
+    (members of
+    :class:`VarTensor <qmetro.qmtensor.classes.tensors.VarTensor>` class).
 
-    To make the algorithm more stable it adds an additional artificial
-    depolarizing noise [2]_ which decays exponentially with each
-    iteration.
+    To make the algorithm more stable it adds an artificial depolarizing
+    noise :cite:`kurdzialek2024` whose strength decays exponentially
+    with each iteration.
     
     Parameters
     ----------
     tn : TensorNetwork
-        Network that is being optimized.
+        Network that will be optimized.
     name : str | None, optional
-        Name of returned network. If None then the name will be
-        tn.name + ' optimized', by default None.
+        Name of the returned network. If None then the name will be
+        `tn.name` + ' optimized', by default None.
     max_error_iterations : int, optional
         Maximal number of times the function will restart
-        computation after error occurence, by default 10.
+        computation after an error occurence, by default 10.
     max_iterations : int, optional
         Maximal number of algorithm iterations, by default 500.
     min_iterations : int, optional
         Minimal number of algorithm iterations, by default 10.
     eps : float, optional
-        The algorithm stops when QFI in 5 consecutive iterations changes
-        by less then eps, by default 1e-4.
+        The algorithm stops when the QFI in 5 consecutive iterations
+        changes relatively by less than eps, by default 1e-4.
     init_tn : QNetwork | None, optional
         Network from which initial values of variables will be taken.
         If None then initial values will be random, by default None
@@ -80,35 +82,36 @@ def iss_opt(tn: TensorNetwork, name: str | None = None,
         - 'partial': print only iteration summary.
         By default False.
     var_iterations : int, optional
-        Number of iterations done solely over non measure variables (CPTP
-        and MPS) before proceeding to measure (SLD) variables, by default
-        1.
+        Number of iterations done solely over non measurement variables
+        (CPTP, MPS and combs) before proceeding to the measurement
+        (pre-SLD) variables, by default 1.
     sld_iterations : int, optional
-        Number of iterations done solely over variable SLDs before
-        proceeding to other variables, by default 1.
+        Number of iterations done solely over measurement (pre-SLD)
+        variables before proceeding to other variables, by default 1.
     art_noise_spaces : list[list[Hashable]] | None, optional
-        Spaces on which artificial noise
-        will act. For a list: [[s00, s01, ...], [s10, s11, ...], ...]
-        noise will be applied to the whole list of spaces [s00, s01, ...]
+        Spaces on which the artificial noise
+        will act. For a list: `[[s00, s01, ...], [s10, s11, ...], ...]`
+        noise will be applied to the whole list of spaces `[s00, s01, ...]`
         combined. If set to None then only spaces of ParamTensor elements
         will be noisy (separately), by default None.
     art_noise_params : tuple[float, float], optional
-        For a tupple (a, l) noise will take a form:
+        For a tupple `(a, l)` noise will take a form of:
 
         rho -> p * rho + (1 - p) * Id,
         
         where p = 1 - a * exp(-l * i), i is the iteration number and Id is
         theidentity matrix, by default (0.5, 0.1).
+        See also :ref:`the documentation <depolarization>`.
     contraction_order : list[str] | None, optional
         Names of tensors in the required order of contraction and
         therfore also the order of optimization. If None then the program
-        will use BFS starting from a smallest variable without input
-        spaces, by default None.
+        will use BFS starting from the variable with smallest dimension
+        and without input spaces, by default None.
     adaptive_art_noise : bool, optional
-        If True then when in a given iteration the increase of QFI coming
-        from variable optimization is smaller then that coming from the
-        artificial noise decay the l parameter of the noise will be
-        doubled, by default True.
+        If True then the program will track the increase of QFI coming
+        from variable optimization and from the artificial noise decay.
+        If the latter is bigger the artificial noise decay parameter, `l`,
+        will be doubled increasing the decay speed. By default True.
 
     Returns
     -------
@@ -121,15 +124,6 @@ def iss_opt(tn: TensorNetwork, name: str | None = None,
         values.
     status : bool
         True if the algorithm converged, False otherwise.
-
-    References
-    ----------
-    .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
-        in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
-        https://doi.org/10.1038/s41467-019-13735-9
-    .. [2] S. Kurdziałek et al. Quantum metrology using quantum combs and
-        tensor network formalism, New Journal of Physics (2024).
-        https://doi.org/10.1088/1367-2630/ada8d1
     """
     config = IssConfig(
         name, max_error_iterations, max_iterations, min_iterations, eps,
@@ -238,7 +232,7 @@ def _connected_iss(tn: TensorNetwork, _tn: TensorNetwork,
     component: list[str], art_noise: ArtNoise, config: IssConfig
     ) -> list[float]:
     """
-    Performs ISS algorithm on a connected component of _qn defined by
+    Performs ISS algorithm on a connected component of `_tn` defined by
     names provided in component argument.
     """
     names = _get_contr_order(tn, _tn, component, art_noise, config)

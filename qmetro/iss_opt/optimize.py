@@ -175,8 +175,9 @@ def _sld_optimize_sdp(m0: ConstTensor, m1: ConstTensor
         m1_par.value = m1_arr / norm_factor
         try:
             qfi = prob.solve() * norm_factor
+            L.value.T # Just to check if L was computed
             break
-        except cp.SolverError as e:
+        except (cp.SolverError, AttributeError) as e:
             if n < NORM_TRIES_MAX:
                 warn(parameter_norm_message(n))
             else:
@@ -319,7 +320,8 @@ def _mps_optimize(m: ConstTensor, norm_tensor: ConstTensor, eps: float
     len_bond = len(m.bond_spaces)
     len_all = len_phys + len_bond
 
-    f_mat = _get_f_mat(m) # It is F operator from [1] multiplied by -1
+    # It is the F operator from Chabuda2020 multiplied by -1.
+    f_mat = _get_f_mat(m)
 
     norm_tensor.reorder(bond_spaces)
     proto_n = norm_tensor.array.copy()

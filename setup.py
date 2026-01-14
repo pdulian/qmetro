@@ -8,7 +8,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='qmetro',
-    version='1.0.3',
+    version='1.1.0',
     packages=find_packages(),
     python_requires='>=3.10',
     install_requires=[
@@ -17,6 +17,7 @@ setup(
         'cvxpy>=1.6.0',
         'matplotlib>=3.10.0',
         'networkx>=3.3',
+        'ncon',
     ],
     long_description=description,
     long_description_content_type='text/markdown',

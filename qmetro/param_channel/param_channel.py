@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections.abc import Hashable, Iterable
-from typing import Callable, Any
 from itertools import repeat
 from warnings import warn
 
@@ -11,7 +10,7 @@ from ..qmtensor import ParamTensor, DEFAULT_SDICT, SpaceDict, ConstTensor
 from ..qtools import (
     choi_from_krauses, dchoi_from_krauses, ket_bra, hc,
     krauses_from_choi, dkrauses_from_choi, krauses_kron,
-    krauses_sequential, choi_dchoi_from_lindblad
+    krauses_sequential
 )
 
 
@@ -21,14 +20,14 @@ class ParamChannel():
     """
     Class representing parametrized channels which can additionally act
     on an "environment" space that is used to construct correlations
-    between multiple channels [1]_.
+    between multiple channels :cite:`dulian2025,kurdzialek2024`.
     
     More precisely it is representing a CPTP map parametrized by t:
 
         F_t: L(E_i (x) I) -> L(E_o (x) O),
     
     where L(X) is the space of linear operators on Hilbert space X and
-    - (x) is tensor product of spaces,
+    - (x) is a tensor product of spaces,
     - I and O are spaces of input and output respectively,
     - E_i and E_o are input and output environment spaces respectively.
     
@@ -37,12 +36,9 @@ class ParamChannel():
     'input space'. Anlogously, E_o (x) O is called 'total output space' 
     and O is called 'output space'.
 
-    Objects can be initialized in three different ways:
+    Objects can be initialized in two different ways:
     1) By providing kraus operators and their derivatives
-    2) By providing choi matrix and its derivative
-    3) By providing lindbladian function, its derivative over parameter,
-    time of evolution and dimension of Hilber space. In this mode, choi
-    and dchoi are calculated firstly.
+    2) By providing choi matrix and its derivative.
     
     Class constructor takes keyword-only arguments.
 
@@ -60,18 +56,6 @@ class ParamChannel():
     dchoi : np.ndarray | None, optional
         Derivative of Choi matrix, by default None. It is assumed to be a
         matrix on E_o (x) O (x) E_i (x) I.
-    lindblad: Callable[[np.ndarray], np.ndarray], optional
-        Lindbladian: function, that for input density matrix returns its 
-        derivative over time; lindblad(rho) = drho/dt. It is assumed that
-        Lindbladian is constant over time. rho is matrix on E_i (x) I,
-        drho/dt is matrix on E_o (x) O, dim(rho) = dim(drho/dt)
-    dlindblad: Callable[[np.ndarray], np.ndarray], optional
-        Function that for input density matrix returns derivative of
-        Lindbladian over some parameter. For example 
-        dlindblad(rho) =  0.5j * (rho@sigma_z - sigma_z@rho) when parameter
-        is angular velocity around z, sigma_z is a z Pauli matrix.
-    time: float, optional
-        Time of evolution with a given lindbladian
     env_dim : int | tuple[int,int], optional
         Environment dimension, that is the value of dimE_i = dimE_o or a
         tuple (E_i, E_o). By default 1.
@@ -80,26 +64,49 @@ class ParamChannel():
     input_dim : int | None, optional
         Dimenion of input space I or for I = I_0 (x) ... (x) I_n-1 it
         should be a list [dimI_0, ..., dimI_n-1]. If None then this
-        dimension is derived from other arguments. Must be provided in
-        lindbladian input mode.
+        dimension is derived from other arguments, by default None.
     output_dim : int | None, optional
         Dimenion of output space O or for O = O_0 (x) ... (x) O_n-1 it
         should be a list [dimO_0, ..., dimO_n-1]. If None then this
-        dimension is derived from other arguments.
-    **kwargs: Any
-        Keyword arguments passed to lindblad and dlindblad
-
+        dimension is derived from other arguments, by default None.
+    
+    Attributes
+    ----------
+    kraus_like_inp : bool
+        Whether the object was initialized using Kraus operators.
+    choi_like_inp : bool
+        Whether the object was initialized using Choi matrix.
+    input_dim : int
+        Dimension of input space I.
+    output_dim : int
+        Dimension of output space O.
+    input_dims : list[int]
+        Dimensions of factors of input space I.
+    output_dims : list[int]
+        Dimensions of factors of output space O.
+    env_inp_dim : int
+        Dimension of environment input space E_i.
+    env_out_dim : int
+        Dimension of environment output space E_o.
+    id : int
+        Unique identifier of the object.
+    sdict : SpaceDict
+        Space dictionary of the object.
+    input_spaces : list[Hashable]
+        Names of factors of input space I.
+    output_spaces : list[Hashable]
+        Names of factors of output space O.
+    env_inp : Hashable
+        Name of environment input space E_i.
+    env_out : Hashable
+        Name of environment output space E_o.
+    
     Raises
     ------
     ValueError
-        Raised when 2 out of 3 possible input modes are mixed or
+        Raised when 2 possible input modes are mixed or
         when `env_dim` and/or `channel_out_dim` are incompatible with the
         shape of Kraus operators/Choi matrix.
-    
-    References
-    ----------
-    [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
-    tensor network formalism
     """
     name_prefix = 'PARAM CHANNEL '
     counter = 0
@@ -109,13 +116,10 @@ class ParamChannel():
         choi: np.ndarray | None = None,
         dkrauses: list[np.ndarray] | None = None,
         dchoi: np.ndarray | None = None,
-        lindblad: Callable[[np.ndarray], np.ndarray] | None = None,
-        dlindblad: Callable[[np.ndarray], np.ndarray] | None = None,
-        time: float | None = None,
         env_dim: int | tuple[int, int] = 1,
         sdict: SpaceDict = DEFAULT_SDICT,
         input_dim: int | list[int] | None = None,
-        output_dim: int | list[int] | None = None, **kwargs: Any):
+        output_dim: int | list[int] | None = None):
 
         kraus_like_inp = krauses is not None or dkrauses is not None
         if krauses is not None and dkrauses is None:
@@ -125,37 +129,20 @@ class ParamChannel():
         if choi is not None and dchoi is None:
             dchoi = np.zeros_like(choi)
         
-        lindblad_like_inp = (
-            (lindblad is not None or dlindblad is not None)
-            and time is not None and input_dim is not None
-        )
-        if lindblad is not None and dlindblad is None:
-            def _dlindblad(rho):
-                return np.zeros_like(rho)
-            dlindblad = _dlindblad
-        
         self.kraus_like_inp = kraus_like_inp
-        #when lindblad is given, choi will be computed
-        self.choi_like_inp = choi_like_inp or lindblad_like_inp
-
-        not_enough_inputs = (not kraus_like_inp and not choi_like_inp
-                            and not lindblad_like_inp)
-        
-        too_many_inputs = ((kraus_like_inp and choi_like_inp) or
-                           (kraus_like_inp and lindblad_like_inp) or
-                           (choi_like_inp and lindblad_like_inp))
+        self.choi_like_inp = choi_like_inp
+        not_enough_inputs = not (kraus_like_inp or choi_like_inp)
+        too_many_inputs = kraus_like_inp and choi_like_inp
 
         if not_enough_inputs:
             raise ValueError(
-                'Either krauses, dkrauses or choi, dchoi or lindblad, '\
-                'dlindblad, time, input_dim sets of arguments must be '\
-                'provided.'
+                'Either krauses, dkrauses or choi, dchoi sets of ' \
+                'arguments must be provided.'
             )
         if too_many_inputs:
             raise ValueError(
-                'Only one of krauses, dkrauses or choi, dchoi or '\
-                'lindblad, dlindblad, time, input_dim sets of arguments '\
-                'must be provided.'
+                'Only one of krauses, dkrauses or choi, dchoi sets of ' \
+                'arguments must be provided.'
             )
 
         if isinstance(env_dim, Iterable):
@@ -214,22 +201,6 @@ class ParamChannel():
                     'is derived from Kruas operators.'
                 )
         else:
-            #choi or lindblad like input
-            #for lindbladian input, first calculate choi, dchoi
-            #then proceed like for choi input
-            if lindblad_like_inp:
-                if isinstance(input_dim, Iterable):
-                    raise ValueError(
-                        'In lindblad input mode input_dim cannot be a '
-                        'list, it must be an integer.'
-                    )
-                #TODO: maybe allow input_dim to be a list
-
-                choi, dchoi = choi_dchoi_from_lindblad(
-                    lindblad, dlindblad, input_dim * self.env_inp_dim,
-                    time, **kwargs
-                )
-            
             choi_dim = len(choi)
             env_inp_out_dim = self.env_inp_dim * self.env_out_dim
 
@@ -357,7 +328,7 @@ class ParamChannel():
         Returns
         -------
         bool
-            `len(self.input_spaces) == 1`
+            Value of ``len(self.input_spaces) == 1``.
         """
         return len(self.input_spaces) == 1
 
@@ -370,7 +341,7 @@ class ParamChannel():
         Returns
         -------
         bool
-            `self.env_inp_dim == 1`
+            Value of ``self.env_inp_dim == 1``.
         """
         return self.env_inp_dim == 1
 
@@ -383,7 +354,7 @@ class ParamChannel():
         Returns
         -------
         bool
-            `self.env_out_dim == 1`
+            Value of ``self.env_out_dim == 1``.
         """
         return self.env_out_dim == 1
 
@@ -396,7 +367,7 @@ class ParamChannel():
         Returns
         -------
         bool
-            `self.trivial_env_inp and self.trivial_env_out`.
+            Value of ``self.trivial_env_inp and self.trivial_env_out``.
         """
         return self.trivial_env_inp and self.trivial_env_out
 
@@ -404,10 +375,12 @@ class ParamChannel():
     @property
     def total_input_dim(self) -> int:
         """
+        Dimension of the total input space, dim E_i (x) I.
+
         Returns
         -------
         int
-            Dimension of the total input space, dim E_i (x) I.
+            Dimension.
         """
         return self.input_dim * self.env_inp_dim
 
@@ -415,10 +388,12 @@ class ParamChannel():
     @property
     def total_output_dim(self) -> int:
         """
+        Dimension of the total output space, dim E_o (x) O.
+
         Returns
         -------
         int
-            Dimension of the total output space, dim E_o (x) O.
+            Dimension.
         """
         return self.output_dim * self.env_out_dim
 
@@ -426,10 +401,12 @@ class ParamChannel():
     @property
     def total_input_dims(self) -> list[int]:
         """
+        Dimensions of spaces in the total input space, [dimE_i, I_0, ...].
+        
         Returns
         -------
-        int
-            Dimensions of the total input space, [dimE_i, I_0, ...].
+        list[int]
+            List of dimensions.
         """
         return [self.env_inp_dim] + self.input_dims
 
@@ -437,10 +414,12 @@ class ParamChannel():
     @property
     def total_output_dims(self) -> list[int]:
         """
+        Dimensions of spaces in the total output space, [dimE_o, O_0, ...].
+
         Returns
         -------
-        int
-            Dimensions of the total output space, [dimE_o, O_0, ...].
+        list[int]
+            List of dimensions.
         """
         return [self.env_out_dim] + self.output_dims
 
@@ -448,10 +427,12 @@ class ParamChannel():
     @property
     def total_input_spaces(self) -> list[Hashable]:
         """
+        Names of factors in the total input space, [E_i, I_0, ...].
+
         Returns
         -------
-        int
-            Names of factors in the total input space, [E_i, I_0, ...].
+        list[Hashable]
+            List of names.
         """
         return [self.env_inp] + self.input_spaces
 
@@ -459,10 +440,12 @@ class ParamChannel():
     @property
     def total_output_spaces(self) -> list[Hashable]:
         """
+        Names of factors in the total output space, [E_o, O_0, ...].
+
         Returns
         -------
-        int
-            Names of factors in the total output space, [E_o, O_0, ...].
+        list[Hashable]
+            List of names.
         """
         return [self.env_out] + self.output_spaces
     
@@ -470,11 +453,13 @@ class ParamChannel():
     @property
     def is_comb(self) -> bool:
         """
+        Whether the object represent a comb (True) or a single channel
+        (False).
+
         Returns
         -------
         bool
-            Whether the object represent a comb (True) or a single
-            channel (False).
+            True if the object is a comb.
         """
         return len(self.input_spaces) > 1
     
@@ -484,25 +469,24 @@ class ParamChannel():
         env_inp: Hashable | None = None, env_out: Hashable | None = None,
         sdict: SpaceDict | None = None, **kwargs) -> ParamTensor:
         """
-        Returns parametrized tensor of self's Choi matrix. Names of its
-        inidices are in attributes of self:
-        - input_spaces, output_spaces,
-        - env_inp_space, env_out_space,
-        - total_input_spaces which is equal to [env_inp_space,
-        *input_spaces],
-        - total_output_spaces which is equal to [env_out_space,
-        *output_spaces].
+        Returns parametrized tensor of `self`'s Choi matrix. Names of its
+        inidices are in the attributes of `self`:
 
-        or can be provided in arguments.
+        - ``input_spaces``, ``output_spaces``,
+        - ``env_inp_space``, ``env_out_space``,
+        - ``total_input_spaces`` which is equal to ``[env_inp_space, *input_spaces]``,
+        - ``total_output_spaces`` which is equal to ``[env_out_space, *output_spaces]``.
+
+        or can be provided as keyword arguments to this method.
 
         Parameters
         ----------
         input_spaces : list[Hashable] | None, optional
             Tensor's input spaces names. They should be in the causal order
-            (as in self.input dims), by default None.
+            (as in ``self.input_dims``), by default None.
         output_spaces : list[Hashable] | None, optional
             Tensor's output spaces names. They should be in the causal
-            order (as in self.output dims), by default None.
+            order (as in ``self.output_dims``), by default None.
         env_inp : Hashable | None, optional
             Name of the environment input space. If the environment input
             is trivial this space will be omitted. By default None.
@@ -510,12 +494,12 @@ class ParamChannel():
             Name of the environment output space. If the environment output
             is trivial this space will be omitted. By default None.
         sdict : SpaceDict, optional
-            Tensor's space dicitionary, by default `self.sdict`.
+            Tensor's space dictionary, by default ``self.sdict``.
 
         Returns
         -------
         ParamTensor
-            Parametrized tensor of channel's Choi matrix.
+            Parametrized tensor of the Choi matrix.
         """
         provided_spaces = any([
             input_spaces, output_spaces, env_inp, env_out, sdict
@@ -1172,15 +1156,18 @@ class ParamChannel():
         """
         Returns the sequential composition of self and others.
 
-        The returned channel represents a map 
-        rho -> self( others[0]( others[1] ( ... (others[-1]( rho ))...),
-        which is a result of concatenation of output of others[i] with
-        input of other[i-1] and output of others[0] with input of self.
+        In the simplest case of two channels `x.compose(y)` will return
+        a channel representing a map `rho -> x(y(rho))`.
+
+        For multiple channels i.e. `x.compose(y0, y1, ..., yn)` it will
+        return a channel representing a map
+        `rho -> x(y0(y1( ... (yn(rho)) ... )`, which is a concatenation
+        (pipeline) of channels x, y0, y1, ..., yn.
 
         Parameters
         ----------
         others[0...*]: ParamChannel
-            Channels to be composed with self
+            Channels to be composed with self.
         simplify_krauses: bool, optional
             If True, then output is always computed based on chois to
             ensure the minimal possible Kraus represantation of output.

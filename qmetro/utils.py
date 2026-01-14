@@ -96,12 +96,14 @@ def schmidt(state: np.ndarray, dims: list[int], eps: float = 1e-5
     """
     Gives Schmidt decomposition of the state.
 
-    It returns tuple of lists (a, s) such that:
-
-        | state > = sum_i a_i |s[i][0]> (x) ... (x) |s[i][r - 1]>,
+    It returns tuple of lists `(a, s)` such that `a[i]` is the amplitude
+    of the i-th superpostion term which is a tensor product of states
+    `s[i][0], ..., s[i][len(dims) - 1]`. In other words, first index of `s`
+    corresponds to the term in the superposition, while the second index
+    corresponds to the subsystem.
     
-    where r is the number of spaces in the decompostion and
-    <s[i][k]|s[j][k]> = int(i == k).
+    The states are normalized and orthogonal in the sense
+    `np.inner(s[i][k].conjugate(), s[j][k]) = int(i == j)`.
 
     Parameters
     ----------                                                 
@@ -189,6 +191,20 @@ def in_sorted(a, x):
 
 
 def enhance_hermiticity(m: np.ndarray) -> tuple[np.ndarray, float]:
+    """
+    Enhances hermiticity of a matrix by replacing it with its hermitian
+    part: (m + hc(m)) / 2.
+
+    Parameters
+    ----------
+    m : np.ndarray
+        Matrix to be enhanced.
+
+    Returns
+    -------
+    tuple[np.ndarray, float]
+        Hermitian matrix and the maximum difference from the original.
+    """    
     herm_m = (m + m.conjugate().T) / 2
     delta = np.max(np.abs(m - herm_m))
     return herm_m, delta

@@ -17,15 +17,15 @@ def multiple_measurements_qfi(single_qfis: list[float],
     If QFI at some point starts to scale with number of probes sublinearly
     for example:
     
-        QFI1 = 1, QFI2 = 1.9, QFI3 = 2.7, ...
+        QFI1 = 1, QFI2 = 2.1, QFI3 = 2.7, ...
     
     then it is advantegous to use probes in multiple measurements. In this
     case:
     
-        QFI1_opt = QFI1, QFI2_opt = 2 * QFI1, QFI3_opt = 3 * QFI, ...
+        QFI1_opt = QFI1, QFI2_opt = QFI2, QFI3_opt = 3 * QFI1, ...
     
-    In general, it requires solving a special case of a knapsack problem
-    [1]_.
+    In general, it requires solving a special case of 
+    `a knapsack problem <https://en.wikipedia.org/wiki/Knapsack_problem>`_ .
 
     Parameters
     ----------
@@ -46,9 +46,6 @@ def multiple_measurements_qfi(single_qfis: list[float],
         of single measurements constituting the optimal strategy for i
         probes.
     
-    References
-    -------
-    .. [1] https://en.wikipedia.org/wiki/Knapsack_problem
     """
     if ns is None:
         max_n = len(single_qfis)
@@ -80,7 +77,7 @@ def multiple_measurements_qfi(single_qfis: list[float],
     return qfis, strategies
 
 
-def state_qfi(state: tuple[np.ndarray, np.ndarray]
+def state_qfi(state: tuple[np.ndarray, np.ndarray], **kwargs
     ) -> tuple[float, np.ndarray]:
     """
     Calculates quantum Fisher information of a quantum state represented
@@ -94,6 +91,9 @@ def state_qfi(state: tuple[np.ndarray, np.ndarray]
                 Density matrix
             2) drho: np.ndarray
                 Derivative of density matrix over estimated parameter
+    **kwargs
+        Additional keyword arguments passed to the CVXPY ``solve`` method
+        (see `docs <https://www.cvxpy.org/tutorial/solvers/index.html>`_).
 
     Returns
     -------
@@ -103,7 +103,7 @@ def state_qfi(state: tuple[np.ndarray, np.ndarray]
         Symmetric logarithmic derivative (SLD) matrix
     """
     rho, drho = state
-    return get_sld(rho, drho, return_qfi=True)
+    return get_sld(rho, drho, return_qfi=True, **kwargs)
 
 
 def state_cfi(state: tuple[np.ndarray, np.ndarray], povm: list[np.ndarray],

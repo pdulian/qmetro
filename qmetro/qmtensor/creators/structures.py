@@ -21,14 +21,19 @@ def mps_var_tnet(output_spaces: list[Hashable], name: str,
     Creates a variable density matrix of a pure matrix product state
     (MPS). This density matrix is a matrix product operaotr (MPO).
 
-    The result is a network of variable tensors: T_0, T_1, ..., T_n-1.
-    The i-th tensor has inidices called: O_i, B_i-1, B_i where
-    - O_i represent Hilbert spaces on which the state acts (output
+    The result is a network of variable tensors: 
+    
+        ``T_0``, ``T_1``, ..., ``T_n-1``.
+    
+    The i-th tensor has inidices called: ``O_i``, ``B_i-1``, ``B_i`` where
+    - ``O_i`` represent Hilbert spaces on which the state acts (output
     spaces),
-    - B_i are bond spaces,
-    - B_-1 and B_n-1 do not exist.
+    - ``B_i`` are bond spaces,
+    - ``B_-1`` and ``B_n-1`` do not exist.
     Then the contraction of all tensors by the bond spaces with the same
-    name yields a density matrix of a pure state on O_0 (x) ... (x) O_n-1.
+    name yields a density matrix of a pure state on
+    
+        ``O_0 (x) ... (x) O_n-1``.
 
     Bond spaces are defined for MPO elements and thus their dimension is
     the square of the MPS bond dimension.
@@ -36,10 +41,10 @@ def mps_var_tnet(output_spaces: list[Hashable], name: str,
     Parameters
     ----------
     output_spaces : list[Hashable]
-        Spaces of the state, i-th element is the space O_i.
+        Spaces of the state, i-th element is the space ``O_i``.
     name : str
         Name of the result. Tensors will have names in format
-        f"{name}, {i}" and connecting spaces B_i = (name, 'BOND', i).
+        f"{name}, {i}" and connecting spaces ``B_i`` = (name, 'BOND', i).
     sdict : SpaceDict, optional
         Space dictionary of the result, by default DEFAULT_SDICT.
     mps_bond_dim : int, optional
@@ -92,10 +97,10 @@ def input_state_var(output_spaces: list[Hashable], name: str,
     output_spaces : list[Hashable]
         Spaces of the state.
     name : str
-        Name of the result. If mps_bond_dim is provided it will use the
-        naming convention of mps_var_tnet.
+        Name of the result. If `mps_bond_dim` is provided it will use the
+        naming convention of :func:`mps_var_tnet`.
     sdict : SpaceDict, optional
-        Space dictionary of the result, by default DEFAULT_SDICT.
+        Space dictionary of the result, by default `DEFAULT_SDICT`.
     mps_bond_dim : int, optional
         Dimension of the MPS connecting (bond) spaces. If None then it will
         return the state on the whole product Hilbert space (as if bond
@@ -109,7 +114,7 @@ def input_state_var(output_spaces: list[Hashable], name: str,
         Tesnor representing the density matrix.
 
     Notes
-    -------
+    -----
     In case one needs names of the MPS elements and bond spaces use
     `mps_var_tnet`.
     """
@@ -140,18 +145,19 @@ def mpo_measure_var_tnet(input_spaces: list[Hashable], name: str,
     """
     Creates a variable measurement (SLD) matrix product operator (MPO).
 
-    The result is a network of variable tensors: T_0, T_1, ..., T_n-1.
-    The i-th tensor has inidices called: I_i, B_i-1, B_i where
-    - I_i represent Hilbert spaces which are measured (input spaces),
-    - B_i are bond spaces,
-    - B_-1 and B_n-1 do not exist.
+    The result is a network of variable tensors: ``T_0``, ``T_1``, ...,
+    ``T_n-1``.
+    The i-th tensor has inidices called: ``I_i``, ``B_i-1``, ``B_i`` where
+    - ``I_i`` represent Hilbert spaces which are measured (input spaces),
+    - ``B_i`` are bond spaces,
+    - ``B_-1`` and ``B_n-1`` do not exist.
     Then the contraction of all tensors by the bond spaces with the same
-    name yields a variable of a measurement on I_0 (x) ... (x) I_n-1.
+    name yields a variable of a measurement on ``I_0 (x) ... (x) I_n-1``.
 
     Parameters
     ----------
     input_spaces : list[Hashable]
-        Measured spaces, i-th element is the space I_i.
+        Measured spaces, i-th element is the space ``I_i``.
     name : str
         Name of the result. Elements will have names in format
         f"{name}, {i}" and connecting spaces in (name, 'BOND', i),
@@ -225,7 +231,7 @@ def measure_var(input_spaces: list[Hashable], name: str,
         Tensor representing the measurement.
 
     Notes
-    -------
+    -----
     In case one needs names of the MPS elements and bond spaces use
     `mpo_measure_var_tnet`.
     """
@@ -274,8 +280,8 @@ def cmarkov_param_tnet(krauses: list[np.ndarray],
         spaces of the ith channel.
     transition_mat : np.ndarray
         Matrix M of conditional probabilities. The coefficient M[i, j] is
-        equal to P(i|j) - the conditional probability of ith Kraus operator
-        given the occurence of jth operator in the previous step.
+        equal to ``P(i|j)`` - the conditional probability of ith Kraus
+        operator given the occurence of jth operator in the previous step.
     name : str
         Name of the result. Elements have names in format f"{name}, {i}"
         where i is the element number and its input and output correlation
@@ -353,20 +359,22 @@ def comb_var_tnet(structure: list[tuple[list[Hashable], list[Hashable]]],
     More precisely, it returns a network of n variable tensor representing
     channels called teeth:
 
-        T_i: L(I_i (x) A_i-1) -> L(O_i (x) A_i),
+        ``T_i: L(I_i (x) A_i-1) -> L(O_i (x) A_i)``,
 
     where:
-    - I_i, O_i and A_i are input, output and ancilla Hilbert spaces,
-    - (x) is a tensor product,
-    - L(H) is a set of linear operators on H,
-    - A_(-1) and A_n are trivial.
+    - ``I_i``, ``O_i`` and ``A_i`` are input, output and ancilla Hilbert
+    spaces,
+    - ``(x)`` is a tensor product,
+    - ``L(H)`` is a set of linear operators on H,
+    - ``A_(-1)`` and ``A_n`` are trivial.
 
     Parameters
     ----------
     structure : list[tuple[list[Hashable], list[Hashable]]]
         List defining the spaces of every tooth. For i-th tooth and
-        `inp_i, out_i = structure[i]` inp_i (out_i) is a list of input
-        (output) spaces of the i-th tooth excluding ancilla.
+        ``inp_i, out_i = structure[i]`` where ``inp_i`` (``out_i``)
+        is a list of input (output) spaces of the i-th tooth excluding
+        the ancilla.
     name : str
         Name of the result. Elements have names in format f"{name}, {i}"
         where i is the element number and its input and output ancilla
@@ -384,9 +392,9 @@ def comb_var_tnet(structure: list[tuple[list[Hashable], list[Hashable]]],
     network : TensorNetwork
         Tensor network of a comb.
     channel_names : list[str]
-        List of teeth's names: [T_0, T_1, ..., T_n-1].
+        List of teeth's names: ``[T_0, T_1, ..., T_n-1]``.
     ancillas : list[Hashable]
-        List of ancilla spaces' names: [A_0, A_1, ..., A_n-2].
+        List of ancilla spaces' names: ``[A_0, A_1, ..., A_n-2]``.
     """
     n = len(structure)
     ancillas = sdict.arrange_spaces(n - 1, ancilla_dim, (name, 'ANCILLA'))
@@ -425,8 +433,9 @@ def comb_var(structure: list[tuple[list[Hashable], list[Hashable]]],
     ----------
     structure : list[tuple[list[Hashable], list[Hashable]]]
         List defining the spaces of every tooth. For i-th tooth and
-        `inp_i, out_i = structure[i]` inp_i (out_i) is a list of input
-        (output) spaces of the i-th tooth excluding ancilla.
+        ``inp_i, out_i = structure[i]`` where ``inp_i`` (``out_i``)
+        is a list of input (output) spaces of the i-th tooth excluding
+        the ancilla.
     name : str
         Name of the result. Elements have names in format f"{name}, {i}"
         where i is the element number and its input and output ancilla

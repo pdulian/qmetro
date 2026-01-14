@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import product
 from typing import Any
 
 import numpy as np
@@ -20,18 +21,12 @@ def par_dephasing(p: float, noise_first: bool = True,
     eps: float | None = None, rot_like: bool = False,
     c: float | None = None, **kwargs: Any) -> ParamChannel:
     """
-    Returnes paramtrised channel of qubit channel where the signal is
-    rotating Bloch sphere around the z-axis and noise shrinks the xy-plane
-    preserving the z-axis. More precisely, it is a channel with Kraus
-    operators:
-
-        sqrt(p) * Id, sqrt(1-p) * sigma_z,
-
-    multiplied from left or right by signal:
-
-        U(phi) = exp(-1j/2 * phi * sigma_z),
-
-    where phi = 0 is a measured parameter defining the derivative.
+    Returnes paramtrised channel of a qubit channel
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise shrinks the xy-plane preserving the z-axis.
+    
+    See more details in :ref:`the documentation <par-deph>`.
 
     Parameters
     ----------
@@ -48,16 +43,17 @@ def par_dephasing(p: float, noise_first: bool = True,
     rot_like : bool, optional
         If True then Kraus operators of noise are:
 
-            U+ = exp(-1j/2 * eps * sigma_z) / sqrt(2),
-            U- = exp(+1j/2 * eps * sigma_z) / sqrt(2),
+            K+ = exp(-1j/2 * eps * sigma_z) / sqrt(2),
+            K- = exp(+1j/2 * eps * sigma_z) / sqrt(2),
 
         where p = cos(eps/2)**2, by default False.
     c : float | None, optional
         Correlation parameter from the interval [-1, 1]. When set it will
         put rot_like=True and create a channel with environment space such
-        that U+ and U- will be correlated. They are fully correlated for
-        c=1, no correlated for c=0 and anticorrelated for c=-1. If None
-        creates ParamChannel without enviornment space. By default None.
+        that K+ and K- will be correlated (see also :func:`cmarkov_channel`
+        ). They are fully correlated for c=1, no correlated for c=0 and
+        anticorrelated for c=-1. If None creates ParamChannel without
+        environment space. By default None.
     **kwargs : dict, optional
         Arguments that will be passed to ParamChannel constructor.
 
@@ -84,42 +80,26 @@ def par_dephasing(p: float, noise_first: bool = True,
         [(1+c)/2, (1-c)/2],
         [(1-c)/2, (1+c)/2]
     ])
-    d_env= len(krauses)
-    id_env = np.identity(d_env)
-    corr_ks = []
-    corr_dks = []
-    for i in range(d_env):
-        ei = id_env[i]
-        for j in range(d_env):
-            ej = id_env[j]
-            corr = np.sqrt(trans[i, j]) * ket_bra(ej, ei)
 
-            corr_k = np.kron(corr, krauses[i]) * np.sqrt(2)
-            corr_ks.append(corr_k)
-            
-            corr_dk = np.kron(corr, dkrauses[i]) * np.sqrt(2)
-            corr_dks.append(corr_dk)
+    Kp, Km = krauses
+    dKp, dKm = dkrauses
     
-    return ParamChannel(
-        krauses=corr_ks, dkrauses=corr_dks, env_dim=2, **kwargs
-    )
+    sqrt2 = np.sqrt(2)
+    rot_p = ParamChannel(krauses=[sqrt2*Kp], dkrauses=[sqrt2*dKp])
+    rot_m = ParamChannel(krauses=[sqrt2*Km], dkrauses=[sqrt2*dKm])
+
+    return cmarkov_channel([rot_p, rot_m], trans)
 
 
 def per_dephasing(p: float, noise_first: bool = True, **kwargs
     ) -> ParamChannel:
     """
-    Returnes paramtrised channel of qubit channel where the signal is
-    rotating Bloch sphere around the z-axis and noise shrinks the yz-plane
-    preserving the x-axis. More precisely, it is a channel with Kraus
-    operators:
+    Returnes paramtrised channel of a qubit channel
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise shrinks the yz-plane preserving the x-axis.
 
-        sqrt(p) * Id, sqrt(1-p) * sigma_x,
-
-    multiplied from left or right by signal:
-
-        U(phi) = exp(-1j/2 * phi * sigma_z),
-
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <per-deph>`.
 
     Parameters
     ----------
@@ -142,18 +122,12 @@ def per_dephasing(p: float, noise_first: bool = True, **kwargs
 def per_amp_damping(p: float, noise_first: bool = True, **kwargs: Any
     ) -> ParamChannel:
     """
-    Returnes paramtrised channel of qubit channel where the signal is
-    rotating Bloch sphere around the z-axis and noise shrinks the whole
-    sphere towards the point (1, 0, 0) that is | + > state. More
-    precisely, it is a channel with Kraus operators:
+    Returnes paramtrised channel of a qubit channel
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise models decay from +1 to -1 eigenstate of Pauli x-matrix.
 
-        K0 = | + >< + | + sqrt(p)| - >< - | and K1 = sqrt(1-p)| + >< -|,
-
-    multiplied from left or right by the signal:
-
-        U(phi) = exp(-1j/2 * phi * sigma_z),
-
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <per-amp>`.
 
     Parameters
     ----------
@@ -177,18 +151,12 @@ def per_amp_damping(p: float, noise_first: bool = True, **kwargs: Any
 def par_amp_damping(p: float, noise_first: bool = True, **kwargs
     ) -> ParamChannel:
     """
-    Returnes parametrised channel of qubit channel where the signal is
-    rotating Bloch sphere around the z-axis and noise shrinks the whole
-    sphere towards the point (0, 0, 1) that is | 0 > state. More
-    precisely, it is a channel with Kraus operators:
+    Returnes parametrised channel of a qubit channel
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise models decay from -1 to +1 eigenstate of Pauli z-matrix.
 
-        K0 = | 0 >< 0 | + sqrt(p)| 1 >< 1 | and K1 = sqrt(1-p)| 0 >< 1 |,
-
-    multiplied from left or right by the signal:
-
-        U(phi) = exp(-1j/2 * phi * sigma_z),
-
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <par-amp>`.
 
     Parameters
     ----------
@@ -212,22 +180,12 @@ def par_amp_damping(p: float, noise_first: bool = True, **kwargs
 def depolarization(p: float, noise_first: bool = True,
     eta: float | None = None, **kwargs: Any) -> ParamChannel:
     """
-    Returnes paramtrised channel of qubit channel where signal is
-    rotating Bloch sphere around the z-axis and noise shrinks the whole
-     sphere towards the point (0, 0, 0), that is the maximally entangled
-    state. More precisely, it is a channel:
+    Returnes paramtrised channel of a qubit channel
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise shrinks uniformly the whole Bloch ball.
 
-        rho -> p * rho + (1-p)/2 * Id,
-
-    which Kraus operators are:
-
-        sqrt[(3p+2)/5] * Id, sqrt[(1-p)/5] * sigma_i for i=1, 2, 3,
-
-    multiplied from left or right by the signal:
-
-        U(phi) = exp(-1j/2 * phi * sigma_z),
-
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <depolarization>`.
 
     Parameters
     ----------
@@ -237,16 +195,11 @@ def depolarization(p: float, noise_first: bool = True,
         Whether noise is before signal, by default True.
     eta : float | None, optional
         Alternative method of determining the noise strength that when
-        provided is used instead of p (p argument is ignored). In this
-        parametrisation eta is the scale by which Bloch sphere gets
-        shrunken. The Kruas operators of the noise become:
-
-            sqrt(1+3eta)/2 * Id, sqrt(1-eta)/2 * sigma_i for i=1, 2, 3.
-
-        The relation between eta and p is given by eta = (4p+1)/5.
+        provided is used instead of p (either p or eta argument has to be
+        provided). In this parametrisation eta is the factor by which Bloch
+        sphere gets shrunken.
     **kwargs : dict, optional
         Arguments that will be passed to ParamChannel constructor.
-
 
     Returns
     -------
@@ -262,21 +215,96 @@ def depolarization(p: float, noise_first: bool = True,
     return ParamChannel(krauses=krauses, dkrauses=dkrauses, **kwargs)
 
 
-def corr_dephasing(p: float, c: float, angle: float = 0,
-    noise_first: bool = True, c_in: float | None = None) -> tuple[
-    list[np.ndarray], list[np.ndarray], np.ndarray, np.ndarray]:
+def cmarkov_channel(channels: list[ParamChannel], trans_mat: np.ndarray
+    ) -> ParamChannel:
     """
-    Computes:
+    Creates a channel encoding classical Markovian correlations between
+    a list of channels with transition probabilities given by the
+    transition matrix.
+
+    It is a channel G such that `G.link_env(G, ..., G)` is a comb
+    representing a Markov chain of channels from the input list.
+
+    Formally, for a list of channels F0, F1, ..., Fn-1 of the form
+    L(H) -> L(K) and a transition matrix T, the function constructs
+    a channel G: L(H x E) -> L(K x E), where E is a newly created
+    environment space of dimension n. When the environment is in
+    the i-th state G applies Fi and changes the state of the environment
+    to j with probability T[i, j]. In this way, the state of
+    the environment encodes which channel from the list will be applied
+    next.
+
+    Parameters
+    ----------
+    channels : list[ParamChannel]
+        List of channels F0, ..., Fn-1to be connected in a chain. All must
+        have the same input and output space dimensions, be single (not
+        comb) and have trivial environments.
+    trans_mat : np.ndarray
+        Transition matrix defining the transition probabilities, that is
+        T[i, j] is the probability of transiting from channel i to channel
+        j.
     
-    - Kraus operators,
-    - derivative of Kraus operators,
-    - Choi matrix,
-    - derivative of Choi matrix
+    Returns
+    -------
+    channel : ParamChannel
+        Channel G encoding the Markovian correlations.
+    """
+    n = len(channels)
+    d_in = channels[0].input_dim
+    d_out = channels[0].output_dim
+
+    for ch in channels:
+        if ch.input_dim != d_in or ch.output_dim != d_out:
+            raise ValueError(
+                'All channels must have the same input and output '
+                'dimensions.'
+            )
+        if not ch.trivial_env:
+            raise ValueError(
+                'All channels must have trivial environment spaces.'
+            )
+        if ch.is_comb:
+            raise ValueError(
+                'All channels must be single channels, not combs.'
+            )
     
-    of two qubit channel representing rotation of Bloch sphere around
-    z-axis accompanied by dephasing noise. The 1st qubit on which
-    the channel acts is the register, which allows to model binary
-    correlations between subsequent dephasing angles. 
+    # Krauses of channel G.
+    As = []
+    dAs = []
+    id = np.identity(n)
+    for i, j in product(range(n), repeat=2):
+        prob = trans_mat[i, j]
+        if prob == 0:
+            continue
+        
+        ei = id[i]
+        ej = id[j]
+        
+        for k, dk in zip(*channels[i].dkrauses()):
+            A = np.sqrt(prob) * np.kron(ket_bra(ej, ei), k)
+            dA = np.sqrt(prob) * np.kron(ket_bra(ej, ei), dk)
+            As.append(A)
+            dAs.append(dA)
+
+    return ParamChannel(krauses=As, dkrauses=dAs, env_dim=n)
+
+
+def corr_dephasing(p: float, c: float, angle: float = 0,
+    noise_first: bool = True, c_in: float | None = None) -> ParamChannel:
+    """
+    Returns rotation-like parametrised dephasing channel with correlation
+    c between subsequent U+ and U- Kraus operators.
+
+    Creates a channel G encoding classical Markov correlation with
+    transition matrix:
+        
+        T = [ (1+c)/2 , (1-c)/2 ]
+            [ (1-c)/2 , (1+c)/2 ]
+    
+    The information about correlations is stored in an environment space
+    such that G.link_env(G, ..., G) is a comb representing a Markov
+    chain of dephasing channels with correlation c.
 
     Parameters
     ----------
@@ -299,17 +327,27 @@ def corr_dephasing(p: float, c: float, angle: float = 0,
 
     Returns
     -------
-    krauses : list[np.ndarray]
-        List of Kraus operators.
-    dkrauses : list[np.ndarray]
-        List of derivatives of Kraus operators.
-    choi: np.ndarray
-        Choi matrix.
-    dchoi: np.ndarray
-        Derivative of Choi matrix.
+    channel : ParamChannel
+        Correlated dephasing channel.
     
     """
-    # TODO
-    raise NotImplementedError(
-        'This function is not implemented yet.'
-    )
+    raise NotImplementedError()
+    # TODO: Make it into general dephasing function.
+    if angle or c_in is not None:
+        raise NotImplementedError(
+            'Currently only angle=0 and c_in=None are supported.'
+        )
+
+    T = np.array([
+        [1+c, 1-c],
+        [1-c, 1+c]
+    ]) / 2
+
+    deph = par_dephasing(p, rot_like=True, noise_first=noise_first)
+    (Up, Um), (dUp, dUm) = deph.dkrauses()
+
+    sqrt2 = np.sqrt(2)
+    rot_p = ParamChannel(krauses=[sqrt2*Up], dkrauses=[sqrt2*dUp])
+    rot_m = ParamChannel(krauses=[sqrt2*Um], dkrauses=[sqrt2*dUm])
+
+    return cmarkov_channel([rot_p, rot_m], T)

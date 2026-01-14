@@ -16,11 +16,12 @@ from .warnings import ENV_FOR_SINGLE, COMB_FOR_SINGLE
 
 
 def mop_channel_qfi(channel: ParamChannel,
-    env_inp_state: np.ndarray | None = None
+    env_inp_state: np.ndarray | None = None, **kwargs
     ) -> float:
     """
-    Computes quantum Fisher information for single parametrized channel
-    using minimization over purifications (MOP) method [1]_.
+    Computes quantum Fisher information for a single parametrized channel
+    using the minimization over purifications (MOP) method
+    :cite:`dulian2025,Demkowicz2012,kurdzialek2024`.
 
     Parameters
     ----------
@@ -31,54 +32,48 @@ def mop_channel_qfi(channel: ParamChannel,
     env_inp_state : np.ndarray | None, optional
         Density matrix of the initial state of the environment. If None
         then it becomes a maximally mixed state.
+    **kwargs
+        Additional keyword arguments passed to the CVXPY ``solve`` method
+        (see `docs <https://www.cvxpy.org/tutorial/solvers/index.html>`_).
 
     Returns
     -------
     qfi : float 
         maximal QFI of a single channel.
-
-    References
-    --------
-    .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
-           The elusive Heisenberg limit in quantum-enhanced metrology.
-           Nat Commun 3, 1063 (2012). https://doi.org/10.1038/ncomms2067
     """
     if not channel.trivial_env:
         warn(ENV_FOR_SINGLE)
         channel = channel.trace_env(env_inp_state)
     if channel.is_comb:
         warn(COMB_FOR_SINGLE)
-    return 4 * minimize_alpha(*channel.dkrauses())
+    return 4 * minimize_alpha(*channel.dkrauses(), **kwargs)
 
 
 def mop_parallel_qfi(channel: ParamChannel, number_of_channels: int,
-    env_inp_state: np.ndarray | None = None) -> float:
+    env_inp_state: np.ndarray | None = None, **kwargs) -> float:
     """
     Computes quantum Fisher information in a scenario with parallel
-    channels.
+    channels :cite:`dulian2025,Demkowicz2012`.
 
     Parameters
     ----------
     channel : ParamChannel
         Channel to compute quantum Fisher information for.
     number_of_channels : int, optional
-        Number of channel uses. In case `channel` is a comb created from
-        `m` single channels the total number of channels will be equal to
-        `number_of_channels * m`.
+        Number of channel uses. In case ``channel`` is a comb created from
+        ``m`` single channels the total number of channels will be equal to
+        ``number_of_channels * m``.
     env_inp_state : np.ndarray | None, optional
         Density matrix of the initial state of the environment. If None
         then it becomes a maximally mixed state.
+    **kwargs
+        Additional keyword arguments passed to the CVXPY ``solve`` method
+        (see `docs <https://www.cvxpy.org/tutorial/solvers/index.html>`_).
 
     Returns
     -------
     qfi : float
         Qunatum Fisher information.
-
-    References
-    --------
-    .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
-           The elusive Heisenberg limit in quantum-enhanced metrology.
-           Nat Commun 3, 1063 (2012). https://doi.org/10.1038/ncomms2067
     """
     if (channel.env_inp_dim != channel.env_out_dim
         and number_of_channels > 1):
@@ -88,24 +83,26 @@ def mop_parallel_qfi(channel: ParamChannel, number_of_channels: int,
         filterwarnings('ignore', message=COMB_FOR_SINGLE)
         comb = channel.markov_series(number_of_channels)
         comb = comb.trace_env(env_inp_state)
-        return mop_channel_qfi(comb)
+        return mop_channel_qfi(comb, **kwargs)
 
 
 def mop_adaptive_qfi(channel: ParamChannel, number_of_channels: int,
     env_control: bool | tuple[bool, bool] = False,
     env_inp_state: np.ndarray | None = None, input_pure_qfi: float = 0,
-    print_solver_messages = False) -> float:
+    **kwargs) -> float:
     """
     Computes the comb QFI using minimization over purifications method
-    (MOP).
+    (MOP) :cite:`dulian2025,kurdzialek2024,Altherr2021`.
 
     This function computes the QFI of comb consisting of
-    `number_of_channels` channels connected with their environments.
-    Notice that `channel` may be a single channel or a comb created by the
-    user. The resulting QFI is achievable when arbitrary adaptive control
-    can be applied in each step. Control may act between channels, but
-    also between different teeth of  `channel`, when `channel` represents
-    a comb.
+    ``number_of_channels`` parameter-encoding channels connected with their
+    environments.
+    
+    Notice that ``channel`` may be a single channel or a comb created by
+    the user. The resulting QFI is achievable when arbitrary adaptive
+    control can be applied in each step. Control may act between channels,
+    but also between different teeth of  ``channel``, when ``channel``
+    represents a comb.
 
     Parameters
     ----------
@@ -128,21 +125,14 @@ def mop_adaptive_qfi(channel: ParamChannel, number_of_channels: int,
         This state can be treated as a first tooth of estimated comb.
         By default, there is no such a state (input_pure_qfi = 0).
         Non-zero values are typically used to calculate bounds.
-    print_solver_messages : bool, optional
-        Whether to print solver messages to console during computation, by
-        default False.
+    **kwargs
+        Additional keyword arguments passed to the CVXPY ``solve`` method
+        (see `docs <https://www.cvxpy.org/tutorial/solvers/index.html>`_).
 
     Returns
     -------
     float
         Quantum Fisher Information optimized over all comb controls.
-      
-    References
-    ------------
-    .. [1] Altherr, A. & Yang, Y.(2021). 
-       "Quantum Metrology for Non-Markovian Processes"
-       Physical Review Letters, 127, 060501
-       https://doi.org/10.1103/PhysRevLett.127.060501
     """
     env_inp_dim = channel.env_inp_dim
     env_out_dim = channel.env_out_dim
@@ -254,6 +244,6 @@ def mop_adaptive_qfi(channel: ParamChannel, number_of_channels: int,
     # Define the objective and solve
     obj = cp.Minimize(trace_var)
     prob = cp.Problem(obj, constraints)
-    sol = prob.solve(verbose=print_solver_messages)
+    sol = prob.solve(**kwargs)
 
     return 4 * sol

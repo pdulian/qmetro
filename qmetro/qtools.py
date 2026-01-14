@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Callable, Any
+from typing import Callable, Mapping, Any
 import inspect
 
 from itertools import product
@@ -18,43 +18,6 @@ from .utils import matrix_exp_derivative
 
 def ket_bra(x: np.ndarray, y: np.ndarray) -> np.ndarray:
     return np.kron(x.reshape(len(x), 1), y.conjugate())
-
-
-def cmarkov_krauses(krauses: list[np.ndarray], transition_mat: np.ndarray
-    ) -> list[np.ndarray]:
-    """
-    Computes Kraus operators of channels with classical Markov
-    correlations.
-
-    Parameters
-    ----------
-    krauses : list[np.ndarray]
-        Kraus operators or their derivatives.
-    transition_mat : np.ndarray
-        Matrix `M` of conditional probabilities. The coefficient `M[i, j]`
-        is equal to P(j|i) - the conditional probability of ith Kraus
-        operator given the occurence of jth operator in the previous step.
-
-    Returns
-    -------
-    list[np.ndarray]
-        List of new operators with correlations.
-    """
-    raise NotImplementedError
-    # This works only for unitary krauses
-    transition_mat = np.array(transition_mat)
-    d_env= len(krauses)
-    id_env = np.identity(d_env)
-    corr_ks = []
-    for i in range(d_env):
-        ei = id_env[i]
-        for j in range(d_env):
-            ej = id_env[j]
-            corr = np.sqrt(transition_mat[i, j]) * ket_bra(ej, ei)
-            corr_k = np.kron(corr, krauses[i])
-            corr_ks.append(corr_k)
-
-    return corr_ks
 
 
 def choi_from_krauses(krauses: list[np.ndarray]) -> np.ndarray:
@@ -119,7 +82,7 @@ def krauses_from_choi(choi: np.ndarray, dims: tuple[int, int],
     Parameters
     ----------
     choi: np.ndarray
-        Choi-Jamiolkowski matrix of a channel : Lin(`dout` x `din`)
+        Choi-Jamiolkowski matrix of a channel : Lin(`dout` (x) `din`)
     dims: tuple[int, int]
         Tuple [`din`, `dout`],`din`, `dout` are input/output dimensions
         of a channel
@@ -137,9 +100,9 @@ def krauses_from_choi(choi: np.ndarray, dims: tuple[int, int],
         or if return_eigensystem=True a tuple (Kraus operators,
         eigenvalues, eigenvectors) where i-th eigenvector is
         eigenvectors[:, i].
-        
+    
     Notes
-    -------
+    -----
         Normalization convention: Trace of the Choi matrix is equal to the
         dimension of the input space.
     """
@@ -183,7 +146,7 @@ def hc(x: np.ndarray | cp.Expression) -> np.ndarray | cp.Expression:
     -------
     np.ndarray | cp.Expression
         `x.conjugate().T`
-    """    
+    """
     return x.conjugate().T
 
 
@@ -218,7 +181,7 @@ def dkrauses_from_choi(choi: np.ndarray, dchoi: np.ndarray,
         `dout` x `din`).
     
     Notes
-    -------
+    -----
         Normalization convention: choi trace is dimension of input space
     """
     D = len(choi)
@@ -240,38 +203,60 @@ def dkrauses_from_choi(choi: np.ndarray, dchoi: np.ndarray,
     return krauses, dkrauses
 
 
-def choi_dchoi_from_lindblad(lindblad: Callable[[np.ndarray], np.ndarray],
-    dlindblad:Callable[[np.ndarray], np.ndarray], dim: int, t: float,
-    **kwargs: Any) -> tuple[np.ndarray, np.ndarray]:
+def choi_from_lindblad(
+    lindblad: Callable[..., np.ndarray]
+        | tuple[np.ndarray, list[np.ndarray]],
+    dlindblad: Callable[..., np.ndarray]
+        | tuple[np.ndarray, list[np.ndarray]]
+        | np.ndarray,
+    t: float, dim: int | None = None,
+    lind_kwargs: Mapping[str, Any] | None = None,
+    ) -> tuple[np.ndarray, np.ndarray]:
     """
-    Calculates choi and its derivative of a channel simulating evolution
-    with a given lindbladian for time t.
+    Calculates Choi matrix and its derivative of a channel simulating
+    evolution with a given Lindbladian for time t.
 
-    This function computes choi its derivative over estimated parameter
-    for continuous time evolution with a fixed lindbladian for some given
-    time. Computations are done fully algebraically, without numerical
-    integration
+    Lindbladian - L is a function, that for input density matrix returns
+    its derivative over time e.g. lindblad(rho) = drho/dt. For example for
+    rotation of Bloch ball around z-axis with angular velocity omega:
+        
+        L(rho) =  0.5j * omega * (rho sigma_z - sigma_z rho),
+    
+    where sigma_z is a Z Pauli matrix. If omega is an estimated parameter,
+    then the derivative of Lindbladian over this parameter - dL is a
+    function:
+
+        dL(rho) =  0.5j * (rho sigma_z - sigma_z rho).
+
+    ``choi_from_lindblad`` computes Choi matrix and its derivative over
+    the estimated parameter for continuous time evolution with a
+    Lindbladian constant in time. Computations are done algebraically,
+    without numerical integration.
 
     Parameters
     ----------
-    lindblad: Callable[[np.ndarray], np.ndarray]
-        Lindbladian: function, that for input density matrix returns its 
-        derivative over time; lindblad(rho) = drho/dt. It is assumed that
-        Lindbladian is constant over time. For example
-        dlindblad(rho, omega) =  0.5j * omega* (rho@sigma_z - sigma_z@rho)
-        for rotation around z with angular velocity omega, sigma_z is a 
-        Z Pauli matrix.
-    dlindblad: Callable[[np.ndarray], np.ndarray]
-        Derivative of Lindbladian over estimated parameter. More precisely,
-        dlindblad(rho) returns double derivative d^2 rho / (dt * dx), x
-        is an estimated parameter. For example 
-        dlindblad(rho) =  0.5j * (rho@sigma_z - sigma_z@rho) when parameter
-        is angular velocity around z.
+    lindblad: Callable[..., np.ndarray] \
+        | tuple[np.ndarray, list[np.ndarray]]
+        Argument representing Lindbladian. It can be:
+        - A function L(rho, a0, a1, ...) returning derivative drho/dt
+        for input state rho and additional keyword arguments a0, a1,...
+        In this case additional parameter `dim` representing dimension of
+        rho has to be provided.
+        - A tuple (H, Ls) where H is a Hamiltonian divided by hbar
+        (np.ndarray) and Ls are jump operators (list[np.ndarray]).
+    dlindblad: Callable[[np.ndarray], np.ndarray] \
+        | tuple[np.ndarray, list[np.ndarray]] \
+        | np.ndarray
+        Argument representing Lindbladian's derivative. It can be:
+        - A function dL(rho, b0, b1, ...) returning derivative of drho/dt
+        over paramter.
+        - A tuple (dH, dLs) where dH and dLs are derivatives of H and Ls.
+        - An array dH and dLs are assumed to be zero.
     dim: int
         Dimension of Hilbert space on which Lindbladian acts
     t: float
         Evolution time
-    **kwargs: Any
+    lind_kwargs: Mapping[str, Any] | None = None
         Additional keyword arguments passed to lindblad and dlindblad
 
     Returns
@@ -282,18 +267,76 @@ def choi_dchoi_from_lindblad(lindblad: Callable[[np.ndarray], np.ndarray],
         Derivative of Choi matrix over some parameter
 
     """
-    #processing kwargs: accepted by lindblad or dlindblad?
+    if callable(lindblad):
+        if dim is None:
+            raise ValueError(
+                'When lindblad is a function, dim argument has to be '\
+                'provided.'
+            )
+        if not callable(dlindblad):
+            raise ValueError(
+                'When lindblad is a function, dlindblad has to be a '\
+                'function as well.'
+            )
+        return _choi_from_lindblad_fun(
+            lindblad, dlindblad, t, dim, lind_kwargs
+        )
+    
+    H, Ls = lindblad
+    if isinstance(dlindblad, tuple):
+        dH, dLs = dlindblad
+    elif isinstance(dlindblad, np.ndarray):
+        dH = dlindblad
+        dLs = [np.zeros_like(L) for L in Ls]
+    else:
+        raise ValueError(
+            'When lindblad is a tuple, dlindblad has to be a tuple ' \
+            'or a numpy array.'
+        )
+    
+    def lindblad_func(rho: np.ndarray) -> np.ndarray:
+        commutator = -1j * (H @ rho - rho @ H)
+        dissipator = sum(
+            L @ rho @ hc(L) - 0.5 * (hc(L) @ L @ rho + rho @ hc(L) @ L)
+            for L in Ls
+        )
+        return commutator + dissipator
+    
+    def dlindblad_func(rho: np.ndarray) -> np.ndarray:
+        dcommutator = -1j * (dH @ rho - rho @ dH)
+        ddissipator = sum(
+            dL @ rho @ hc(L) + L @ rho @ hc(dL)
+            - 0.5 * (
+                hc(dL) @ L @ rho + hc(L) @ dL @ rho
+                + rho @ hc(dL) @ L + rho @ hc(L) @ dL
+            )
+            for L, dL in zip(Ls, dLs)
+        )
+        return dcommutator + ddissipator
+    
+    return _choi_from_lindblad_fun(
+        lindblad_func, dlindblad_func, t, H.shape[0]
+    )
+
+
+def _choi_from_lindblad_fun(
+    lindblad: Callable[..., np.ndarray],
+    dlindblad: Callable[..., np.ndarray],
+    t: float, dim: int, lind_kwargs: Mapping[str, Any] | None = None,
+    ) -> tuple[np.ndarray, np.ndarray]:
+    # processing kwargs: accepted by lindblad or dlindblad
     sig_lindblad = inspect.signature(lindblad)
     sig_dlindblad = inspect.signature(dlindblad)
 
+    lind_kwargs = lind_kwargs or {}
     lindblad_kwargs = {
         k: v
-        for k, v in kwargs.items()
+        for k, v in lind_kwargs.items()
         if k in sig_lindblad.parameters
     }
     dlindblad_kwargs = {
         k: v
-        for k, v in kwargs.items()
+        for k, v in lind_kwargs.items()
         if k in sig_dlindblad.parameters
     }
 
@@ -332,21 +375,11 @@ def depolarization_krauses(p: float | None = None,
     ) -> tuple[list[np.ndarray], list[np.ndarray]]:
     """
     Computes Kraus operators and their derivatives for a qubit channel
-    where the signal is rotating Bloch sphere around the z-axis and noise
-    shrinks the whole sphere towards the point (0, 0, 0), that is
-    the maximally entangled state. More precisely, it is a channel:
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise shrinks uniformly the whole Bloch ball.
 
-        rho -> p * rho + (1-p)/2 * Id,
-
-    which Kraus operators are:
-
-        sqrt[(3p+2)/5] * Id, sqrt[(1-p)/5] * sigma_i for i=1, 2, 3,
-
-    multiplied from left or right by the signal:
-     
-        U(phi) = exp(-1j/2 * phi * sigma_z), 
-        
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <depolarization>`.
 
     Parameters
     ----------
@@ -357,12 +390,8 @@ def depolarization_krauses(p: float | None = None,
     eta : float | None, optional
         Alternative method of determining the noise strength that when
         provided is used instead of p (either p or eta argument has to be
-        provided). In this parametrisation eta is the scale by which Bloch
-        sphere gets shrunken. The Kruas operators of the noise become:
-
-            sqrt(1+3eta)/2 * Id, sqrt(1-eta)/2 * sigma_i for i=1, 2, 3.
-
-        The relation between eta and p is given by eta = (4p+1)/5.
+        provided). In this parametrisation eta is the factor by which Bloch
+        sphere gets shrunken.
 
     Returns
     -------
@@ -401,17 +430,11 @@ def par_dephasing_krauses(p: float | None = None, noise_first: bool = True,
     ) -> tuple[list[np.ndarray], list[np.ndarray]]:
     """
     Computes Kraus operators and their derivatives for a qubit channel
-    where the signal is rotating Bloch sphere around the z-axis and noise
-    shrinks the xy-plane preserving the z-axis. More precisely, it is
-    a channel with Kraus operators:
-
-        sqrt(p) * Id, sqrt(1-p) * sigma_z,
-
-    multiplied from left or right by signal:
-     
-        U(phi) = exp(-1j/2 * phi * sigma_z), 
-        
-    where phi = 0 is a measured parameter defining the derivative.
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise shrinks the xy-plane preserving the z-axis.
+    
+    See more details in :ref:`the documentation <par-deph>`.
 
     Parameters
     ----------
@@ -431,7 +454,7 @@ def par_dephasing_krauses(p: float | None = None, noise_first: bool = True,
             exp(-1j/2 * eps * sigma_z) / sqrt(2),
             exp(+1j/2 * eps * sigma_z) / sqrt(2),
 
-        where p = cos(eps/2)**2.
+        where p = cos(eps/2)**2. By default False.
 
     Returns
     -------
@@ -473,17 +496,11 @@ def per_dephasing_krauses(p: float, noise_first: bool = True) -> tuple[
     list[np.ndarray], list[np.ndarray]]:
     """
     Computes Kraus operators and their derivatives for a qubit channel
-    where the signal is rotating Bloch sphere around the z-axis and noise
-    shrinks the yz-plane preserving the x-axis. More precisely, it is
-    a channel with Kraus operators:
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise shrinks the yz-plane preserving the x-axis.
 
-        sqrt(p) * Id, sqrt(1-p) * sigma_x,
-
-    multiplied from left or right by signal:
-     
-        U(phi) = exp(-1j/2 * phi * sigma_z), 
-        
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <per-deph>`.
 
     Parameters
     ----------
@@ -513,17 +530,11 @@ def par_amp_damping_krauses(p: float, noise_first: bool = True) -> tuple[
     list[np.ndarray], list[np.ndarray]]:
     """
     Computes Kraus operators and their derivatives for a qubit channel
-    where the signal is rotating Bloch sphere around the z-axis and noise
-    shrinks the whole sphere towards the point (0, 0, 1) that is | 0 >
-    state. More precisely, it is a channel with Kraus operators:
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise models decay from -1 to +1 eigenstate of Pauli z-matrix.
 
-        | 0 >< 0 | + sqrt(p)| 1 >< 1 |, sqrt(1-p)| 0 >< 1|,
-
-    multiplied from left or right by the signal:
-     
-        U(phi) = exp(-1j/2 * phi * sigma_z), 
-        
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <par-amp>`.
 
     Parameters
     ----------
@@ -531,7 +542,7 @@ def par_amp_damping_krauses(p: float, noise_first: bool = True) -> tuple[
         Noise parametrization. For p = 1 there is no noise for p = 0
         the noise is maximal.
     noise_first : bool, optional
-        Whether noise is before signal, by default True.
+        Whether the noise is before the signal, by default True.
 
     Returns
     -------
@@ -557,17 +568,11 @@ def per_amp_damping_krauses(p: float, noise_first: bool = True) -> tuple[
     list[np.ndarray], list[np.ndarray]]:
     """
     Computes Kraus operators and their derivatives for a qubit channel
-    where the signal is rotating Bloch sphere around the z-axis and noise
-    shrinks the whole sphere towards the point (1, 0, 0) that is | + >
-    state. More precisely, it is a channel with Kraus operators:
+    where:
+    - the signal is rotating Bloch sphere around the z-axis,
+    - noise models decay from +1 to -1 eigenstate of Pauli x-matrix.
 
-        | + >< + | + sqrt(p)| - >< - |, sqrt(1-p)| + >< -|,
-
-    multiplied from left or right by the signal:
-     
-        U(phi) = exp(-1j/2 * phi * sigma_z), 
-        
-    where phi = 0 is a measured parameter defining the derivative.
+    See more details in :ref:`the documentation <per-amp>`.
 
     Parameters
     ----------
@@ -973,11 +978,11 @@ def krauses_sequential(
     return krauses12, dkrauses12
 
 
-def minimize_alpha(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
-    ) -> float:
+def minimize_alpha(krauses: list[np.ndarray], dkrauses: list[np.ndarray],
+    **kwargs) -> float:
     """
     Minimize the norm of alpha over all Kraus representations for a given
-    channel.
+    channel :cite:`dulian2025,Demkowicz2012`.
 
     Given a list of Kraus operators and their derivatives, this function
     calculates the minimum norm of alpha over all possible Kraus
@@ -990,17 +995,14 @@ def minimize_alpha(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
     dkrauses : list[np.ndarray]
         List of derivatives of Kraus operators, each represented as a 2D
         NumPy array.
+    **kwargs
+        Additional keyword arguments passed to the CVXPY ``solve`` method
+        (see `docs <https://www.cvxpy.org/tutorial/solvers/index.html>`_).
 
     Returns
     -------
     float
         The minimum value of norm of alpha over all Kraus representations.
-
-    References
-    --------
-    .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M.
-       The elusive Heisenberg limit in quantum-enhanced metrology.
-       Nat Commun 3, 1063 (2012). https://doi.org/10.1038/ncomms2067
     """
     # Number of Kraus operators
     num_kraus = len(krauses)
@@ -1034,11 +1036,11 @@ def minimize_alpha(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
     problem = cp.Problem(objective, constraints)
 
     # Solve the optimization problem and return the minimum value of alpha
-    return problem.solve()
+    return problem.solve(**kwargs)
 
 
-def get_sld(rho: np.ndarray, drho: np.ndarray, return_qfi: bool = False
-    ) -> np.ndarray | tuple[float, np.ndarray]:
+def get_sld(rho: np.ndarray, drho: np.ndarray, return_qfi: bool = False,
+    **kwargs) -> np.ndarray | tuple[float, np.ndarray]:
     """
     Computes symmetric logarithmic derivative (SLD) of a parametrized
     state.
@@ -1052,6 +1054,9 @@ def get_sld(rho: np.ndarray, drho: np.ndarray, return_qfi: bool = False
     return_qfi : bool, optional
         Whether to return also a quantum Fisher information (QFI) of
         the state, by default False.
+    **kwargs
+        Additional keyword arguments passed to the CVXPY ``solve`` method
+        (see `docs <https://www.cvxpy.org/tutorial/solvers/index.html>`_).
 
     Returns
     -------
@@ -1065,7 +1070,7 @@ def get_sld(rho: np.ndarray, drho: np.ndarray, return_qfi: bool = False
     constraint = [A >> 0,] # L2 >> L^2
     obj = cp.Maximize(cp.real(cp.trace(2 * drho @ L - rho @ L2)))
     prob = cp.Problem(obj, constraint)
-    qfi = prob.solve()
+    qfi = prob.solve(**kwargs)
 
     if return_qfi:
         return qfi, L.value

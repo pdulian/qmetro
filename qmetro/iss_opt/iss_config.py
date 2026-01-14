@@ -13,6 +13,65 @@ from .consts import PARTIAL
 
 @dataclass
 class IssConfig:
+    """
+    Configuration parameters for the ISS optimization algorithm.
+
+    Parameters
+    ----------
+    name : str | None, optional
+        Name of the returned network. If None then the name will be
+        `tn.name` + ' optimized', by default None.
+    max_error_iterations : int, optional
+        Maximal number of times the function will restart
+        computation after an error occurence, by default 10.
+    max_iterations : int, optional
+        Maximal number of algorithm iterations, by default 500.
+    min_iterations : int, optional
+        Minimal number of algorithm iterations, by default 10.
+    eps : float, optional
+        The algorithm stops when the QFI in 5 consecutive iterations
+        changes by less than eps, by default 1e-4.
+    init_tn : QNetwork | None, optional
+        Network from which initial values of variables will be taken.
+        If None then initial values will be random, by default None
+    print_messages : bool | str, optional
+        Wheter to print messages about progress it made. Possible options:
+        - True: all messages will be printed,
+        - False: no messages will be printed,
+        - 'partial': print only iteration summary.
+        By default False.
+    var_iterations : int, optional
+        Number of iterations done solely over non measurement variables
+        (CPTP, MPS and combs) before proceeding to the measurement
+        (pre-SLD) variables, by default 1.
+    sld_iterations : int, optional
+        Number of iterations done solely over measurement (pre-SLD)
+        variables before proceeding to other variables, by default 1.
+    art_noise_spaces : list[list[Hashable]] | None, optional
+        Spaces on which the artificial noise
+        will act. For a list: `[[s00, s01, ...], [s10, s11, ...], ...]`
+        noise will be applied to the whole list of spaces `[s00, s01, ...]`
+        combined. If set to None then only spaces of ParamTensor elements
+        will be noisy (separately), by default None.
+    art_noise_params : tuple[float, float], optional
+        For a tupple `(a, l)` noise will take a form of:
+
+        rho -> p * rho + (1 - p) * Id,
+        
+        where p = 1 - a * exp(-l * i), i is the iteration number and Id is
+        theidentity matrix, by default (0.5, 0.1).
+        See also :ref:`the documentation <depolarization>`.
+    contraction_order : list[str] | None, optional
+        Names of tensors in the required order of contraction and
+        therfore also the order of optimization. If None then the program
+        will use BFS starting from the variable with smallest dimension
+        and without input spaces, by default None.
+    adaptive_art_noise : bool, optional
+        If True then the program will track the increase of QFI coming
+        from variable optimization and from the artificial noise decay.
+        If the latter is bigger the artificial noise decay parameter, `l`,
+        will be doubled increasing the decay speed. By default True.
+    """
     name: str | None
     max_error_iterations: int
     max_iterations: int

@@ -41,6 +41,19 @@ class SpaceDict():
         Name of the dictionary. If equal to '' then the name will be
         set to a number of previously existing quantum system. By
         default ''.
+    
+    Attributes
+    ----------
+    name : str
+        Name of the dictionary.
+    spaces : dict[Hashable, int]
+        Dictionary connecting spaces to their dimensions.
+    bond_spaces : set[Hashable]
+        Set of bond spaces.
+    prime : str
+        Suffix for primed spaces.
+    primed_spaces : dict[Hashable, Hashable]
+        Dictionary connecting primed spaces to unprimed ones.
     """
 
     counter = 0
@@ -289,9 +302,8 @@ class SpaceDict():
             Zero const tensor.
         """
         spaces = spaces or []
-        arr = np.zeros(
-            tuple(self.irange[s] for s in spaces), dtype=my_complex
-        )
+        shape = tuple(self.irange[s] for s in spaces) or (1,)
+        arr = np.zeros(shape, dtype=my_complex)
         return ConstTensor(spaces, array=arr, sdict=self, **kwargs)
 
 
@@ -369,6 +381,23 @@ class GeneralTensor():
         Comb (causal) structure in a form of [(input_0, output_0),
         (input_1, output_1), ...] where input_i (output_i) is a list
         of input (output) spaces of the i-th tooth.
+
+    Attributes
+    ----------
+    spaces : list[Hashable]
+        List of all tensor spaces.
+    sdict : SpaceDict
+        Space dictionary.
+    name : str
+        Tensor name.
+    physical_spaces : list[Hashable]
+        List of physical spaces.
+    bond_spaces : list[Hashable]
+        List of bond spaces.
+    dimension : int
+        Product of dimensions of all tensor spaces.
+    physical_dim : int
+        Product of dimensions of physical spaces.
     """
     counter = 0
     name_prefix = 'GENERAL TENSOR '
@@ -868,6 +897,19 @@ class GeneralTensor():
     @property
     def comb_structure(self
         ) -> list[tuple[list[Hashable], list[Hashable]]] | None:
+        """
+        Comb (causal) structure in a form of
+        
+        ``[(input_0, output_0), (input_1, output_1), ...]``,
+
+        where ``input_i`` (``output_i``) is a list of input (output)
+        spaces of the i-th tooth.
+
+        Returns
+        -------
+        list[tuple[list[Hashable], list[Hashable]]] | None
+            Comb structure.
+        """        
         return self._comb_structure
 
 
@@ -905,6 +947,12 @@ class ConstTensor(GeneralTensor):
         Comb (causal) structure in a form of [(input_0, output_0),
         (input_1, output_1), ...] where input_i (output_i) is a list
         of input (output) spaces of the i-th tooth.
+    
+    Attributes
+    ----------
+    array : np.ndarray
+        Tensor as numpy array. The order of indices corresponds to
+        the order of spaces in ``self.spaces``.
     """
     name_prefix = 'CONST TENSOR '
     contr_count = 0
@@ -1424,6 +1472,9 @@ class ConstTensor(GeneralTensor):
 
 
     def __add__(self, other: ConstTensor) -> ConstTensor:
+        if not isinstance(other, ConstTensor):
+            return NotImplemented
+        
         if self.sdict is not other.sdict:
             raise ValueError(
                 'Tensor addition is possible only between tensors with '\
@@ -1461,7 +1512,9 @@ class ConstTensor(GeneralTensor):
                 f'{self.spaces} and {other.spaces}.'
             )
 
-        other.reorder(self.spaces)
+        if self.spaces:
+            other.reorder(self.spaces)
+        
         self.array += other.array
 
         return self
@@ -1781,6 +1834,13 @@ class VarTensor(GeneralTensor):
         Comb (causal) structure in a form of [(input_0, output_0),
         (input_1, output_1), ...] where input_i (output_i) is a list
         of input (output) spaces of the i-th tooth.
+
+    Attributes
+    ----------
+    is_unital : bool
+        Whether the tensor is unital.
+    is_measurement : bool
+        Whether the tensor is measurement-like (SLD-like) variable.
     """
     name_prefix = 'VAR TENSOR '
 
@@ -2018,23 +2078,22 @@ class VarTensor(GeneralTensor):
         ----------
         spaces : list[Hashable] | None, optional
             The change of spaces will take the form
-            self.spaces[i] -> spaces[i]. If None then change of spaces will
-            be carried out using space_map, by default None.
+            `self.spaces[i]` -> `spaces[i]`. If None then change of spaces
+            will be carried out using `space_map`, by default None.
         space_map : Callable[[Hashable], Hashable] | None, optional
             The change of spaces will take the form
-            space -> space_map(space), by default None
+            `space` -> `space_map(space)`, by default None.
         sdict : SpaceDict | None, optional
             Space dictionary of the copy. If None then it will be
-            self.sdict, by default None.
+            `self.sdict`, by default None.
         name : str | None, optional
-            Name of the copy. If None then it will be self.name, by
+            Name of the copy. If None then it will be `self.name`, by
             default None.
 
         Returns
         -------
         copy : VarTensor
             New tensor with renamed spaces.
-
         """
         templ = super().respace(spaces, space_map, sdict, name)
 
@@ -2081,12 +2140,32 @@ class TensorNetwork(GeneralTensor):
 
     Parameters
     ----------
-    tensors : list[GeneralTensor  |  Scalar] | None, optional
+    tensors : list[GeneralTensor | Scalar] | None, optional
         Nodes of the network (or other network), by default None.
     sdict : SpaceDict, optional
-        Space dictionary, by default DEFAULT_SDICT.
+        Space dictionary, by default ``DEFAULT_SDICT``.
     name : str | None, optional
         Network name, by default None.
+
+    Attributes
+    ----------
+    tensors : dict[str, ConstTensor | ParamTensor | VarTensor]
+        Dictionary of tensors in the network where keys are tensor names
+        and values are tensors.
+    edges : dict[Hashable, list[str]]
+        Dictionary of edges where keys are space names and values
+        are lists of tensor names connected by the edge.
+    contr_spaces : set[Hashable]
+        Set of spaces that connect two tensors (i.e. are contracted) and
+        as such are not visible outside the network.
+    free_spaces : set[Hashable]
+        Set of spaces such that only one tensor is connected to them
+        (i.e. are not contracted).
+    free_dimension : int
+        Dimension of the free space (product of dimensions of free spaces).
+    multiplier : complex
+        Multiplier resulting from contraction with trivial tensors
+        (scalars).
     """
     name_prefix = 'TENSOR NETWORK '
 
@@ -2098,10 +2177,10 @@ class TensorNetwork(GeneralTensor):
 
         Parameters
         ----------
-        tensors : list[GeneralTensor  |  Scalar] | None, optional
+        tensors : list[GeneralTensor | Scalar] | None, optional
             Nodes of the network (or other network), by default None.
         sdict : SpaceDict, optional
-            Space dictionary, by default DEFAULT_SDICT.
+            Space dictionary, by default ``DEFAULT_SDICT``.
         name : str | None, optional
             Network name, by default None.
 
@@ -2430,8 +2509,8 @@ class TensorNetwork(GeneralTensor):
 class ParamTensor(ConstTensor):
     """
     Class of parametrised tensor. It is a const tensor with additional
-    attribute 'dtensor' which represents its derivative over the
-    paramter in 0.
+    attribute ``dtensor`` which represents its derivative in the parameter
+    at the point.
 
     Parameters
     ----------
@@ -2442,7 +2521,7 @@ class ParamTensor(ConstTensor):
         None then it will be initialized from the array argument, by
         default None.
     sdict : SpaceDict, optional
-        Space dictionary, by default DEFAULT_SDICT.
+        Space dictionary, by default ``DEFAULT_SDICT``.
     array : np.ndarray | None, optional
         Tensor as numpy array, by default None.
     name : str | None, optional
@@ -2456,9 +2535,15 @@ class ParamTensor(ConstTensor):
     output_spaces : list[Hashable] | None, optional
         Tensor output spaces, by default None.
     comb_structure: list[tuple[list[Hashable], list[Hashable]]] | None
-        Comb (causal) structure in a form of [(input_0, output_0),
-        (input_1, output_1), ...] where input_i (output_i) is a list
-        of input (output) spaces of the i-th tooth.
+        Comb (causal) structure in a form of
+        ``[(input_0, output_0), (input_1, output_1), ...]``
+        where ``input_i`` (``output_i``) is a list of input (output) spaces
+        of the i-th tooth.
+    
+    Attributes
+    ----------
+    dtensor : ConstTensor
+        Tensor representing the derivative.
     """
     name_prefix = 'PARAM TENSOR '
 
@@ -2593,6 +2678,9 @@ class ParamTensor(ConstTensor):
             dother = other.dtensor
         new.dtensor = self.dtensor + dother
         return new
+    
+
+    __radd__ = __add__
 
 
     def __iadd__(self, other: ConstTensor | ParamTensor):
@@ -2664,7 +2752,7 @@ class ParamTensor(ConstTensor):
 
     def __str__(self):
         result = super().__str__()
-        result += f'\ndmatrix:\n {self.dtensor.choi(self.spaces)}'
+        result += f'\ndtensor:\n {self.dtensor.array}'
         return result
 
 

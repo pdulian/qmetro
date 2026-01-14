@@ -1,0 +1,16 @@
+/* Force equation numbers to the right for display math */
+.math {
+    position: relative;
+}
+
+.math .eqno {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+div.document p {
+    text-align: justify;
+    hyphens: auto;
+}

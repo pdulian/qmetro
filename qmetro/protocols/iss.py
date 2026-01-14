@@ -26,7 +26,7 @@ def iss_channel_qfi(channel: ParamChannel, ancilla_dim: int = 1,
     ) -> tuple[float, list[float], np.ndarray, np.ndarray, bool]:
     """
     Computes quantum Fisher information for a single parametrized channel
-    using iterative see-saw (ISS) method [1]_.
+    using iterative see-saw (ISS) method :cite:`dulian2025,kurdzialek2024`.
 
     Parameters
     ----------
@@ -46,7 +46,10 @@ def iss_channel_qfi(channel: ParamChannel, ancilla_dim: int = 1,
         - None : auxiliary noise is not used.
         By default True.
     kwargs :
-        Additional arguments passed on to `iss` optimization function.
+        Additional arguments passed on to
+        :func:`iss_opt <qmetro.iss_opt.main.iss_opt>`
+        see :class:`IssConfig <qmetro.iss_opt.iss_config.IssConfig>` for
+        details.
 
     Returns
     -------
@@ -62,12 +65,6 @@ def iss_channel_qfi(channel: ParamChannel, ancilla_dim: int = 1,
         the channel goes first and the ancilla second.
     status : bool
         True if the algorithm converged, False otherwise.
-
-    References
-    ------
-    .. [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
-           tensor network formalism, New Journal of Physics (2024).
-           https://doi.org/10.1088/1367-2630/ada8d1
     """
     if not channel.trivial_env:
         warn(ENV_FOR_SINGLE)
@@ -120,7 +117,7 @@ def iss_parallel_qfi(channel: ParamChannel, number_of_channels: int,
     ) -> tuple[float, list[float], np.ndarray, np.ndarray, bool]:
     """
     Computes quantum Fisher information for channels in parallel using
-    iterative see-saw (ISS) algorithm [1]_.
+    iterative see-saw (ISS) algorithm :cite:`dulian2025,Chabuda2020`.
 
     In parallel strategy all channels are simultaneously probed by an
     entangled input state and their output is collectively measured.
@@ -161,12 +158,6 @@ def iss_parallel_qfi(channel: ParamChannel, number_of_channels: int,
         the channels go first and the ancilla goes last.
     status : bool
         True if the algorithm converged, False otherwise.
-
-    References
-    -------
-    .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
-           in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
-           https://doi.org/10.1038/s41467-019-13735-9
     """
     if (channel.env_inp_dim != channel.env_out_dim
         and number_of_channels > 1):
@@ -189,17 +180,17 @@ def iss_tnet_parallel_qfi(channel: ParamChannel, number_of_channels: int,
     bool]:
     """
     Computes quantum Fisher information for channels in parallel using
-    iterative see-saw algorithm and tensor networks, that is matrix
-    product state (MPS) and matrix product operators (MPOs).
+    iterative see-saw algorithm and tensor networks
+    :cite:`dulian2025,Chabuda2020`.
 
-    In parallel strategy all channels are simultaneously probed by an
+    In the parallel strategy all channels are simultaneously probed by an
     entangled input state and their output is collectively measured.
 
     In the approach with tensor networks the input state is expressed as
     a tensor network in a shape of a line where i-th tensor represents
     part of the input state that goes to the i-th probe channel and
     has is connected with two other tensors (one tensor in case of the
-    first and the last one) with bond spaces/indices [1]_.
+    first and the last one) with bond spaces/indices.
 
     The measurement and then the symmetric logarithmic derivative (SLD)
     matrix is expressed as an analogous tensor network (representing
@@ -256,12 +247,6 @@ def iss_tnet_parallel_qfi(channel: ParamChannel, number_of_channels: int,
         exists).
     status : bool
         True if the algorithm converged, False otherwise.
-
-    References
-    -------
-    .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
-           in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
-           https://doi.org/10.1038/s41467-019-13735-9
     """
     if channel.env_inp_dim != channel.env_out_dim:
         if number_of_channels == 1:
@@ -391,7 +376,7 @@ def iss_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
     """
     Computes quantum Fisher information channels in an adaptive control
     system called quantum comb using iterative see-saw (ISS) algorithm
-    [1]_.
+    :cite:`dulian2025,kurdzialek2024`.
 
     In this approach we consider n copies of a quantum channel Phi:
     
@@ -450,12 +435,6 @@ def iss_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
         in order: out_n-1, anc.
     status : bool
         True if the algorithm converged, False otherwise.
-
-    References
-    -------
-    .. [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
-           tensor network formalism, New Journal of Physics (2024).
-           https://doi.org/10.1088/1367-2630/ada8d1
     """
     if channel.env_inp_dim != channel.env_out_dim:
         if number_of_channels == 1:
@@ -568,7 +547,7 @@ def iss_tnet_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
     """
     Computes quantum Fisher information in an adaptive control
     system called quantum comb using iterative see-saw (ISS) algorithm
-    [1]_.
+    :cite:`dulian2025,kurdzialek2024`.
 
     In this approach we consider n copies of a quantum channel Phi:
     
@@ -651,12 +630,6 @@ def iss_tnet_adaptive_qfi(channel : ParamChannel, number_of_channels: int,
         in order: out_n-1, anc.
     status : bool
         True if the algorithm converged, False otherwise.
-
-    References
-    -------
-    .. [1] S. Kurdziałek et al. Quantum metrology using quantum combs and
-           tensor network formalism, New Journal of Physics (2024).
-           https://doi.org/10.1088/1367-2630/ada8d1
     """
     if channel.env_inp_dim != channel.env_out_dim:
         if number_of_channels == 1:
@@ -824,10 +797,11 @@ def iss_tnet_collisional_qfi(channel: ParamChannel,
     ]:
     """
     Returns the quantum Fisher information in a scenario with channels in
-    a comb which teeth have separate ancillas using iterative see-saw
-    (ISS) algorithm. This is a very similar structure to the one in the
-    adaptive strategy the only difference being that comb's teeth cannot
-    communicate with each other using their common ancilla space.
+    a comb whose teeth have separate ancillas using the iterative see-saw
+    (ISS) algorithm :cite:`dulian2025,Chabuda2020,kurdzialek2024`.
+    This is a very similar structure to the one in the
+    adaptive strategy the only difference being that the comb's teeth
+    cannot communicate with each other using their common ancilla space.
 
     More precisely, in this approach we consider n copies of a quantum
     channel Phi:
@@ -921,15 +895,6 @@ def iss_tnet_collisional_qfi(channel: ParamChannel,
         tensor (if it exists).
     status : bool
         True if the algorithm converged, False otherwise.
-    
-    References
-    -------
-    .. [1] K. Chabuda et al. Tensor-Network Approach for Quantum Metrology
-           in Many-Body Quantum Systems, Nature Commun 11, 250 (2020).
-           https://doi.org/10.1038/s41467-019-13735-9
-    .. [2] S. Kurdziałek et al. Quantum metrology using quantum combs and
-           tensor network formalism, New Journal of Physics (2024).
-           https://doi.org/10.1088/1367-2630/ada8d1
     """
     if channel.env_inp_dim != channel.env_out_dim:
         if number_of_channels == 1:

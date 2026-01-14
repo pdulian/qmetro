@@ -16,7 +16,7 @@ def minimize_beta(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
     ) -> float:
     """
     Minimize the norm of beta over all Kraus representations for a given
-    channel.
+    channel :cite:`dulian2025,Demkowicz2012`.
 
     This function calculates the minimum norm of beta over all possible
     Kraus representations of a channel, given a list of Kraus operators
@@ -34,12 +34,6 @@ def minimize_beta(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
     -------
     float
         The minimum value of norm of beta over all Kraus representations.
-        
-    References
-    --------
-    .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
-       The elusive Heisenberg limit in quantum-enhanced metrology. 
-       Nat Commun 3, 1063 (2012). https://doi.org/10.1038/ncomms2067
     """
     # Number of Kraus operators
     num_kraus = len(krauses)
@@ -80,7 +74,8 @@ def minimize_beta(krauses: list[np.ndarray], dkrauses: list[np.ndarray]
 def minimize_alpha_given_beta(krauses: list[np.ndarray],
     dkrauses: list[np.ndarray], bmax: float) -> float:
     """
-    Minimize the norm of alpha given a constraint on norm of beta.
+    Minimize the norm of alpha given a constraint on norm of beta
+    :cite:`dulian2025,Kurdzialek2023`.
 
     This function calculates the minimum norm of alpha over all possible
     Kraus representations for a channel, given a constraint that norm of
@@ -100,13 +95,6 @@ def minimize_alpha_given_beta(krauses: list[np.ndarray],
     -------
     float
         The minimum value of alpha given the constraint on beta.
-        
-    References
-    --------
-    .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
-        Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-        superpositions against noise in quantum metrology. Physical Review
-        Letters, 131(9), 090801.
     """
     # Number of Kraus operators
     num_kraus = len(krauses)
@@ -158,7 +146,8 @@ def beta_alpha_chart(krauses: list[np.ndarray],
     dkrauses: list[np.ndarray], p: int = 20, eps: float = 0.0
     ) -> tuple[np.ndarray, np.ndarray]:
     """
-    Generate a chart of minimal alpha values given constraints on beta.
+    Generate a chart of minimal alpha values given constraints on beta
+    :cite:`Kurdzialek2023`.
 
     This function calculates a list of minimal alpha values (`a_list`)
     for a range of beta values (`b_list`) for a given channel, for beta
@@ -194,14 +183,8 @@ def beta_alpha_chart(krauses: list[np.ndarray],
     The `b_list` array is then generated with `n` samples between
     `bmin + eps` and `bmax + 2*eps`. For each beta value in `b_list`, the
     minimum alpha under that beta constraint is calculated using
-    `minimize_alpha_given_beta`.
-
-    References
-    --------
-    .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
-        Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-        superpositions against noise in quantum metrology. Physical Review
-        Letters, 131(9), 090801.
+    :func:`minimize_alpha_given_beta
+    <qmetro.bounds.bounds.minimize_alpha_given_beta>`.
     """
     # Calculate minimum beta and maximum beta (based on minimum alpha)
     bmin = minimize_beta(krauses, dkrauses)
@@ -222,7 +205,8 @@ def beta_alpha_chart(krauses: list[np.ndarray],
 def par_bound_single_n(channel: ParamChannel, n: int) -> float:
     """
     Calculate parallel (PAR) bound for the Quantum Fisher Information
-    (QFI) for a specific number of channels `n`.
+    (QFI) for a specific number of channels `n`
+    :cite:`dulian2025,Kolodynski2013`.
 
     Parameters
     ----------
@@ -235,12 +219,6 @@ def par_bound_single_n(channel: ParamChannel, n: int) -> float:
     -------
     float
         PAR bounds for QFI for `n` channels probed in parallel.
-    
-    References
-    --------
-    .. [1] Kołodyński, J., & Demkowicz-Dobrzański, R. (2013).
-       Efficient tools for quantum metrology with uncorrelated noise.
-       New Journal of Physics, 15(7), 073043.            
     """
     if not channel.trivial_env:
         raise ValueError(
@@ -304,7 +282,7 @@ def par_bounds(channel: ParamChannel, nmax: int,
     ) -> np.ndarray:
     """
     Calculate parallel (par) bounds for the Quantum Fisher Information
-    (QFI).
+    (QFI) :cite:`dulian2025,Kolodynski2013,Kurdzialek2023`.
     
     This function computes the set of PAR bounds for the QFIs of up to
     `nmax` channels probed paralelly using arbitrary, possibly entangled
@@ -319,12 +297,12 @@ def par_bounds(channel: ParamChannel, nmax: int,
     method: str, optional
         Method used to calculate bounds, there are two possibilities:
         - 'default': calculates the bound by solving SDP for each number
-            of channels separately. This method calls function
-            `par_bound_single_n` for each n.
+        of channels separately. This method calls function
+        `par_bound_single_n` for each n.
         - 'ab_chart': construct minimal alpha vs beta chart and then
-            calculates the bound for each n. Faster for large `nmax`, may
-            give slightly less tight bounds then 'default' (but
-            asymptotically both methods are equivalent).
+        calculates the bound for each n. Faster for large `nmax`, may
+        give slightly less tight bounds then 'default' (but
+        asymptotically both methods are equivalent).
     p : int, optional
         Number of samples of beta for precision in bound calculation, by
         default 40, used for 'ab_chart' method only.
@@ -337,17 +315,6 @@ def par_bounds(channel: ParamChannel, nmax: int,
     np.ndarray
         Array of PAR bounds for QFI with up to `nmax` channels (starting
         from n=1).
-    
-    References
-    --------
-    .. [1] Kołodyński, J., & Demkowicz-Dobrzański, R. (2013).
-       Efficient tools for quantum metrology with uncorrelated noise.
-       New Journal of Physics, 15(7), 073043.
-       
-    .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
-        Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-        superpositions against noise in quantum metrology. Physical Review
-        Letters, 131(9), 090801.
     """
     if not channel.trivial_env:
         raise ValueError(
@@ -400,10 +367,10 @@ def ad_bounds(channel: ParamChannel,
     ) -> np.ndarray:
     """
     Calculate adaptive (AD) bounds for the Quantum Fisher Information
-    (QFI).
+    (QFI) :cite:`dulian2025,Kurdzialek2023,kurdzialek2024bounds`.
     
     This function computes the set of AD bounds for the QFIs of up to
-    `nmax` channels probed sequentially with arbitrary controls between,
+    ``nmax`` channels probed sequentially with arbitrary controls between,
     utilizing arbitrarily large ancilla.
     
     Parameters
@@ -415,11 +382,12 @@ def ad_bounds(channel: ParamChannel,
     method: str, optional
         Method used to calculate bounds, there are two possibilities:
         - 'default': calculates the bound using the iterative procedure
-          involing calculation of extended comb QFI described in [2]_.
+        involving calculation of extended comb QFI described in
+        :cite:`kurdzialek2024bounds`.
         - 'ab_chart': construct minimal alpha vs beta chart and then
-            calculates the bound for each n [1]_. Faster for large `nmax`,
-            may give slightly less tight bounds then 'default' (but
-            asymptotically both methods are equivalent).
+        calculates the bound for each n :cite:`Kurdzialek2023`.
+        Faster for large ``nmax``, may give slightly less tight bounds
+        then 'default' (but asymptotically both methods are equivalent).
     p : int, optional
         Number of samples of beta for precision in bound calculation, by
         default 40, used for 'ab_chart' method only.
@@ -430,18 +398,8 @@ def ad_bounds(channel: ParamChannel,
     Returns
     -------
     np.ndarray
-        Array of AD bounds for QFI with up to `nmax` channels (starting
-        from n=1).
-    
-    References
-    ----------
-    .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
-        Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-        superpositions against noise in quantum metrology. Physical
-        Review Letters, 131(9), 090801.
-    .. [2] Kurdzialek, S., Albarelli, F., & Demkowicz-Dobrzanski, R.
-        (2024). Universal bounds for quantum metrology in the presence
-        of correlated noise. arXiv:2410.01881.
+        Array of AD bounds for QFI with up to ``nmax`` channels (starting
+        from ``n=1``).
     """
     #minimal n for which warning is displayed for 'default' method
     AB_CHART_WARNING_THRESHOLD = 500
@@ -475,7 +433,7 @@ def ad_bounds(channel: ParamChannel,
         bounds = []
         for _ in range(nmax):
             current_bound = mop_adaptive_qfi(
-                channel, 1, input_pure_qfi = current_bound
+                channel, 1, input_pure_qfi=current_bound
             )
             bounds.append(current_bound)
 
@@ -507,7 +465,7 @@ def cs_bounds(channel: ParamChannel,
     ) -> np.ndarray:
     """
     Calculate causal superpositions (CS) bounds for the Quantum Fisher
-    Information (QFI).
+    Information (QFI) :cite:`dulian2025,Kurdzialek2023`.
     
     This function computes the set of CS bounds for the QFIs of up to
     `nmax` channels probed using arbitrary causal superposition scheme
@@ -532,14 +490,6 @@ def cs_bounds(channel: ParamChannel,
     np.ndarray
         Array of CS bounds for QFI with up to `nmax` channels (starting
         from n=1).
-    
-    References
-    --------
-    .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
-           Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-           superpositions against noise in quantum metrology. Physical
-           Review Letters, 131(9), 090801.
-        
     """
     krauses, dkrauses = channel.dkrauses()
         
@@ -563,13 +513,18 @@ def par_ad_cs_bounds(channel: ParamChannel,
     """
     Calculate parallel (PAR), adaptive (AD) and  causal superpositions (CS)
     bounds for the Quantum Fisher Information (QFI) using alpha vs beta
-    chart method.
+    chart method :cite:`dulian2025,Kurdzialek2023`.
     
     This function computes three sets of bounds, PAR, AD and CS by 
     constructing list of minimal alpha for given beta constraints (see
-    `beta_alpha_chart`). It is equivalent to calling par_bounds, ad_bounds
-    and cs_bounds functions with method = 'ab_chart'.
-    Calling this function is faster, since ab_chart is created only once.
+    :func:`beta_alpha_chart <qmetro.bounds.bounds.beta_alpha_chart>`).
+    It is equivalent to calling :func:`par_bounds
+    <qmetro.bounds.bounds.par_bounds>`,
+    :func:`ad_bounds <qmetro.bounds.bounds.ad_bounds>`
+    and :func:`cs_bounds <qmetro.bounds.bounds.cs_bounds>` functions with
+    method = 'ab_chart'.
+    Calling this function is faster, since alpha-beta chart is created
+    only once.
     
     Parameters
     ----------
@@ -597,13 +552,6 @@ def par_ad_cs_bounds(channel: ParamChannel,
             - CS_bounds_list : np.ndarray
                 Array of CS bounds for QFI with up to `nmax` channels
                 (starting from n=1).
-    References
-    --------
-    .. [1] Kurdziałek, S., Górecki, W., Albarelli, F., &
-        Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-        superpositions against noise in quantum metrology. Physical Review
-        Letters, 131(9), 090801.
-    
     """
     raise NotImplementedError
     krauses, dkrauses = channel.dkrauses()
@@ -638,10 +586,11 @@ def asym_scaling_qfi(channel: ParamChannel, power: int | None = None
     """
     Calculate the scaling of QFI (with constant) when asymptotically many
     copies of an input channel are probed paralelly (PAR) using optimal
-    input (possibly with ancilla) [1]_ .
+    input (possibly with ancilla)
+    :cite:`dulian2025,Demkowicz2012,Kurdzialek2023`.
     
-    The result is also QFI scaling for optimal adaptive (AD) or causal
-    superpostions (CS) strategy, see [2]_.
+    The result is also valid for optimal adaptive (AD) and causal
+    superpostions (CS) strategy.
     
     Parameters
     ----------
@@ -663,18 +612,7 @@ def asym_scaling_qfi(channel: ParamChannel, power: int | None = None
     -----
     The QFI for asymptotically large number of channels `n` scales as 
     `coef` * `n` ^ `power`.
-    
-    References
-    ----------
-    .. [1] Demkowicz-Dobrzański, R., Kołodyński, J. & Guţă, M. 
-           The elusive Heisenberg limit in quantum-enhanced metrology. 
-           Nat Commun 3, 1063 (2012). https://doi.org/10.1038/ncomms2067
-    .. [2] Kurdziałek, S., Górecki, W., Albarelli, F., &
-           Demkowicz-Dobrzański, R. (2023). Using adaptiveness and causal
-           superpositions against noise in quantum metrology.
-           Physical Review Letters, 131(9), 090801.
     """
-
     no_scaling = power is None
     wrong_scaling = not (power is None or power == 1 or power == 2)
 
@@ -723,35 +661,41 @@ def ad_bounds_correlated(channel: ParamChannel, nmax: int,
     print_messages: bool = False) -> tuple[np.ndarray, np.ndarray]:
     """
     Calculate QFI bounds for adaptive strategies for general correlated
-    models.
+    models :cite:`dulian2025,kurdzialek2024bounds`.
     
     This function computes the upper bounds for QFI when n copies of
     the given channel are linked using their environments. It is assumed
-    that information leaks from environment aftery every `block_size` copies.
+    that information leaks from environment aftery every `block_size`
+    copies.
     
     Parameters
     ----------
     channel : ParamChannel
-        Object representing an elementary channel or comb and its derivative.
+        Object representing an elementary channel or comb and its
+        derivative.
     nmax : int
-        Maximal number of elementary channels for which the bound is computed.
+        Maximal number of elementary channels for which the bound is
+        computed.
     block_size: int
-        The number of channels merged in one sub-chain during the algorithm.
-        The larger it is, the tighter the bounds, but also computations are 
-        slower and more memory-consuming. It is denoted by `m` in [1]_.
+        The number of channels merged in one sub-chain during
+        the algorithm. The larger it is, the tighter the bounds, but also
+        computations are slower and more memory-consuming. It is denoted
+        by `m` in :cite:`dulian2025,kurdzialek2024bounds`.
     for_every_n: bool, optional
-        When False (default), then the bound is calculated for number of copies
-        which are multiples of `block_size` only. When True, bounds are computed
-        for all number of copies up to `nmax`. In the latter case, the algorithm
-        is slower, but bounds may be slightly tighter.
+        When False (default), then the bound is calculated for number of
+        copies which are multiples of `block_size` only. When True, bounds
+        are computed for all number of copies up to `nmax`. In the latter
+        case, the algorithm is slower, but bounds may be slightly tighter.
     close_last_env: bool, optional
-        When True, then it is assumed that in the last channel in the chain,
-        no information leaks from environment. This makes the bounds slightly tighter,
-        but slower the algorithm, since the QFI with environment leakage must be computed
-        anyway for the sake of next iteration step.
+        When True, then it is assumed that in the last channel in
+        the chain, no information leaks from environment. This makes
+        the bounds slightly tighter but slows down the execution because
+        the QFI with the environment leakage must be computed anyway for
+        the sake of the next iteration step.
     env_inp_state: np.ndarray|None, optional
-        When specified, this state is contracted with first environment input
-        of the chain. Otherwise, control can arbitrarily act on first input environment.
+        When specified, this state is contracted with first environment
+        input of the chain. Otherwise, control can arbitrarily act on
+        first input environment.
     print_messages: bool, optional
         When True, then calculated bounds are printed in real time.
     
@@ -763,12 +707,6 @@ def ad_bounds_correlated(channel: ParamChannel, nmax: int,
         for which the bounds were computed.  
     bounds : np.ndarray  
         Array of corresponding upper bounds for QFI.  
-
-    References
-    --------
-    .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
-        "Universal bounds for quantum metrology in the presence of
-        correlated noise", arxiv: 2410.01881
     """
     if channel.env_inp_dim != channel.env_out_dim:
         raise ValueError(
@@ -800,8 +738,8 @@ def ad_bounds_correlated(channel: ParamChannel, nmax: int,
                     )                    
                 else:
                     close_bound = mop_adaptive_qfi(
-                        channel, block_size, env_control = (True, False), 
-                        input_pure_qfi = open_bound
+                        channel, block_size, env_control=(True, False),
+                        input_pure_qfi=open_bound
                     )
                     
                 bounds_close_env.append(close_bound)
@@ -810,13 +748,13 @@ def ad_bounds_correlated(channel: ParamChannel, nmax: int,
             if n + block_size <= nmax or not close_last_env:
                 if first_step and env_inp_state is not None:
                     open_bound = mop_adaptive_qfi(
-                        channel, block_size, env_control = (False, True), 
-                        env_inp_state = env_inp_state
+                        channel, block_size, env_control=(False, True),
+                        env_inp_state=env_inp_state
                     )                    
                 else:
                     open_bound = mop_adaptive_qfi(
-                        channel, block_size, env_control = (True, True), 
-                        input_pure_qfi = open_bound
+                        channel, block_size, env_control=(True, True),
+                        input_pure_qfi=open_bound
                     )
                 
                 bounds_open_env.append(open_bound)
@@ -907,13 +845,14 @@ def ad_bounds_correlated(channel: ParamChannel, nmax: int,
 def minimize_beta_correlated(krauses_comb: list[np.ndarray], 
     dkrauses_comb: list[np.ndarray], dims: tuple[int, ...]) -> float:
     """
-    Computes the minimal 'comb-norm' of a correlated beta matrix.
+    Computes the minimal 'comb-norm' of a correlated beta matrix
+    :cite:`kurdzialek2024bounds`.
     
     The returned minimal b value has significant physical implications:
     - When `b=0`, Heisenberg scaling (HS) is not possible.
     - When `b>0`, asymptotic upper bound for Quantum Fisher 
-      Information (QFI) as `4 b^2 (N/m)^2`, `m` is the number of channels
-      in comb, `N` is the total number of channels.
+    Information (QFI) as `4 b^2 (N/m)^2`, `m` is the number of channels
+    in comb, `N` is the total number of channels.
     
     Parameters
     ----------
@@ -932,16 +871,11 @@ def minimize_beta_correlated(krauses_comb: list[np.ndarray],
         The minimal value of b, representing the optimization result.
         
     Notes
-    ------
+    -----
     - First input (`H_1`) and last output (`H_2m`) should also contain
       register spaces `R` containing information about correlations.
-    - This is an implementation of algorithm from appendix C2 from [1]_.
-    
-    References
-    --------
-    .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
-        "Universal bounds for quantum metrology in the presence of
-        correlated noise", arxiv: 2410.01881
+    - This is an implementation of the algorithm from appendix C2 from
+      :cite:`kurdzialek2024bounds`.
     """
     # Extend dimensions with H0 and artificial H-1 space
     dims_ext = np.concatenate([[1, 2], dims])
@@ -950,8 +884,8 @@ def minimize_beta_correlated(krauses_comb: list[np.ndarray],
     num_kraus = len(krauses_comb)
     total_dim = np.prod(dims)
 
-    # SDP formulation: construct comb Q (see [1]) variables and
-    # constraints
+    # SDP formulation: construct comb Q (see kurdzialek2024bounds)
+    # variables and constraints
     combs_Q, constraints, trace_var = comb_variables(
         dims_ext, hermitian=True, trace_constraint=None
     )
@@ -1023,24 +957,25 @@ def minimize_alpha_beta_0_correlated(krauses_comb: list[np.ndarray],
     dkrauses_comb: list[np.ndarray], dims: tuple[int, ...]) -> float:
     """
     Computes the minimal 'comb-norm' of a correlated alpha matrix assuming
-    beta_1=0.
+    beta_1=0 :cite:`kurdzialek2024bounds`.
     
     When the returned minimal `a` value is finite, then
+
     - Heisenberg scaling (HS) is not possible.
     - Asymptotic upper bound for Quantum Fisher Information (QFI)
-      is `4 a N/m`, `m` is the number of channels in comb,
-      `N` is the total number of channels.
+      is `4 a N/m`, `m` is the number of channels in comb, `N` is the total
+      number of channels, and `a` is alpha.
     
     Parameters
     ----------
     krauses_comb : list[np.ndarray]
         List of Kraus operators for the comb. Each operator is a linear
-        map from `H_2m-1 x H_2m-3 x ... x H1` to `H_2m x H_2m-2 x ... x
-        H2`.
+            map from `H_2m-1 x H_2m-3 x ... x H_1` to
+            `H_2m x H_2m-2 x ... x H_2`.
     dkrauses_comb : list[np.ndarray]
         List of derivatives of Kraus operators for the comb.
     dims : tuple[int, ...]
-        Dimensions of the spaces `[H1, H2, ..., H_2m]`.
+        Dimensions of the spaces `[H_1, H_2, ..., H_2m]`.
     
     Returns
     -------
@@ -1048,16 +983,12 @@ def minimize_alpha_beta_0_correlated(krauses_comb: list[np.ndarray],
         The minimal value of a, representing the optimization result.
         
     Notes
-    ------
+    -----
     - First input (`H_1`) and last output (`H_2m`) should also contain
       register spaces `R` containing information about correlations.
-    - This is an implementation of algorithm from appendix C2 from [1]_.
-    
-    References
-    --------
-    .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
-        "Universal bounds for quantum metrology in the presence of
-        correlated noise", arxiv: 2410.01881
+    - This is an implementation of algorithm from appendix C2 from .
+      :cite:`kurdzialek2024bounds`.
+
     """
     #Number of Kraus operators and total dimension
     num_kraus = len(krauses_comb)
@@ -1074,12 +1005,14 @@ def minimize_alpha_beta_0_correlated(krauses_comb: list[np.ndarray],
     dims_traced_output = list(dims).copy()
     dims_traced_output[-1] = 1
 
-    # Comb Q variables and constraints (see [1], appendix C2)
+    # Comb Q variables and constraints (see kurdzialek2024bounds,
+    # appendix C2)
     combs_Q, constraints_Q, trace_var_Q = comb_variables(
         tuple(dims_traced_output), hermitian=True, trace_constraint=None
     )
 
-    # Comb Y variables and constraints (see [1], appendix C2)
+    # Comb Y variables and constraints (see kurdzialek2024bounds,
+    # appendix C2)
     combs_Y, constraints_Y, _ = comb_variables(
         tuple(dims_traced_output), hermitian=False, trace_constraint=None
     )
@@ -1132,12 +1065,12 @@ def ad_asym_bound_correlated(channel: ParamChannel, block_size: int,
     power: int | None = None) -> tuple[float, int]:
     """
     Calculate the asymptotic bound for QFI for adaptive strategies
-    for correlated models.
+    for correlated models :cite:`dulian2025,kurdzialek2024bounds`.
     
     This function returns an upper bound for scaling coefficient
     and the scaling power (1 for standard scaling, 2 for Heisenberg).
     Unlike for uncorrelated models, this is just upper bound, not the
-    exact value. The bound becomes tighter for larger `block_size`. 
+    exact value. The bound becomes tighter for larger ``block_size``.
     
     Parameters
     ----------
@@ -1148,7 +1081,7 @@ def ad_asym_bound_correlated(channel: ParamChannel, block_size: int,
         The number of channels merged in one sub-chain during the
         algorithm. The larger it is, the tighter the bounds, but also
         computations are slower and more memory-consuming. It is denoted
-        by `m` in [1]_.
+        by ``m`` in :cite:`dulian2025,kurdzialek2024bounds`.
     power: int | None optional
         Power in the QFI scaling law. It can be 1 (standard scaling) or
         2 (Heisenberg scaling). When not provided, the scaling type is 
@@ -1163,14 +1096,8 @@ def ad_asym_bound_correlated(channel: ParamChannel, block_size: int,
                 
     Notes
     -----
-    The QFI for asymptotically large number of channels `n` is upper
-    bounded by `coef` * `n` ^ `power`
-        
-    References
-    ----------
-    .. [1] Kurdzialek, S. , Albarelli, F. & Demkowicz-Dobrzanski , R.
-        "Universal bounds for quantum metrology in the presence of
-        correlated noise", arxiv: 2410.01881
+    The QFI for asymptotically large number of channels :math:`n` is upper
+    bounded by :math:`\mathrm{coef} \cdot n^{\mathrm{power}}`
     """
     if channel.env_inp_dim != channel.env_out_dim:
         raise ValueError(
