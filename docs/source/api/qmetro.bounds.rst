@@ -7,3 +7,4 @@ bounds
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: warn

@@ -11,6 +11,7 @@ classes/tensors
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: deque
 
 
 creators/single

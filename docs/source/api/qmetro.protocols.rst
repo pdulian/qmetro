@@ -18,6 +18,7 @@ iss
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: warn
 
 mop
 ---------------------------
@@ -26,6 +27,7 @@ mop
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: warn
 
 other
 -----------------------------
