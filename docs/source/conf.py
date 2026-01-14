@@ -62,3 +62,9 @@ numfig_format = {
 }
 
 autodoc_typehints = "description"
+
+autodoc_mock_imports = [
+    "cvxpy",
+    "scipy",
+    "ncon"
+]
