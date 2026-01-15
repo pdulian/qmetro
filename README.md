@@ -24,5 +24,8 @@ To install QMetro++:
 pip install qmetro
 ```
 
+First import may take a couple seconds (circa 1,86s) because QMetro++ loads
+CVXPY and numerical backends.
+
 ## Contact
 For more information please contact: p.dulian@cent.uw.edu.pl

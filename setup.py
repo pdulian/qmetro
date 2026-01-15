@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
 
@@ -8,7 +9,16 @@ with open('README.md', 'r') as f:
 
 setup(
     name='qmetro',
-    version='1.1.0',
+    version='1.1.1',
+    description='A package that provides a set of tools for identifying \
+        optimal estimation protocols that maximize quantum Fisher \
+        information (QFI).',
+    url='https://github.com/pdulian/qmetro',
+    project_urls={
+        'Documentation': 'https://qmetro.readthedocs.io/en/latest/',
+        'Source': 'https://github.com/pdulian/qmetro',
+        'Article': 'https://arxiv.org/abs/2506.16524'
+    },
     packages=find_packages(),
     python_requires='>=3.10',
     install_requires=[
@@ -21,4 +31,8 @@ setup(
     ],
     long_description=description,
     long_description_content_type='text/markdown',
+    author='Piotr Dulian and Stanisław Kurdziałek',
+    author_email='p.dulian@cent.uw.edu.pl',
+    license='GPLv3',
+    keywords='quantum metrology optimization physics',
 )
