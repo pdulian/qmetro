@@ -31,6 +31,9 @@ To install QMetro++:
 
    pip install qmetro
 
+First import may take a couple seconds (circa 1,86s) because QMetro++ loads
+CVXPY and numerical backends.
+
 
 .. toctree::
    :maxdepth: 2

@@ -1097,7 +1097,7 @@ def ad_asym_bound_correlated(channel: ParamChannel, block_size: int,
     Notes
     -----
     The QFI for asymptotically large number of channels :math:`n` is upper
-    bounded by :math:`\mathrm{coef} \cdot n^{\mathrm{power}}`
+    bounded by :math:`\\mathrm{coef} \\cdot n^{\\mathrm{power}}`
     """
     if channel.env_inp_dim != channel.env_out_dim:
         raise ValueError(
