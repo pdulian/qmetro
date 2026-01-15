@@ -110,8 +110,14 @@ The obtained value is an array ``bound = [b_1, b_2, ..., b_N]`` where
 The numerical results are presented in :numref:`fig:parallel` (B) and
 (C). We considered the parallel strategy with ancilla dimension
 :math:`d_\mathcal{A}` and various bond dimensions
-:math:`r_\mathrm{MPS}=\sqrt{r_\mathfrak{L}}`. Notice that for the
-dephasing case (B) results from MOP and ISS methods coincide perfectly
+:math:`r_\mathrm{MPS}=\sqrt{r_\mathfrak{L}}`. The relation between 
+:math:`r_{\mathrm{MPS}}$ and $r_{\mathfrak{L}}` was chosen based on
+the fact that the density matrix of the input state has bond 
+dimension equal to :math:`r_\mathrm{MPS}^2`, so taking
+:math:`r_\mathfrak{L}` up to this value should not significantly affect
+the execution time (in practice, a smaller :math:`r_\mathfrak{L}` is
+typically sufficient). Notice that for the dephasing case (B) results
+from MOP and ISS methods coincide perfectly
 and that QFI for MPS with :math:`r_\mathrm{MPS}=4` approaches the upper
 bound as :math:`N` increases. This suggests that in this case
 :math:`d_\mathcal{A}=2` is sufficient to saturate the bound. On the
