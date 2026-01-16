@@ -5,6 +5,11 @@
 
 Welcome to QMetro++ documentation!
 ====================================
+
+.. image:: https://static.pepy.tech/personalized-badge/qmetro?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads
+   :alt: PyPI Downloads
+   :target: https://pepy.tech/projects/qmetro
+
 `QMetro++ <https://github.com/pdulian/qmetro>`_ is a Python package that
 provides a set of tools for identifying optimal estimation protocols that
 maximize quantum Fisher information (QFI). Optimization can be performed

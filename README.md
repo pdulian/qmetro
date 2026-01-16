@@ -1,5 +1,8 @@
 # QMetro++
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/qmetro?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/qmetro)
 ## Python optimization package for large scale quantum metrology with customized strategy structures
+
+
 QMetro++ is a Python package that
 provides a set of tools for identifying optimal estimation protocols that
 maximize quantum Fisher information (QFI). Optimization can be performed
