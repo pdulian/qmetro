@@ -1,5 +1,9 @@
 # QMetro++
-[![PyPI Downloads](https://static.pepy.tech/personalized-badge/qmetro?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/qmetro)
+[![PyPI version](https://img.shields.io/pypi/v/qmetro)](https://pypi.org/project/qmetro/)
+[![Documentation](https://img.shields.io/readthedocs/qmetro)](https://qmetro.readthedocs.io/)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/qmetro?period=total&units=INTERNATIONAL_SYSTEM&left_color=gray&right_color=blue&left_text=downloads)](https://pepy.tech/projects/qmetro)
+[![License](https://img.shields.io/pypi/l/qmetro)](https://pypi.org/project/qmetro/)
+[![arXiv](https://img.shields.io/badge/arXiv-2506.16524-b31b1b.svg)](https://arxiv.org/abs/2506.16524)
 ## Python optimization package for large scale quantum metrology with customized strategy structures
 
 

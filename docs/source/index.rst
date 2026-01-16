@@ -6,9 +6,24 @@
 Welcome to QMetro++ documentation!
 ====================================
 
-.. image:: https://static.pepy.tech/personalized-badge/qmetro?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads
-   :alt: PyPI Downloads
+.. image:: https://img.shields.io/pypi/v/qmetro
+   :target: https://pypi.org/project/qmetro/
+
+.. image:: https://static.pepy.tech/personalized-badge/qmetro?period=total&units=INTERNATIONAL_SYSTEM&left_color=grey&right_color=blue&left_text=downloads
+   :alt: Total PyPI downloads
    :target: https://pepy.tech/projects/qmetro
+
+.. image:: https://img.shields.io/pypi/l/qmetro
+   :target: https://pypi.org/project/qmetro/
+
+.. image:: https://img.shields.io/badge/GitHub-qmetro-black?logo=github
+   :alt: GitHub repository
+   :target: https://github.com/pdulian/qmetro
+
+.. image:: https://img.shields.io/badge/arXiv-2506.16524-b31b1b.svg
+   :alt: arXiv paper
+   :target: https://arxiv.org/abs/2506.16524
+
 
 `QMetro++ <https://github.com/pdulian/qmetro>`_ is a Python package that
 provides a set of tools for identifying optimal estimation protocols that
