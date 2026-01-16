@@ -10,9 +10,10 @@ with open('README.md', 'r') as f:
 setup(
     name='qmetro',
     version='1.1.1',
-    description='A package that provides a set of tools for identifying \
-        optimal estimation protocols that maximize quantum Fisher \
-        information (QFI).',
+    description=(
+        'A package that provides a set of tools for identifying '
+        'optimal estimation protocols that maximize quantum Fisher '
+        'information (QFI).'),
     url='https://github.com/pdulian/qmetro',
     project_urls={
         'Documentation': 'https://qmetro.readthedocs.io/en/latest/',
