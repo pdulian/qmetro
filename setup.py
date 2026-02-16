@@ -9,7 +9,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='qmetro',
-    version='1.1.1',
+    version='1.1.2',
     description=(
         'A package that provides a set of tools for identifying '
         'optimal estimation protocols that maximize quantum Fisher '
