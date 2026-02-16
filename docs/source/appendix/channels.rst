@@ -112,12 +112,12 @@ Perpendicular amplitude damping channel is defined by the Kraus operators
 
 .. math::
 
-   K_0 = | + \rangle \langle + | +\sqrt{p} | - \rangle \langle - |,
+   K_0 = | - \rangle \langle - | +\sqrt{p} | + \rangle \langle + |,
    \quad
-   K_1 = \sqrt{1-p} | + \rangle \langle - |,
+   K_1 = \sqrt{1-p} | - \rangle \langle + |,
 
 for some :math:`p \in [0,1]`. This models the decay
-:math:`| - \rangle \rightarrow | + \rangle`.
+:math:`| + \rangle \rightarrow | - \rangle`.
 
 
 .. _per-deph:

@@ -376,6 +376,7 @@ def depolarization_krauses(p: float | None = None,
     """
     Computes Kraus operators and their derivatives for a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
     - noise shrinks uniformly the whole Bloch ball.
 
@@ -410,12 +411,12 @@ def depolarization_krauses(p: float | None = None,
             'Either p or eta must be provided.'
         )
     if p is None:
-        p = (5*eta - 1) / 4
+        p = (3*eta + 1) / 4
     else:
-        eta = (4*p + 1) / 5
+        eta = (4*p - 1) / 3
 
-    krauses = [sqrt(1 + 3 * p) / 2 * np.identity(2)]
-    krauses += [sqrt(1 - p) / 2 * sigma for sigma in PAULIS]
+    krauses = [sqrt(p) * np.identity(2)]
+    krauses += [sqrt((1 - p) / 3) * sigma for sigma in PAULIS]
     U = -1j/2 * PAULI_Z
     if noise_first:
         dkrauses = [U @ K for K in krauses]
@@ -431,6 +432,7 @@ def par_dephasing_krauses(p: float | None = None, noise_first: bool = True,
     """
     Computes Kraus operators and their derivatives for a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
     - noise shrinks the xy-plane preserving the z-axis.
     
@@ -497,6 +499,7 @@ def per_dephasing_krauses(p: float, noise_first: bool = True) -> tuple[
     """
     Computes Kraus operators and their derivatives for a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
     - noise shrinks the yz-plane preserving the x-axis.
 
@@ -531,8 +534,9 @@ def par_amp_damping_krauses(p: float, noise_first: bool = True) -> tuple[
     """
     Computes Kraus operators and their derivatives for a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
-    - noise models decay from -1 to +1 eigenstate of Pauli z-matrix.
+    - noise models decay from state ``|1⟩`` to ``|0⟩``.
 
     See more details in :ref:`the documentation <par-amp>`.
 
@@ -569,8 +573,9 @@ def per_amp_damping_krauses(p: float, noise_first: bool = True) -> tuple[
     """
     Computes Kraus operators and their derivatives for a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
-    - noise models decay from +1 to -1 eigenstate of Pauli x-matrix.
+    - noise models decay from state ``|+⟩`` to ``|-⟩``.
 
     See more details in :ref:`the documentation <per-amp>`.
 
@@ -656,8 +661,8 @@ def swap_operator(dims: tuple[int, ...], i1: int, i2: int) -> np.ndarray:
     the specified subsystems with indices `i1` and `i2`.
     The resulting space ordering will be:
     
-        - Original structure: `H_1 x ... x H_i1 x ... x H_i2 x ... H_N`
-        - New structure: `H_1 x ... x H_i2 x ... x H_i1 x ... H_N` 
+    - Original structure: `H_1 x ... x H_i1 x ... x H_i2 x ... H_N`
+    - New structure: `H_1 x ... x H_i2 x ... x H_i1 x ... H_N` 
 
     If `v` is a vector in the original structure, `swap_operator @ v`
     gives the vector in the swapped structure.

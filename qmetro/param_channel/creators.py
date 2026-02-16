@@ -23,6 +23,7 @@ def par_dephasing(p: float, noise_first: bool = True,
     """
     Returnes paramtrised channel of a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
     - noise shrinks the xy-plane preserving the z-axis.
     
@@ -96,6 +97,7 @@ def per_dephasing(p: float, noise_first: bool = True, **kwargs
     """
     Returnes paramtrised channel of a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
     - noise shrinks the yz-plane preserving the x-axis.
 
@@ -124,8 +126,9 @@ def per_amp_damping(p: float, noise_first: bool = True, **kwargs: Any
     """
     Returnes paramtrised channel of a qubit channel
     where:
+    
     - the signal is rotating Bloch sphere around the z-axis,
-    - noise models decay from +1 to -1 eigenstate of Pauli x-matrix.
+    - noise models decay from state ``|+⟩`` to ``|-⟩``.
 
     See more details in :ref:`the documentation <per-amp>`.
 
@@ -153,8 +156,9 @@ def par_amp_damping(p: float, noise_first: bool = True, **kwargs
     """
     Returnes parametrised channel of a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
-    - noise models decay from -1 to +1 eigenstate of Pauli z-matrix.
+    - noise models decay from state ``|1⟩`` to ``|0⟩``.
 
     See more details in :ref:`the documentation <par-amp>`.
 
@@ -182,6 +186,7 @@ def depolarization(p: float, noise_first: bool = True,
     """
     Returnes paramtrised channel of a qubit channel
     where:
+
     - the signal is rotating Bloch sphere around the z-axis,
     - noise shrinks uniformly the whole Bloch ball.
 
@@ -290,7 +295,7 @@ def cmarkov_channel(channels: list[ParamChannel], trans_mat: np.ndarray
     return ParamChannel(krauses=As, dkrauses=dAs, env_dim=n)
 
 
-def corr_dephasing(p: float, c: float, angle: float = 0,
+def _corr_dephasing(p: float, c: float, angle: float = 0,
     noise_first: bool = True, c_in: float | None = None) -> ParamChannel:
     """
     Returns rotation-like parametrised dephasing channel with correlation
